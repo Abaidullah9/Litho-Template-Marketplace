@@ -284,7 +284,7 @@ export async function githubApi(path, token) {
     headers: {
       Accept: "application/vnd.github+json",
       Authorization: `Bearer ${token}`,
-      "User-Agent": "omarchy-plugin-marketplace-approval",
+      "User-Agent": "litho-template-marketplace-approval",
       "X-GitHub-Api-Version": "2022-11-28",
     },
   });

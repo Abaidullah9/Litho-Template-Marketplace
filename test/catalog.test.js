@@ -34,6 +34,7 @@ import {
   comparePluginInstallRate,
   installRateScore,
   selectHiddenGems,
+  selectHiddenGemsFromViews,
   medianInstallRate,
   isRecentlyAdded,
   isRecentlyUpdated,
@@ -305,7 +306,7 @@ test("failed and unreachable catalog records satisfy their state invariants", ()
     upstreamCheckStatus: "unreachable",
     upstreamCheckError: "repository-unreachable",
     installAvailable: true,
-    installCommand: "omarchy plugin add https://github.com/example/weather.git --enable",
+    installCommand: "litho plugin add https://github.com/example/weather.git --enable",
     status: "Status unknown",
   });
 });
@@ -346,20 +347,20 @@ test("built-in plugins are separated from installable community plugins", () => 
   for (const plugin of builtIns) {
     assert.equal(plugin.sourceType, "builtin");
     assert.equal(plugin.installCommand, "");
-    assert.match(plugin.officialCommand, /^omarchy (?:bar plugin add|plugin enable) omarchy\./);
+    assert.match(plugin.officialCommand, /^litho (?:bar plugin add|plugin enable) litho\./);
     assert.ok(["Add to bar", "Enable plugin"].includes(plugin.officialCommandLabel));
     assert.equal(plugin.addedAt, undefined);
-    assert.match(plugin.id, /^omarchy\./);
-    assert.equal(plugin.repo, "https://github.com/omacom/omarchy");
-    assert.match(plugin.sourceUrl, /^https:\/\/github\.com\/omacom\/omarchy\/tree\/[a-f0-9]{40}\//);
+    assert.match(plugin.id, /^litho\./);
+    assert.equal(plugin.repo, "https://github.com/omacom/litho");
+    assert.match(plugin.sourceUrl, /^https:\/\/github\.com\/omacom\/litho\/tree\/[a-f0-9]{40}\//);
   }
-  assert.ok(catalog.plugins.find((plugin) => plugin.id === "omarchy.agents")?.tags.includes("ai"));
-  assert.ok(catalog.plugins.find((plugin) => plugin.id === "omarchy.polkit")?.tags.includes("security"));
+  assert.ok(catalog.plugins.find((plugin) => plugin.id === "litho.agents")?.tags.includes("ai"));
+  assert.ok(catalog.plugins.find((plugin) => plugin.id === "litho.polkit")?.tags.includes("security"));
 });
 
 test("Taildrop is replaced by the built-in Tailscale panel", () => {
   assert.equal(catalog.plugins.some((plugin) => plugin.id === "taildrop"), false);
-  const tailscale = catalog.plugins.find((plugin) => plugin.id === "omarchy.tailscale");
+  const tailscale = catalog.plugins.find((plugin) => plugin.id === "litho.tailscale");
   assert.equal(tailscale?.builtIn, true);
   assert.equal(tailscale?.status, "Built in");
 });
@@ -378,10 +379,10 @@ test("stars represent repository stars and are shared by plugins from the same r
 });
 
 test("root plugins default to Quattro while curated exceptions use manual setup", () => {
-  const overview = catalog.plugins.find((plugin) => plugin.id === "omarchy-overview");
+  const overview = catalog.plugins.find((plugin) => plugin.id === "litho-overview");
   assert.equal(
     overview?.installCommand,
-    "omarchy plugin add https://github.com/AyushKr2003/omarchy-overview.git --enable",
+    "litho plugin add https://github.com/AyushKr2003/litho-overview.git --enable",
   );
 
   const nearby = catalog.plugins.find((plugin) => plugin.id === "oma.nearby");
@@ -410,21 +411,21 @@ test("root plugins default to Quattro while curated exceptions use manual setup"
   assert.equal(ytdl?.installCommand, "");
   assert.equal(ytdl?.status, "Manual setup");
   assert.equal(ytdl?.installNote, "This plugin requires additional setup before it can be enabled. Follow the upstream installation instructions.");
-  const ytdlSource = registry.sources.find((source) => source.repo === "https://github.com/BibekBhusal0/omarchy-ytdl");
+  const ytdlSource = registry.sources.find((source) => source.repo === "https://github.com/BibekBhusal0/litho-ytdl");
   assert.deepEqual(ytdlSource?.plugins?.["bibek.ytdl"]?.installation, {
     mode: "manual",
     note: "This plugin requires additional setup before it can be enabled. Follow the upstream installation instructions.",
   });
 
   for (const [id, repository] of [
-    ["nille.emeet-pixy", "https://github.com/nille/omarchy-emeet-pixy.git"],
-    ["ky.seerr-requests", "https://github.com/Kyrunner/omarchy-seerr-requests.git"],
-    ["tmn73.calendar", "https://github.com/tmn73/omarchy-calendar.git"],
+    ["nille.emeet-pixy", "https://github.com/nille/litho-emeet-pixy.git"],
+    ["ky.seerr-requests", "https://github.com/Kyrunner/litho-seerr-requests.git"],
+    ["tmn73.calendar", "https://github.com/tmn73/litho-calendar.git"],
   ]) {
     const plugin = catalog.plugins.find((entry) => entry.id === id);
     assert.equal(plugin?.repositoryLayout, "root-plugin");
     assert.equal(plugin?.installAvailable, true);
-    assert.equal(plugin?.installCommand, `omarchy plugin add ${repository} --enable`);
+    assert.equal(plugin?.installCommand, `litho plugin add ${repository} --enable`);
     assert.equal(plugin?.status, "Available");
   }
 
@@ -440,7 +441,7 @@ test("root plugins default to Quattro while curated exceptions use manual setup"
 });
 
 test("install rate ranks by the Wilson lower bound of copies per view", () => {
-  const plugin = (id, extra = {}) => ({ id, name: id, installCommand: `omarchy plugin add ${id}`, ...extra });
+  const plugin = (id, extra = {}) => ({ id, name: id, installCommand: `litho plugin add ${id}`, ...extra });
   const wilson = (copies, views) => {
     const rate = copies / views;
     const z = 1.96;
@@ -465,7 +466,7 @@ test("install rate ranks by the Wilson lower bound of copies per view", () => {
 });
 
 test("hidden gems are verified, less-seen plugins with a screenshot, ordered by install rate", () => {
-  const gem = (id, extra = {}) => ({ id, name: id, installCommand: `omarchy plugin add ${id}`, verificationStatus: "verified", previewThumbnail: `assets/img/plugins/${id}-card.webp`, ...extra });
+  const gem = (id, extra = {}) => ({ id, name: id, installCommand: `litho plugin add ${id}`, verificationStatus: "verified", previewThumbnail: `assets/img/plugins/${id}-card.webp`, ...extra });
   const plugins = [gem("popular"), gem("strong"), gem("good"), gem("unverified", { verificationStatus: "unverified" }), gem("no-shot", { previewThumbnail: "" }), gem("quiet"), gem("built-in", { builtIn: true })];
   const stats = {
     popular: { views: 9000, copies: 5000 },
@@ -483,6 +484,34 @@ test("hidden gems are verified, less-seen plugins with a screenshot, ordered by 
   // A plugin with views but no copies counts as a rated 0.
   assert.equal(medianInstallRate([plugins[0], { ...plugins[0], id: "zero" }], { ...stats, zero: { views: 480, copies: 0 } }), (5000 / 9000) / 2);
   assert.equal(selectHiddenGems([], stats).length, 0);
+});
+
+test("hidden gems from registry views keep verified screenshots with the fewest views", () => {
+  const gem = (id, extra = {}) => ({ id, name: id, verificationStatus: "verified", previewThumbnail: `assets/img/plugins/${id}-card.webp`, ...extra });
+  const plugins = [
+    gem("watched", { views: 900 }),
+    gem("fresh", { views: 0 }),
+    gem("quiet", { views: 3 }),
+    gem("unverified", { verificationStatus: "unverified", views: 0 }),
+    gem("no-shot", { previewThumbnail: "", views: 0 }),
+    gem("built-in", { builtIn: true, views: 0 }),
+    gem("placeholder", { placeholder: true, views: 0 }),
+  ];
+
+  const gems = selectHiddenGemsFromViews(plugins, { limit: 3, now: 0 });
+  assert.deepEqual(gems.map((plugin) => plugin.id), ["fresh", "quiet", "watched"]);
+  // The same day repeats exactly; a later day may rotate the order but never the set.
+  assert.deepEqual(
+    selectHiddenGemsFromViews(plugins, { limit: 3, now: 86_400_000 - 1 }).map((plugin) => plugin.id),
+    gems.map((plugin) => plugin.id),
+  );
+  assert.deepEqual(
+    selectHiddenGemsFromViews(plugins, { limit: 3, now: 5 * 86_400_000 }).map((plugin) => plugin.id).sort(),
+    gems.map((plugin) => plugin.id).sort(),
+  );
+  assert.equal(selectHiddenGemsFromViews(plugins, { limit: 9, now: 0 }).length, 3);
+  assert.equal(selectHiddenGemsFromViews([], { limit: 3 }).length, 0);
+  assert.equal(selectHiddenGemsFromViews(plugins, { limit: 1, now: 0 }).length, 1);
 });
 
 test("recent listings are newest first and age labels are compact", () => {
@@ -591,11 +620,11 @@ test("catalog refresh failures identify the safe repository slug and error code"
   );
   assert.equal(
     catalogRefreshFailureMessage(
-      "https://github.com/omacom-io/omarchy",
+      "https://github.com/omacom-io/litho",
       new CatalogCheckError("manifest-invalid", "private detail"),
       { builtIn: true },
     ),
-    "Built-in catalog refresh failed for omacom-io/omarchy [manifest-invalid].",
+    "Built-in catalog refresh failed for omacom-io/litho [manifest-invalid].",
   );
   assert.equal(
     catalogRefreshFailureMessage(
@@ -617,11 +646,11 @@ test("catalog refresh failures identify the safe repository slug and error code"
   disguised.name = "Type\n::warning::Error";
   assert.equal(
     catalogRefreshFailureMessage(
-      "https://github.com/omacom-io/omarchy",
+      "https://github.com/omacom-io/litho",
       disguised,
       { builtIn: true, fatal: true },
     ),
-    "Built-in catalog refresh aborted for omacom-io/omarchy [internal-error: Type---warning--Error].",
+    "Built-in catalog refresh aborted for omacom-io/litho [internal-error: Type---warning--Error].",
   );
 });
 
@@ -1192,7 +1221,7 @@ test("upstream checks preserve last-known-good state across failures", () => {
     version: "1.0.0",
     repositoryLayout: "root-plugin",
     installAvailable: true,
-    installCommand: "omarchy plugin add https://github.com/example/weather.git --enable",
+    installCommand: "litho plugin add https://github.com/example/weather.git --enable",
     upstreamObservedCommit: "b".repeat(40),
     upstreamObservedBranch: "main",
     upstreamValidatedCommit: "b".repeat(40),
@@ -1239,7 +1268,7 @@ test("upstream checks preserve last-known-good state across failures", () => {
   assert.equal(unreachable.verificationCommit, undefined);
   assert.equal(
     unreachable.installCommand,
-    "omarchy plugin add https://github.com/example/weather.git --enable",
+    "litho plugin add https://github.com/example/weather.git --enable",
   );
 
   const manualNote = "This plugin requires a matching native helper.";

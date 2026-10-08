@@ -1,8 +1,8 @@
-import { accentColor, formatDate, legibleColor, setupThemeToggle } from "./shared.js?v=20261002-03";
-import { createExplorerSearchMatcher, repositoryPublisher } from "./explore-search.js?v=20261002-03";
+import { accentColor, formatDate, legibleColor, setupThemeToggle } from "./shared.js?v=20261008-01";
+import { createExplorerSearchMatcher, repositoryPublisher } from "./explore-search.js?v=20261008-01";
 import { themeById } from "./themes.js?v=20260920-05";
 import { inclusiveDayCount, inclusiveRangeStart } from "./growth-range.js?v=20260828-18";
-import { matchesBarTaxonomy, matchesVpnTaxonomy } from "./taxonomy.js?v=20261002-03";
+import { matchesBarTaxonomy, matchesVpnTaxonomy } from "./taxonomy.js?v=20261008-01";
 
 const number = new Intl.NumberFormat("en-US");
 const shortDate = new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "short", timeZone: "UTC" });
@@ -386,7 +386,7 @@ function pluginInitials(node) {
 function selectNode(node, center = false) {
   selected = node;
   if (!node) {
-    canvas.setAttribute("aria-label", "Interactive semantic graph of community plugins");
+    canvas.setAttribute("aria-label", "Interactive semantic graph of community templates");
     detail.hidden = true;
     analysis.hidden = false;
     drawGraph();
@@ -394,7 +394,7 @@ function selectNode(node, center = false) {
   }
   analysis.hidden = false;
   detail.hidden = false;
-  canvas.setAttribute("aria-label", `Interactive semantic graph of community plugins. Selected ${node.name}.`);
+  canvas.setAttribute("aria-label", `Interactive semantic graph of community templates. Selected ${node.name}.`);
   if (center) centerNode(node);
   const score = Math.round(node.influence / maximumInfluence * 100);
   const cluster = clusterById.get(node.cluster);
@@ -446,7 +446,7 @@ function selectNode(node, center = false) {
     visibleTags.push(more);
   }
   tags.replaceChildren(...visibleTags);
-  detail.querySelector(".plugin-link").href = `plugin.html?${new URLSearchParams({ id: node.id })}`;
+  detail.querySelector(".plugin-link").href = `template.html?${new URLSearchParams({ id: node.id })}`;
   detail.querySelector(".repo-link").href = safeExternalUrl(node.repo);
   const neighbors = detail.querySelector(".neighbor-list");
   neighbors.replaceChildren(...node.neighbors.map((neighbor) => {
@@ -455,7 +455,7 @@ function selectNode(node, center = false) {
     button.type = "button";
     const similarity = Math.round(neighbor.similarity * 100);
     const candidatePublisher = repositoryPublisher(candidate.repo);
-    button.setAttribute("aria-label", `Select related plugin ${candidate.name}, ${similarity}% similarity${candidatePublisher ? `, by @${candidatePublisher}` : ""}`);
+    button.setAttribute("aria-label", `Select related template ${candidate.name}, ${similarity}% similarity${candidatePublisher ? `, by @${candidatePublisher}` : ""}`);
     const name = element("span", "", candidate.name);
     if (candidatePublisher) name.append(element("i", "neighbor-publisher", `@${candidatePublisher}`));
     button.append(name, element("small", "", `${similarity}% →`));
@@ -516,8 +516,8 @@ function renderAnalysis() {
     button.dataset.cluster = cluster.id;
     button.dataset.filterKind = cluster.taxonomy ? "taxonomy" : "community";
     button.setAttribute("aria-label", cluster.taxonomy
-      ? `${cluster.label} filter: ${number.format(cluster.count)} matching plugins`
-      : `${cluster.label}: ${number.format(cluster.count)} plugins, ${Math.round(cluster.count / explorer.nodes.length * 100)} percent`);
+      ? `${cluster.label} filter: ${number.format(cluster.count)} matching templates`
+      : `${cluster.label}: ${number.format(cluster.count)} templates, ${Math.round(cluster.count / explorer.nodes.length * 100)} percent`);
     button.setAttribute("aria-pressed", "false");
     communityFilterColors.set(cluster.id, cluster.color);
     button.style.setProperty("--community", graphColor(cluster.color));
@@ -1039,8 +1039,8 @@ function setupGrowthGuide() {
     guideValue.setAttribute("x", boxX + 13);
     guideValue.setAttribute("y", boxY + 25);
     guideValue.textContent = projected
-      ? `≈ ${number.format(Math.round(point.total))} plugins`
-      : `${number.format(point.total)} plugins`;
+      ? `≈ ${number.format(Math.round(point.total))} templates`
+      : `${number.format(point.total)} templates`;
     guideDate.setAttribute("x", boxX + 13);
     guideDate.setAttribute("y", boxY + 48);
     guideDate.textContent = projected
@@ -1095,7 +1095,7 @@ function renderGrowth({ updateUrl = true } = {}) {
   growthDelta.querySelector("strong").textContent = `${change > 0 ? "+" : ""}${number.format(change)}`;
   growthDelta.classList.toggle("is-flat", change === 0);
   const absoluteChange = Math.abs(change);
-  growthDelta.setAttribute("aria-label", `${number.format(absoluteChange)} plugin${absoluteChange === 1 ? "" : "s"} ${trendWord} over the selected period`);
+  growthDelta.setAttribute("aria-label", `${number.format(absoluteChange)} template${absoluteChange === 1 ? "" : "s"} ${trendWord} over the selected period`);
   document.querySelector("#growth-trend-arrow").textContent = trendArrow;
   document.querySelector("#growth-rate-value").textContent = rateText;
   const growthRate = document.querySelector("#growth-rate");
@@ -1108,7 +1108,7 @@ function renderGrowth({ updateUrl = true } = {}) {
     ? "since the Quattro release"
     : `${shortDate.format(new Date(`${from}T00:00:00Z`))}–${shortDate.format(new Date(`${to}T00:00:00Z`))}`;
   document.querySelector("#growth-as-of").textContent = `As of ${posterDate.format(new Date(`${to}T00:00:00Z`)).toUpperCase()}`;
-  document.querySelector("#growth-chart-description").textContent = `Active community plugin listings changed from ${number.format(start.total)} to ${number.format(end.total)} between ${posterDate.format(new Date(`${from}T00:00:00Z`))} and ${posterDate.format(new Date(`${to}T00:00:00Z`))}${percentage === null ? "" : `, a ${new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 }).format(Math.abs(percentage))} percent ${trendWord}`}.`;
+  document.querySelector("#growth-chart-description").textContent = `Active community template listings changed from ${number.format(start.total)} to ${number.format(end.total)} between ${posterDate.format(new Date(`${from}T00:00:00Z`))} and ${posterDate.format(new Date(`${to}T00:00:00Z`))}${percentage === null ? "" : `, a ${new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 }).format(Math.abs(percentage))} percent ${trendWord}`}.`;
   const latestDate = explorer.growth.at(-1).date;
   const projectionButtons = [...document.querySelectorAll("[data-projection-year]")];
   projectionButtons.forEach((button) => {
@@ -1121,7 +1121,7 @@ function renderGrowth({ updateUrl = true } = {}) {
   document.querySelector("#growth-legend-projection").hidden = !projection;
   document.querySelector("#growth-legend-band").hidden = !projection;
   if (projection) {
-    document.querySelector("#growth-chart-description").textContent += ` Projected at the average pace since the Quattro release (${new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 }).format(projection.perDay)} plugins per day): about ${number.format(projection.total)} by ${posterDate.format(new Date(`${projection.endDate}T00:00:00Z`))}. At the pace of the slowest and fastest complete week since the release (${new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 }).format(projection.slowest)} and ${new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 }).format(projection.fastest)} per day): ${number.format(projection.low)} to ${number.format(projection.high)}.`;
+    document.querySelector("#growth-chart-description").textContent += ` Projected at the average pace since the Quattro release (${new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 }).format(projection.perDay)} templates per day): about ${number.format(projection.total)} by ${posterDate.format(new Date(`${projection.endDate}T00:00:00Z`))}. At the pace of the slowest and fastest complete week since the release (${new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 }).format(projection.slowest)} and ${new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 }).format(projection.fastest)} per day): ${number.format(projection.low)} to ${number.format(projection.high)}.`;
     for (let year = Number(latestDate.slice(0, 4)); `${year}-12-31` < projection.endDate; year += 1) {
       const date = `${year}-12-31`;
       if (date <= latestDate) continue;
@@ -1298,7 +1298,7 @@ function renderGrowth({ updateUrl = true } = {}) {
     releaseLayer.append(svgElement("rect", { class: "release-label-box", x: boxX, y: boxY, width: releaseBoxWidth, height: releaseBoxHeight }));
     releaseLayer.append(svgElement("rect", { class: "release-label-accent", x: boxX, y: boxY, width: 4, height: releaseBoxHeight }));
     const releaseDate = posterDate.format(new Date(`${explorer.release.date}T00:00:00Z`)).toUpperCase();
-    releaseLayer.append(svgElement("text", { class: "release-label", x: boxX + 16, y: boxY + 25 }, "OMARCHY QUATTRO v4.0.0"));
+    releaseLayer.append(svgElement("text", { class: "release-label", x: boxX + 16, y: boxY + 25 }, "LITHO QUATTRO v4.0.0"));
     releaseLayer.append(svgElement("text", { class: "release-label-meta", x: boxX + 16, y: boxY + 48 }, `${releaseDate} · RELEASE`));
   }
 }
@@ -1318,7 +1318,7 @@ function setupGrowth() {
     : "Reconstructed cumulative listings";
   document.querySelector("#growth-source").textContent = growthMeta.historical
     ? "Git catalog snapshots"
-    : "Current catalog metadata · excludes delisted plugins";
+    : "Current catalog metadata · excludes delisted templates";
   fromInput.min = minimum;
   fromInput.max = maximum;
   toInput.min = minimum;

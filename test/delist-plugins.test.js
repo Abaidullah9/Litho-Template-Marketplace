@@ -10,6 +10,7 @@ import {
   writeFile,
 } from "node:fs/promises";
 import os from "node:os";
+import { fileURLToPath } from "node:url";
 import path from "node:path";
 import test from "node:test";
 import {
@@ -286,7 +287,7 @@ test("the delisting CLI binds environment input to its report", async () => {
       await writeFile(path.join(directory, "site", entry.previewThumbnail), "card\n");
     }
     execFileSync(process.execPath, [
-      new URL("../scripts/delist-plugins.mjs", import.meta.url).pathname,
+      fileURLToPath(new URL("../scripts/delist-plugins.mjs", import.meta.url)),
       `--registry=${registryPath}`,
       `--catalog=${catalogPath}`,
       `--preview-dir=${previewDirectory}`,

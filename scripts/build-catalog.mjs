@@ -50,8 +50,8 @@ const accents = ["lime", "amber", "coral", "cyan", "violet", "rose"];
 const supportedKinds = new Set(["bar", "bar-widget", "menu", "overlay", "panel", "service"]);
 const supportedPreviewFormats = new Set(["png", "jpeg", "webp", "avif", "heif"]);
 const builtInTaxonomyTags = Object.freeze({
-  "omarchy.agents": ["ai"],
-  "omarchy.polkit": ["security"],
+  "litho.agents": ["ai"],
+  "litho.polkit": ["security"],
 });
 const defaultPreviewPattern = /^preview\.(?:png|jpe?g|webp|avif)$/i;
 export const manifestFieldLimits = Object.freeze({
@@ -157,7 +157,7 @@ export function catalogRefreshFailureMessage(repoUrl, error, options = {}) {
 function githubHeaders() {
   const headers = {
     Accept: "application/vnd.github+json",
-    "User-Agent": "omarchy-plugin-marketplace-catalog-builder",
+    "User-Agent": "litho-template-marketplace-catalog-builder",
     "X-GitHub-Api-Version": "2022-11-28",
   };
   if (process.env.GITHUB_TOKEN) headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
@@ -692,7 +692,7 @@ function rawUrl(repository, commitSha, path) {
 async function readSnapshotBuffer(repository, path, commitSha, limit, code) {
   catalogApiUsage.rawRequests += 1;
   const response = await fetchWithTimeout(rawUrl(repository, commitSha, path), {
-    headers: { "User-Agent": "omarchy-plugin-marketplace-catalog-builder" },
+    headers: { "User-Agent": "litho-template-marketplace-catalog-builder" },
   });
   if (!response.ok) {
     checkError(
@@ -784,8 +784,8 @@ export function validateManifest(manifest, manifestPath, { community = false } =
   if (community && manifest.id !== manifest.id.toLowerCase()) {
     checkError("manifest-invalid", `${manifestPath}: community manifest ids must use lowercase characters`);
   }
-  if (community && manifest.id.toLowerCase().startsWith("omarchy.")) {
-    checkError("reserved-plugin-id", `${manifestPath}: the omarchy.* namespace is reserved`);
+  if (community && manifest.id.toLowerCase().startsWith("litho.")) {
+    checkError("reserved-plugin-id", `${manifestPath}: the litho.* namespace is reserved`);
   }
   if (
     !Array.isArray(manifest.kinds)
@@ -1400,15 +1400,15 @@ export function communityInstall(source, manifestPath, overrides = {}) {
     return {
       repositoryLayout: "root-plugin",
       installAvailable: true,
-      installCommand: `omarchy plugin add ${repositoryGitUrl(source.repo)} --enable`,
-      installNote: "Omarchy clones the current upstream repository, validates it locally, and only then installs and enables the plugin.",
+      installCommand: `litho plugin add ${repositoryGitUrl(source.repo)} --enable`,
+      installNote: "Litho clones the current upstream repository, validates it locally, and only then installs and enables the plugin.",
     };
   }
   return {
     repositoryLayout: "monorepo",
     installAvailable: false,
     installCommand: "",
-    installNote: "Automatic installation is unavailable because this plugin is stored inside a multi-plugin repository without a transactional Omarchy update path.",
+    installNote: "Automatic installation is unavailable because this plugin is stored inside a multi-plugin repository without a transactional Litho update path.",
   };
 }
 
@@ -1472,7 +1472,7 @@ function suitePlugin(source, context, preview) {
     repositoryLayout: "suite",
     installAvailable: false,
     installCommand: "",
-    installNote: "This repository is a shell suite with its own installer, not an installable Omarchy Quattro plugin repository.",
+    installNote: "This repository is a shell suite with its own installer, not an installable Litho Quattro plugin repository.",
     license: "See repository",
     ...repositoryMetadata(context.metadata),
     ...(context.repositoryRelease ? { repositoryRelease: context.repositoryRelease } : {}),
@@ -1626,7 +1626,7 @@ function builtInKind(kinds) {
 }
 
 function builtInCommand(id) {
-  return { command: `omarchy plugin enable ${id}`, label: "Enable plugin" };
+  return { command: `litho plugin enable ${id}`, label: "Enable plugin" };
 }
 
 async function discoveredBuiltIns(source, context) {
@@ -1656,8 +1656,8 @@ async function discoveredBuiltIns(source, context) {
       checkError("manifest-invalid", `${context.repository.slug}/${manifestPath}: invalid JSON`);
     }
     const manifest = {
-      author: "Omarchy",
-      description: `Built-in ${sourceManifest.name || sourceManifest.id || "Omarchy"} plugin`,
+      author: "Litho",
+      description: `Built-in ${sourceManifest.name || sourceManifest.id || "Litho"} plugin`,
       ...sourceManifest,
     };
     validateManifestFiles(manifest, manifestPath, context);
@@ -1679,7 +1679,7 @@ async function discoveredBuiltIns(source, context) {
       installCommand: "",
       officialCommand: officialCommand.command,
       officialCommandLabel: officialCommand.label,
-      installNote: "Included with Omarchy Quattro. No marketplace installation is required.",
+      installNote: "Included with Litho Quattro. No marketplace installation is required.",
       category: builtInCategory(kinds),
       tags: [...kinds, ...(builtInTaxonomyTags[manifest.id] || [])],
       license: "See repository",

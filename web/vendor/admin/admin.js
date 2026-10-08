@@ -21,6 +21,7 @@ const NAV = [
   { href: "/admin/analytics", key: "analytics", label: "Analytics" },
   { href: "/admin/registry", key: "registry", label: "Registry" },
   { group: "System" },
+  { href: "/admin/admins", key: "admins", label: "Admins" },
   { href: "/admin/activity", key: "activity", label: "Activity" },
   { href: "/admin/settings", key: "settings", label: "Settings" },
 ];
@@ -200,7 +201,7 @@ function toggleTheme() {
 }
 
 export async function requireSession() {
-  await get("/api/admin/session");
+  return await get("/api/admin/session");
 }
 
 // ---------------------------------------------------------------- feedback

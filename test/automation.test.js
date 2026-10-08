@@ -142,7 +142,7 @@ function mixHex(foreground, background, foregroundWeight) {
 }
 
 function submissionBody({
-  repo = "https://github.com/example/omarchy-plugin.git",
+  repo = "https://github.com/example/litho-plugin.git",
   category = "Developer Tools",
   tags = "Launcher, Quickshell, Quickshell",
   suggestedTag = "_No response_",
@@ -229,8 +229,8 @@ function assertTagProjectionMatchesRegistry(registry, catalog, tag) {
 
 test("GitHub repository URLs are normalized and restricted", () => {
   assert.deepEqual(
-    parseGitHubRepository("https://github.com/example/omarchy-plugin.git"),
-    { owner: "example", repository: "omarchy-plugin", slug: "example/omarchy-plugin" }
+    parseGitHubRepository("https://github.com/example/litho-plugin.git"),
+    { owner: "example", repository: "litho-plugin", slug: "example/litho-plugin" }
   );
   assert.throws(() => parseGitHubRepository("http://github.com/example/plugin"), /Only public HTTPS/);
   assert.throws(() => parseGitHubRepository("https://gitlab.com/example/plugin"), /Only public HTTPS/);
@@ -371,7 +371,7 @@ test("direct search handles standalone punctuation in plugin names", () => {
 
 test("short searches use Unicode-aware word prefixes", () => {
   assert.equal(matchesDirectSearch("农历", {
-    primaryText: "Lunar Calendar io.github.tuthan.omarchy-lunar-calendar",
+    primaryText: "Lunar Calendar io.github.tuthan.litho-lunar-calendar",
     searchText: "East Asian Lunar Calendar (Lịch Âm / 农历)",
   }), true);
   assert.equal(matchesDirectSearch("全部", {
@@ -442,7 +442,7 @@ test("dotted searches match complete plugin IDs beyond the host namespace", () =
 
 test("search ignores diacritics on both sides of the comparison", () => {
   const context = pluginSearchContext({
-    id: "robertlindomar.omarchy-ptbr.clock",
+    id: "robertlindomar.litho-ptbr.clock",
     name: "Relógio",
     description: "Notificações e café für Müller",
     tags: ["system"],
@@ -469,12 +469,12 @@ test("search relevance ranks exact names and IDs before prefixes and other match
   const context = (name, id) => pluginSearchContext({ name, id, tags: [] });
   const archy = context("Archy", "io.github.example.archy");
   const archyBar = context("Archy Bar", "example.archy-bar");
-  const omarchyClock = context("Omarchy Clock", "example.clock");
+  const lithoClock = context("Barlitho", "example.barlitho");
   const unrelatedName = context("Weather", "example.weather");
   assert.equal(searchRelevanceTier(archy, "archy"), 0);
   assert.equal(searchRelevanceTier(archy, "io.github.example.archy"), 0);
   assert.equal(searchRelevanceTier(archyBar, "archy"), 1);
-  assert.equal(searchRelevanceTier(omarchyClock, "archy"), 2);
+  assert.equal(searchRelevanceTier(lithoClock, "litho"), 2);
   assert.equal(searchRelevanceTier(unrelatedName, "archy"), 3);
   assert.equal(searchRelevanceTier(archy, ""), 0);
   assert.equal(searchRelevanceTier(context("Müller Notes", "example.notes"), "muller notes"), 0);
@@ -506,7 +506,7 @@ test("inline completion accepts genuine plugin, tag, and author prefixes", () =>
 test("committed text terms match hyphenated and joined spellings", () => {
   const codexBar = {
     primaryText: "CodexBar codexbar ai",
-    searchText: "CodexBar Every AI coding limit in one Omarchy panel ai",
+    searchText: "CodexBar Every AI coding limit in one Litho panel ai",
   };
   const nightLight = {
     primaryText: "Night Light nightlight system",
@@ -1099,7 +1099,7 @@ test("plugin cards retain their existing verification display", () => {
   }), {
     status: "unverified",
     label: "Unverified",
-    explanation: "No current verification record is available for the listed commit. This does not mean the plugin is malicious.",
+    explanation: "No current verification record is available for the listed commit. This does not mean the template is malicious.",
   });
   assert.equal(pluginVerificationState({ builtIn: true }), null);
 });
@@ -1157,14 +1157,14 @@ test("plugin details distinguish exact snapshots from unverified updates", () =>
     coverage: "unverified",
     label: "Unverified",
     markerLabels: ["Unverified"],
-    explanation: "No current verification record is available for the listed snapshot. This does not mean the plugin is malicious.",
+    explanation: "No current verification record is available for the listed snapshot. This does not mean the template is malicious.",
   });
   assert.deepEqual(pluginVerificationDetailState({ verificationStatus: "unverified" }), {
     status: "unverified",
     coverage: "unverified",
     label: "Unverified",
     markerLabels: ["Unverified"],
-    explanation: "No current verification record is available for the listed snapshot. This does not mean the plugin is malicious.",
+    explanation: "No current verification record is available for the listed snapshot. This does not mean the template is malicious.",
   });
   assert.equal(pluginVerificationDetailState({ builtIn: true }), null);
   assert.equal(pluginVerificationDetailState({ repositoryLayout: "suite" }), null);
@@ -1313,7 +1313,7 @@ test("Kids catalog filtering uses only the exact controlled taxonomy", () => {
 
 test("Bar catalog filtering covers bar replacements and bar modifiers, not bar widgets", () => {
   for (const plugin of [
-    { id: "omarchy.bar", name: "Bar", category: "Bars", kind: "Bar", tags: ["bar"] },
+    { id: "litho.bar", name: "Bar", category: "Bars", kind: "Bar", tags: ["bar"] },
     { id: "example.custom", name: "Custom", category: "Bar", tags: [] },
     { id: "example.glass", name: "Glass", category: "Widgets", kind: "Bar", tags: [] },
     { id: "example.glass", name: "Glass", category: "Widgets", kind: "  BAR ", tags: [] },
@@ -1321,7 +1321,7 @@ test("Bar catalog filtering covers bar replacements and bar modifiers, not bar w
     { id: "henri.hide-bar-on-fullscreen", name: "Hide Bar on Video Fullscreen", category: "Desktop", kind: "Service", tags: ["bar"] },
     { id: "fixlixpender.bar-color", name: "Bar Color", category: "Appearance", kind: "Bar widget", tags: ["hyprland"] },
     { id: "floating-waybar", name: "Floating Waybar", category: "Appearance", kind: "Bar", tags: ["quickshell"] },
-    { id: "kc.omarchy-menubar-manager", name: "Omarchy Menubar Manager", category: "Appearance", kind: "Bar widget", tags: ["bar"] },
+    { id: "kc.litho-menubar-manager", name: "Litho Menubar Manager", category: "Appearance", kind: "Bar widget", tags: ["bar"] },
   ]) {
     assert.equal(matchesBarTaxonomy(plugin), true, plugin.name);
   }
@@ -1331,7 +1331,7 @@ test("Bar catalog filtering covers bar replacements and bar modifiers, not bar w
     {},
     "Bar",
     { id: "felixzsh.codexbar", name: "CodexBar", category: "Widgets", kind: "Bar widget", tags: ["ai", "bar"] },
-    { id: "gennaro.hwmon", name: "HW Monitor", category: "Widgets", kind: "Bar widget", tags: ["bar", "quickshell"], description: "Sparkline panel for the Omarchy bar." },
+    { id: "gennaro.hwmon", name: "HW Monitor", category: "Widgets", kind: "Bar widget", tags: ["bar", "quickshell"], description: "Sparkline panel for the Litho bar." },
     { id: "io.github.austindixson.touchbar", name: "Touch Bar", category: "Hardware", kind: "Service", tags: ["hyprland"] },
     { id: "gurvindersingh-web.system-stats", name: "System Stats (Waybar Style)", category: "Hardware", kind: "Bar widget", tags: ["bar"] },
     { id: "sportsbar", name: "Sportsbar", category: "Widgets", kind: "Bar widget", tags: ["bar", "media"] },
@@ -1345,7 +1345,7 @@ test("Bar catalog filtering covers bar replacements and bar modifiers, not bar w
   }
 
   const totals = catalogCategoryTotals([
-    { id: "omarchy.bar", name: "Bar", category: "Bars", kind: "Bar", tags: ["bar"] },
+    { id: "litho.bar", name: "Bar", category: "Bars", kind: "Bar", tags: ["bar"] },
     { id: "ericvrp.bar-autohide", name: "Bar Autohide", category: "Appearance", kind: "Service", tags: ["bar"] },
     { id: "felixzsh.codexbar", name: "CodexBar", category: "Widgets", kind: "Bar widget", tags: ["ai", "bar"] },
   ]);
@@ -1372,7 +1372,7 @@ test("VPN catalog filtering requires exact category, VPN identity, or security-s
     { id: "example.client", name: "Private connection", tags: ["vpn"] },
     { id: "local.warp", name: "Cloudflare WARP", tags: ["security"] },
     { id: "io.github.justspica.omaguard", name: "Omaguard", tags: ["bar", "quickshell", "security"], description: "Mullvad VPN state, connection, and server switching." },
-    { id: "ecylmz.omarchy-tunnel", name: "Omarchy Tunnel", tags: ["bar", "quickshell", "security"], description: "A WireGuard VPN manager with connect controls and tunnel status." },
+    { id: "ecylmz.litho-tunnel", name: "Litho Tunnel", tags: ["bar", "quickshell", "security"], description: "A WireGuard VPN manager with connect controls and tunnel status." },
     { id: "jaabell.sshuttledeck", name: "SSHuttleDeck", tags: ["bar", "security", "quickshell"], description: "An SSH VPN tunnel launcher." },
     { id: "example.tunnel", name: "Tunnel", tags: ["security"], description: "VPN connection control." },
     { id: "example.tunnel", name: "Tunnel", tags: ["security"], description: "WireGuard connection control." },
@@ -1422,7 +1422,7 @@ test("entry modules and their shared dependency use one cache key", async () => 
   const root = new URL("../", import.meta.url);
   const files = {
     index: await readFile(new URL("site/index.html", root), "utf8"),
-    plugin: await readFile(new URL("site/plugin.html", root), "utf8"),
+    plugin: await readFile(new URL("site/template.html", root), "utf8"),
     publish: await readFile(new URL("site/publish.html", root), "utf8"),
     develop: await readFile(new URL("site/develop.html", root), "utf8"),
     explore: await readFile(new URL("site/explore.html", root), "utf8"),
@@ -1448,16 +1448,12 @@ test("entry modules and their shared dependency use one cache key", async () => 
     favicon: await readFile(new URL("site/favicon.svg", root), "utf8"),
   };
   const keys = [
-    files.index.match(/app\.js\?v=([^"']+)/)?.[1],
-    files.plugin.match(/plugin\.js\?v=([^"']+)/)?.[1],
-    files.publish.match(/publish\.js\?v=([^"']+)/)?.[1],
-    files.develop.match(/develop\.js\?v=([^"']+)/)?.[1],
     files.app.match(/shared\.js\?v=([^"']+)/)?.[1],
     files.app.match(/engagement\.js\?v=([^"']+)/)?.[1],
     files.app.match(/search\.js\?v=([^"']+)/)?.[1],
     files.app.match(/taxonomy\.js\?v=([^"']+)/)?.[1],
     files.pluginJs.match(/shared\.js\?v=([^"']+)/)?.[1],
-    files.pluginJs.match(/engagement\.js\?v=([^"']+)/)?.[1],
+    files.pluginJs.match(/marketplace-api\.js\?v=([^"']+)/)?.[1],
     files.publishJs.match(/shared\.js\?v=([^"']+)/)?.[1],
     files.developJs.match(/shared\.js\?v=([^"']+)/)?.[1],
     files.exploreJs.match(/shared\.js\?v=([^"']+)/)?.[1],
@@ -1465,70 +1461,76 @@ test("entry modules and their shared dependency use one cache key", async () => 
   ];
   assert.ok(keys.every(Boolean));
   assert.equal(new Set(keys).size, 1);
-  assert.equal(keys[0], "20261002-03");
-  assert.equal(files.explore.match(/explore\.js\?v=([^"']+)/)?.[1], "20261002-03");
-  assert.equal(files.exploreJs.match(/explore-search\.js\?v=([^"']+)/)?.[1], "20261002-03");
+  assert.equal(keys[0], "20261008-01");
+  assert.equal(files.exploreJs.match(/explore-search\.js\?v=([^"']+)/)?.[1], "20261008-01");
   assert.equal(files.exploreJs.match(/growth-range\.js\?v=([^"']+)/)?.[1], "20260828-18");
-  const styleKeys = [files.index, files.plugin, files.publish, files.develop, files.explore]
-    .map((html) => html.match(/style\.css\?v=([^"']+)/)?.[1]);
-  assert.ok(styleKeys.every(Boolean));
-  assert.equal(new Set(styleKeys).size, 1);
-  assert.equal(styleKeys[0], "20261002-03");
-  assert.match(files.sharedJs, /from "\.\/themes\.js\?v=20260920-05"/);
-  const faviconKeys = [files.index, files.plugin, files.publish, files.develop, files.explore]
-    .map((html) => html.match(/favicon\.svg\?v=([^"']+)/)?.[1]);
-  assert.ok(faviconKeys.every(Boolean));
-  assert.equal(new Set(faviconKeys).size, 1);
-  assert.match(files.index, /<title>Browse Plugins \| Omarchy Plugins<\/title>/);
   for (const page of [files.index, files.plugin, files.publish, files.develop, files.explore]) {
-    assert.doesNotMatch(page, /omarchy-brand-(?:action|logo)/);
+    assert.doesNotMatch(page, /assets\/js\/(?:app|plugin|publish|develop|explore)\.js\?v=/);
+    assert.doesNotMatch(page, /assets\/css\/style\.css\?v=/);
+    assert.match(page, /_next\/static\/chunks\//);
   }
-  assert.match(files.index, /Browse community-built plugins for <a href="https:\/\/omarchy\.org\/"[^>]*>Omarchy Quattro<\/a>/);
-  assert.equal((files.index.match(/href="develop\.html"/g) || []).length, 2);
-  assert.equal((files.index.match(/href="explore\.html"/g) || []).length, 2);
-  assert.match(files.index, /class="market-hero-actions"[\s\S]*Browse plugins[\s\S]*href="develop\.html">Develop a plugin[\s\S]*Publish a plugin/);
-  assert.match(files.index, /class="mobile-bottom"[\s\S]*>Home<[\s\S]*>Browse<[\s\S]*href="explore\.html"[\s\S]*>Explore<[\s\S]*>Publish</);
-  for (const page of [files.plugin, files.develop, files.publish]) assert.match(page, /class="sidebar-link" href="explore\.html">Explore plugins<\/a>/);
-  assert.match(files.index, /class="market-nav"[\s\S]*href="#catalog" aria-label="Browse plugins" aria-current="page">Browse[\s\S]*href="explore\.html">Explore[\s\S]*href="develop\.html" aria-label="Develop a plugin">Develop[\s\S]*aria-label="Contribute a plugin">Contribute[\s\S]*href="publish\.html" aria-label="Publish a plugin">Publish/);
-  assert.match(files.develop, /class="sidebar-link active" href="develop\.html" aria-current="page">Development guide<\/a>/);
+  assert.match(files.sharedJs, /from "\.\/themes\.js\?v=20260920-05"/);
+  const faviconKey = files.index.match(/favicon\.svg\?v=([^"']+)/)?.[1];
+  assert.equal(faviconKey, "20260728-9");
+  assert.match(files.index, /<title>Browse Templates \| Template Marketplace<\/title>/);
+  for (const page of [files.index, files.plugin, files.publish, files.develop, files.explore]) {
+    assert.doesNotMatch(page, /litho-brand-(?:action|logo)/);
+  }
+  assert.match(files.index, /Browse academic and technical templates for theses, papers, reports and CVs/);
+  assert.ok((files.index.match(/href="\/?develop\.html"/g) || []).length >= 1);
+  assert.ok((files.index.match(/href="\/?explore\.html"/g) || []).length >= 1);
+  assert.match(files.index, /class="market-hero-actions"[\s\S]*Browse templates[\s\S]*href="\/?develop\.html">Read the guidelines[\s\S]*Submit a template/);
+  assert.match(files.index, /class="mobile-bottom"[\s\S]*>Home<[\s\S]*>Browse<[\s\S]*href="\/?explore\.html"[\s\S]*>Explore<[\s\S]*>Submit</);
+  assert.match(files.plugin, /class="sidebar-link" href="\/?explore\.html">Explore<\/a>/);
+  for (const page of [files.develop, files.publish]) assert.match(page, /class="sidebar-link" href="\/?explore\.html">Explore templates<\/a>/);
+  assert.match(files.index, /class="market-nav"[\s\S]*href="#catalog" aria-label="Browse templates" aria-current="page">Browse[\s\S]*href="\/?explore\.html">Explore[\s\S]*href="\/?develop\.html" aria-label="Template guidelines">Guidelines[\s\S]*aria-label="Contribute on GitHub"[\s\S]*href="\/?submit\.html" aria-label="Submit a template">/);
+  // Admin entry: a compact lock control in the homepage nav, a spelled-out footer link, and the
+  // one nav link that stays visible once the rest of the nav collapses on small screens. The label
+  // lives in the footer because the header's 1104px budget is already spent by the six nav items.
+  assert.match(files.index, /href="\/?submit\.html" aria-label="Submit a template">[\s\S]*<a class="market-admin-entry" href="\/admin\/login" aria-label="Sign in to the admin dashboard" title="Sign in to the admin dashboard"><svg viewBox="0 0 24 24" aria-hidden="true">[\s\S]*?<\/svg><\/a>[\s\S]*<button class="square-action theme-toggle"/);
+  assert.equal((files.index.match(/class="market-admin-entry"/g) || []).length, 1);
+  assert.match(files.index, /<a class="footer-status-link" href="\/admin\/login">ADMIN <span aria-hidden="true">↗<\/span><\/a>/);
+  assert.equal((files.index.match(/href="\/admin\/login"/g) || []).length, 2);
+  assert.match(files.style, /\.market-nav a\.market-admin-entry \{ padding: 0 9px; border-color: var\(--line\); color: var\(--text\); \}/);
+  assert.match(files.style, /\.market-nav a\.market-admin-entry:hover \{ border-color: var\(--accent\); background: var\(--accent\); color: var\(--accent-contrast\); \}/);
+  assert.match(files.style, /\.market-nav a \{ display: none; \}\s*\.market-nav a\.market-admin-entry \{ display: inline-flex; \}/);
+  assert.match(files.develop, /class="sidebar-link active" href="\/?develop\.html" aria-current="page">Template guidelines<\/a>/);
   assert.match(files.develop, /<span class="status"><i class="status-dot" aria-hidden="true"><\/i>Stable<\/span>/);
   assert.match(files.develop, /<dt>Status<\/dt><dd><span class="status-label">Stable<\/span><\/dd>/);
   assert.doesNotMatch(files.develop, />Draft<|status(?:-label)? is-caution[^>]*>Stable/);
-  assert.match(files.publish, /class="sidebar-link active" href="publish\.html" aria-current="page">Publishing guide<\/a>/);
+  assert.match(files.publish, /class="sidebar-link active" href="\/?publish\.html" aria-current="page">Submission guide<\/a>/);
   assert.match(files.index, /id="catalog-pagination"[\s\S]*id="page-previous"[\s\S]*id="page-summary"[\s\S]*id="page-next"/);
-  assert.match(files.index, /<\/nav>\s*<div id="catalog-view-toggle" class="catalog-view-toggle" hidden>\s*<button id="catalog-view-button" class="catalog-view-button" type="button" aria-controls="plugin-grid" aria-expanded="false">[\s\S]*id="catalog-view-label">Browse all plugins<[\s\S]*<span id="catalog-result-status" class="sr-only" role="status" aria-live="polite"><\/span>/);
+  assert.match(files.index, /<\/nav>\s*<div id="catalog-view-toggle" class="catalog-view-toggle" hidden(?:="")?>\s*<button id="catalog-view-button" class="catalog-view-button" type="button" aria-controls="plugin-grid" aria-expanded="false">[\s\S]*id="catalog-view-label">Browse all templates<[\s\S]*<span id="catalog-result-status" class="sr-only" role="status" aria-live="polite"><\/span>/);
   assert.doesNotMatch(files.index, /id="plugin-grid"[^>]*aria-live|id="page-announcement"|id="catalog-view-announcement"/);
-  assert.match(files.index, /<div id="catalog-view-dock" class="catalog-view-dock" hidden>\s*<button id="catalog-view-dock-button" type="button">\s*<span id="catalog-view-dock-status">Showing all plugins<\/span>\s*<span class="catalog-view-dock-action">Show 9 per page/);
-  assert.match(files.index, /class="footer-status-link footer-maintainer"[\s\S]*<div class="footer-resource-links">[\s\S]*class="footer-status-link" href="https:\/\/github\.com\/omacom\/omarchy-plugin-marketplace\/blob\/main\/LICENSE"[\s\S]*MIT LICENSE[\s\S]*class="footer-status-link" href="https:\/\/github\.com\/omacom\/omarchy-plugin-marketplace"[\s\S]*GITHUB/);
+  assert.match(files.index, /<div id="catalog-view-dock" class="catalog-view-dock" hidden(?:="")?>\s*<button id="catalog-view-dock-button" type="button">\s*<span id="catalog-view-dock-status">Showing all templates<\/span>\s*<span class="catalog-view-dock-action">Show 9 per page/);
+  assert.match(files.index, /class="footer-status-link footer-maintainer"[\s\S]*<div class="footer-resource-links">[\s\S]*class="footer-status-link" href="https:\/\/github\.com\/litho-templates\/litho-template-marketplace\/blob\/main\/LICENSE"[\s\S]*MIT LICENSE[\s\S]*class="footer-status-link" href="https:\/\/github\.com\/litho-templates\/litho-template-marketplace"[\s\S]*GITHUB/);
   assert.match(files.readme, /## License\s+\[MIT License\]\(LICENSE\) · \[Marketplace and third-party rights notice\]\(NOTICE\.md\)\s*$/);
   assert.match(files.notice, /The \[MIT License\]\(LICENSE\) applies only to original source code and associated documentation authored for this marketplace/);
   assert.match(files.notice, /does not grant rights to plugin code, repositories, names, trademarks, logos, screenshots, previews, or other third-party content/);
   assert.match(files.notice, /The marketplace relies on each submitter's rights confirmation\. A listing does not transfer ownership, verify third-party rights, or imply endorsement/);
   assert.match(files.notice, /If you believe a listing or asset infringes your rights,[\s\S]*issues\/new\?template=rights-request\.yml/);
-  assert.match(files.readme, /## Engagement Metrics[\s\S]*anonymous aggregate detail views, successful command copies, and hearts[\s\S]*not downloads, installations, unique people, verified votes, rankings, or security signals/);
-  assert.match(files.engagementJs, /https:\/\/api\.omarchyplugins\.com\/v1/);
+  assert.match(files.readme, /## Engagement Metrics[\s\S]*anonymous aggregate detail views and successful downloads[\s\S]*not installations, unique people, verified votes, rankings, or security signals/);
+  assert.match(files.engagementJs, /https:\/\/api\.lithoplugins\.com\/v1/);
   assert.match(files.engagementJs, /cache: "no-store",\s*credentials: "omit"/);
   assert.doesNotMatch(files.engagementJs, /Authorization|Bearer|apiKey|apiToken/);
-  assert.match(files.app, /<svg class="social-glyph star-glyph" viewBox="0 0 14 14" aria-hidden="true">/);
+  assert.doesNotMatch(files.app, /star-glyph/);
   assert.match(files.sharedJs, /<span class="engagement-glyph" aria-hidden="true"><\/span>/);
   assert.match(files.sharedJs, /<span class="social-glyph heart-glyph" data-heart-glyph aria-hidden="true"><\/span>/);
   assert.deepEqual(new Set(`${files.app}${files.sharedJs}`.match(/[-]/g)), new Set(["", ""]));
-  assert.match(files.style, /@font-face \{[\s\S]*font-family: "Omarchy Engagement Icons";[\s\S]*engagement-icons\.woff2\?v=20260816-02/);
+  assert.match(files.style, /@font-face \{[\s\S]*font-family: "Litho Engagement Icons";[\s\S]*engagement-icons\.woff2\?v=20260816-02/);
   assert.equal(files.engagementFont.subarray(0, 4).toString("ascii"), "wOF2");
   assert.ok(files.engagementFont.byteLength > 1000 && files.engagementFont.byteLength < 10_000);
   assert.match(files.engagementFontLicense, /SIL OPEN FONT LICENSE Version 1\.1/);
   assert.match(files.thirdPartyNotices, /JetBrains Mono Nerd Font subset[\s\S]*engagement-icons\.woff2[\s\S]*heart and eye glyphs[\s\S]*engagement-icons\.OFL\.txt/);
-  assert.match(files.app, /data-copy-command="\$\{escapeHtml\(plugin\.installCommand\)\}" data-plugin-id="\$\{escapeHtml\(plugin\.id\)\}"/);
+  assert.match(files.app, /class="card-install has-control-tooltip" href="\$\{escapeHtml\(plugin\.downloadUrl\)\}" data-download-id="\$\{escapeHtml\(plugin\.id\)\}"/);
   assert.match(files.app, /if \(!await copyText\(button\.dataset\.copyCommand, button\)\) return;[\s\S]*recordPluginCopy\(pluginId\)/);
-  assert.match(files.pluginJs, /if \(!await copyText\(command, copyButton\)\) return;[\s\S]*recordPluginCopy\(plugin\.id\)/);
+  assert.match(files.pluginJs, /const result = await recordTemplateEvent\(plugin\.id, "download"\);[\s\S]*showToast\("Download started"\)/);
   assert.doesNotMatch(`${files.app}${files.pluginJs}`, /recordEngagementEvent\([^)]*, "copy"\)/);
-  assert.match(files.pluginJs, /recordPluginView\(plugin\.id\)\.then\(applyAuthoritativeEngagement\)/);
-  assert.match(files.pluginJs, /catch\(\(reason\) => \{[\s\S]*if \(!engagementLoaded\) \{[\s\S]*hidePendingEngagement\(document\)/);
-  assert.match(files.pluginJs, /recordPluginHeart\(plugin\.id\)[\s\S]*showToast\("Heart could not be sent\. Try again\."\)[\s\S]*showToast\("Heart sent\."\)/);
+  assert.match(files.pluginJs, /recordTemplateViewOnce\(plugin\.id\)\.then\(\(result\) => \{[\s\S]*updateEngagementSummary\(document, plugin\.id, stats\)/);
+  assert.match(files.pluginJs, /catch \(reason\) \{[\s\S]*title: "Template details unavailable"/);
+  assert.match(files.pluginJs, /detail-engagement-cluster[\s\S]*engagementSummary\(plugin, engagement, \{ detail: true, pending: pendingEngagement \}\)/);
   assert.match(files.app, /recordPluginHeart\(pluginId\)[\s\S]*showToast\("Heart could not be sent\. Try again\."\)[\s\S]*showToast\("Heart sent\."\)/);
-  for (const source of [files.pluginJs, files.app]) {
-    assert.match(source, /if \(result\?\.reason === "repeat"\) showToast\("Heart already counted from your network today\."\);\s*else showToast\("Heart could not be sent\. Try again\."\);/);
-  }
+  assert.match(files.app, /if \(result\?\.reason === "repeat"\) showToast\("Heart already counted from your network today\."\);\s*else showToast\("Heart could not be sent\. Try again\."\);/);
   assert.match(files.sharedJs, /aria-disabled="true"[\s\S]*button\.disabled = false/);
   assert.doesNotMatch(files.sharedJs, /hearted \? " disabled"/);
   assert.match(files.rightsRequest, /name: Rights or asset removal request[\s\S]*id: material[\s\S]*id: basis[\s\S]*id: action[\s\S]*made in good faith/);
@@ -1541,14 +1543,15 @@ test("entry modules and their shared dependency use one cache key", async () => 
   assert.doesNotMatch(files.license, /plugin code|trademarks|third-party content|Marketplace license scope/);
   assert.match(files.thirdPartyNotices, /Lucide[\s\S]*ISC License[\s\S]*Copyright \(c\) 2026 Lucide Icons and Contributors[\s\S]*Permission to use, copy, modify, and\/or distribute/);
   assert.match(files.favicon, /Cable icon geometry from Lucide[\s\S]*Copyright \(c\) 2026 Lucide Icons and Contributors[\s\S]*Permission to use, copy, modify, and\/or distribute[\s\S]*THE SOFTWARE IS PROVIDED "AS IS"/);
-  assert.match(files.index, />Search plugins, tags, text, or authors<\/label>/);
-  assert.match(files.index, /placeholder="Search plugins, tag:media, kind:panel, or @author…"/);
+  assert.match(files.index, />Search templates, tags, text, or publishers<\/label>/);
+  assert.match(files.index, /placeholder="Search templates, tag:latex, kind:thesis, or @publisher…"/);
   assert.match(files.index, /<option value="updated">Recent activity<\/option>/);
-  assert.match(files.index, /<option value="stars">Most starred<\/option>[\s\S]*<option value="views">Most viewed<\/option>[\s\S]*<option value="copies">Most copied<\/option>[\s\S]*<option value="hearts">Most hearts<\/option>/);
-  assert.match(files.index, /<span class="sr-only">Sort or filter plugins<\/span>[\s\S]*<select id="sort-select">[\s\S]*<option value="name">A–Z<\/option>[\s\S]*<option value="verified">Verified<\/option>[\s\S]*<option value="unverified">Unverified<\/option>/);
+  assert.match(files.index, /<option value="views">Most viewed<\/option>[\s\S]*<option value="downloads">Most downloaded<\/option>/);
+  assert.doesNotMatch(files.index, /<option value="stars"|<option value="copies"|<option value="hearts"/);
+  assert.match(files.index, /<span class="sr-only">Sort or filter templates<\/span>[\s\S]*<select id="sort-select">[\s\S]*<option value="name">A–Z<\/option>[\s\S]*<option value="verified">Verified<\/option>[\s\S]*<option value="unverified">Unverified<\/option>/);
   assert.doesNotMatch(files.index, /verification-bar|verification-select/);
-  assert.match(files.app, /const engagementSorts = new Set\(\["views", "copies", "hearts", "rank", "installRate"\]\)/);
-  assert.match(files.index, /<option value="hearts">Most hearts<\/option>\s*<option value="rank">Top ranked<\/option>\s*<option value="installRate">Install rate<\/option>/);
+  assert.match(files.app, /const engagementSorts = new Set\(\["views", "downloads"\]\)/);
+  assert.doesNotMatch(files.index, /<option value="hearts"|<option value="rank"|<option value="installRate"/);
   assert.match(files.app, /installRate: \(a, b\) => comparePluginInstallRate\(a, b, state\.engagement\)/);
   assert.match(files.app, /rank: \(a, b\) => \(ranks\.get\(a\.id\)\?\.overall \|\| Infinity\) - \(ranks\.get\(b\.id\)\?\.overall \|\| Infinity\)/);
   assert.match(files.app, /views: \(a, b\) => comparePluginEngagement\(a, b, state\.engagement, "views"\)/);
@@ -1557,7 +1560,7 @@ test("entry modules and their shared dependency use one cache key", async () => 
   assert.match(files.app, /state\.engagementEnabled = false;[\s\S]*renderSortOptions\(\);[\s\S]*state\.sort !== previousSort/);
   assert.match(files.app, /data-card-plugin="\$\{escapeHtml\(plugin\.id\)\}"/);
   assert.match(files.app, /state\.sort === sortMetric \|\| state\.sort === "rank"[\s\S]*render\(\);[\s\S]*restorePluginCardFocus\(focusToken\)[\s\S]*\} else if \(splitView\(\)\) \{\s*refreshSplitRanks\(\);/);
-  assert.match(files.app, /Engagement loaded\. Sorted plugins by/);
+  assert.match(files.app, /Sorted templates by \$\{label\.toLowerCase\(\)\}\./);
   assert.match(files.app, /is unavailable because engagement stats could not be loaded/);
   assert.match(files.index, /id="search-input"[^>]*role="combobox"[^>]*aria-autocomplete="both"/);
   assert.doesNotMatch(files.index, /id="author-filter"|id="author-select"/);
@@ -1565,15 +1568,14 @@ test("entry modules and their shared dependency use one cache key", async () => 
   assert.match(files.index, /id="search-terms"[^>]*aria-label="Active search terms"/);
   assert.match(files.index, /id="search-suggestions"[\s\S]*role="listbox"/);
   assert.match(files.index, /id="search-fish-preview"/);
-  const securityReportUrl = "https://github.com/omacom/omarchy-plugin-marketplace/security/advisories/new";
-  const verificationRequestUrl = "https://github.com/omacom/omarchy-plugin-marketplace/issues/new?template=verify-plugin.yml";
-  assert.ok(files.pluginJs.includes(`const securityReportUrl = "${securityReportUrl}";`));
-  assert.ok(files.pluginJs.includes(`const verificationRequestUrl = "${verificationRequestUrl}";`));
-  const longSecurityNoticeStart = "Community plugins are developed and maintained by independent third parties.";
+  const securityReportUrl = "https://github.com/litho-templates\/litho-template-marketplace/security/advisories/new";
+  const verificationRequestUrl = "https://github.com/litho-templates\/litho-template-marketplace/issues/new?template=verify-plugin.yml";
+  assert.doesNotMatch(files.pluginJs, /securityReportUrl|verificationRequestUrl/);
+  const longSecurityNoticeStart = "Templates are developed and maintained by independent third parties.";
   const expectedSecurityNotice = [
-    "Community plugins are developed and maintained by independent third parties. They execute as unsandboxed code and may access or modify files, settings, credentials, network resources, or other parts of your system according to their implementation and permissions.",
-    "The Marketplace performs limited automated checks on the identified plugin commit and may conduct manual review. These checks are not a security audit, certification, endorsement, or guarantee that a plugin is safe, secure, error-free, or suitable for a particular purpose. Upstream code may change after review unless the installed version is explicitly pinned to the reviewed commit. Current Omarchy marketplace install and update commands clone mutable upstream HEAD and are not verification-bound.",
-    `Before installation, review the plugin’s source code, requested capabilities, dependencies, and installation and removal instructions. Report suspected malicious or compromised plugins immediately through the [private security report form](${securityReportUrl}). The Marketplace may suspend or remove listings while concerns are investigated.`,
+    "Templates are developed and maintained by independent third parties. A template can include scripts, macros, or configuration that executes on your machine when you build or run it.",
+    "The Marketplace performs limited checks on the listed metadata, links, preview files, and may conduct manual review. These checks are not a security audit, certification, endorsement, or guarantee that a template is safe, secure, error-free, or suitable for a particular purpose. Listed files may change after review unless the downloaded archive is pinned to the reviewed version.",
+    `Before using a template, review its files, macros, external dependencies, and licence. Report suspected malicious or compromised templates immediately through the [private security report form](${securityReportUrl}). The Marketplace may suspend or remove listings while concerns are investigated.`,
     "Nothing in this notice excludes or limits liability where exclusion or limitation is prohibited by applicable law.",
   ].join(" ");
   const securityNoticeStart = files.readme.indexOf("## Security Notice");
@@ -1585,74 +1587,74 @@ test("entry modules and their shared dependency use one cache key", async () => 
     .replace(/\s+/g, " ")
     .trim();
   assert.equal(securityNotice, expectedSecurityNotice);
-  assert.doesNotMatch(files.readme, /^## Disclaimer$|Omarchy Plugins is an independent community project and is not affiliated with, sponsored by, or endorsed by Omarchy or 37signals\./m);
+  assert.doesNotMatch(files.readme, /^## Disclaimer$|Litho Plugins is an independent community project and is not affiliated with, sponsored by, or endorsed by Litho or 37signals\./m);
   assert.doesNotMatch(files.readme, /report suspicious plugins ASAP/);
   assert.match(files.security, /private vulnerability reporting form[\s\S]*security\/advisories\/new[\s\S]*Do not disclose credentials, exploit details, personal information, or other sensitive material in a public issue[\s\S]*may suspend or remove a listing/);
-  assert.match(files.plugin, /<title>Plugin Details \| Omarchy Plugins<\/title>/);
+  assert.match(files.plugin, /<title>Template Details \| Template Marketplace<\/title>/);
   assert.match(files.plugin, /class="skip-link" href="#plugin-detail"/);
-  assert.match(files.plugin, /id="aside-verification-link" href="#verification" hidden>Verification status<\/a>[\s\S]*id="aside-security-link" href="#security" hidden>Security Notice<\/a>[\s\S]*href="#terms">Terms of Use<\/a>/);
-  assert.match(files.plugin, /id="mobile-install-link" href="#install" data-section-ids="install verification security">Install<\/a>/);
+  assert.match(files.plugin, /id="aside-verification-link" href="#verification">Verification status<\/a>[\s\S]*id="aside-security-link" href="#security" hidden(?:="")?>Security Notice<\/a>[\s\S]*href="#terms">Terms of Use<\/a>/);
+  assert.match(files.plugin, /class="mobile-bottom"[\s\S]*href="#download">Download<\/a>/);
   assert.doesNotMatch(files.plugin, /href="#trust"|Trust & source/);
-  assert.match(files.pluginJs, /const securityContext = plugin\.upstreamCheckStatus === "failed"[\s\S]*compatibility has not been confirmed[\s\S]*command[\s\S]*clones the repository’s current HEAD[\s\S]*pluginStatus === "Manual setup"[\s\S]*Manual installation follows the upstream project’s instructions/);
-  assert.match(files.pluginJs, /class="callout prominent-callout install-security-note"[\s\S]*<strong id="security-notice-title">Security Notice<\/strong>[\s\S]*\$\{securityContext\}[\s\S]*Third-party plugins run as unsandboxed code[\s\S]*not a security audit or guarantee[\s\S]*report suspicious plugins ASAP/);
-  assert.match(files.pluginJs, /const verificationStatusSection = isThirdPartyListing[\s\S]*<section class="detail-section" id="verification"><h2>Verification status<\/h2><div class="placeholder-install verification-status-note"><ul class="verification-status-list">\$\{snapshotNotice\}\$\{updateNotice\}\$\{contributorAction\}<\/ul><\/div><\/section>/);
-  assert.match(files.pluginJs, /snapshotNotice[\s\S]*verification-snapshot[\s\S]*Snapshot verified:<\/strong> Marketplace verification covers only the exact commit[\s\S]*verification-unverified[\s\S]*Snapshot unverified:<\/strong> This listed commit has not been verified/);
-  assert.match(files.pluginJs, /updateNotice[\s\S]*verification-update[\s\S]*Update unverified:<\/strong> The latest upstream changes have not been verified/);
-  assert.match(files.pluginJs, /contributorAction[\s\S]*Submit the new exact commit[\s\S]*Submit the exact listed commit[\s\S]*plugin verification form/);
-  assert.match(files.pluginJs, /const securityNoticeSection = installSecurityNotice[\s\S]*<section class="detail-section security-notice-section" id="security" aria-labelledby="security-notice-title">\$\{installSecurityNotice\}<\/section>/);
-  assert.match(files.pluginJs, /!installAvailable[\s\S]*class="placeholder-install"[\s\S]*: `\$\{commandPanel\}\$\{installNote\}`[\s\S]*id="install"[\s\S]*\$\{verificationStatusSection\}[\s\S]*\$\{securityNoticeSection\}[\s\S]*id="terms"/);
-  assert.match(files.pluginJs, /class="detail-section\$\{isThirdPartyListing \? " detail-section-before-verification" : ""\}" id="install"/);
-  assert.match(files.pluginJs, /#aside-verification-link[\s\S]*hidden = !content\.querySelector\("#verification"\)[\s\S]*#aside-security-link[\s\S]*hidden = !content\.querySelector\("#security"\)/);
+  assert.match(files.pluginJs, /function displayedStatus\(plugin\) \{[\s\S]*return plugin\.status === "published" \|\| !plugin\.status \? "Available" : plugin\.status;/);
+  assert.match(files.pluginJs, /<div class="placeholder-install"><strong>No download yet<\/strong><p>This template is listed for browsing only\./);
+  assert.match(files.pluginJs, /const verificationSection = `[\s\S]*<section class="detail-section" id="verification"><h2>Verification status<\/h2>[\s\S]*<ul class="verification-status-list">\$\{verificationNotice\}\$\{verificationMethod\}\$\{verificationScore\}<\/ul>/);
+  assert.match(files.pluginJs, /const verificationNotice = verified[\s\S]*verification-snapshot"><strong>Verified:<\/strong> \$\{escapeHtml\(plugin\.verificationReason[\s\S]*verification-unverified"><strong>Unverified:<\/strong> This listing has not been reviewed yet/);
+  assert.match(files.pluginJs, /const verificationMethod = `<li><strong>Method:<\/strong> \$\{escapeHtml\(plugin\.verificationMethod \|\| "manual"\)\}/);
+  assert.match(files.pluginJs, /const verificationScore = typeof plugin\.verificationScore === "number"/);
+  assert.match(files.pluginJs, /const detailsSection = `[\s\S]*<section class="detail-section" id="details"><h2>Details<\/h2>[\s\S]*detailRow\("Identifier"/);
+  assert.match(files.pluginJs, /\$\{downloadSection\}[\s\S]*\$\{detailsSection\}[\s\S]*\$\{verificationSection\}[\s\S]*\$\{termsSection\}/);
+  assert.match(files.pluginJs, /<section class="detail-section" id="download"><h2>Download<\/h2>/);
+  assert.match(files.pluginJs, /#aside-verification-link"\)\.hidden = !content\.querySelector\("#verification"\)[\s\S]*#aside-security-link"\)\.hidden = true;/);
   assert.doesNotMatch(files.pluginJs, /verification-action-prompt/);
-  assert.match(files.pluginJs, /issues\/new\?template=verify-plugin\.yml/);
+  assert.match(files.pluginJs, /href="submit\.html">Submit a template/);
   assert.doesNotMatch(files.pluginJs, /update-plugin\.yml/);
-  assert.match(files.pluginJs, /security\/advisories\/new/);
-  assert.match(files.pluginJs, /const displayedInstallNote = installAvailable && plugin\.repositoryLayout === "root-plugin"\s*\? ""[\s\S]*const installNote = displayedInstallNote\s*\? `<p class="install-note">\$\{escapeHtml\(displayedInstallNote\)\}<\/p>`\s*:\s*""/);
-  assert.doesNotMatch(files.pluginJs, /Mutable upstream installation|Omarchy clones the current upstream repository, validates it locally/);
-  assert.match(files.pluginJs, /function safeGitHubWebUrl\(value\)[\s\S]*url\.protocol !== "https:"[\s\S]*url\.hostname !== "github\.com"[\s\S]*return url\.href/);
-  assert.match(files.pluginJs, /const repositoryReleaseUrl = safeGitHubWebUrl\(plugin\.repositoryRelease\?\.url\)[\s\S]*plugin\.repositoryRelease\?\.tag && repositoryReleaseUrl[\s\S]*: "No release tag"/);
-  assert.match(files.pluginJs, /<dt>Last checked<\/dt>[\s\S]*<dt>Last known release<\/dt><dd>\$\{repositoryRelease\}<\/dd>[\s\S]*\$\{check\.commitLabel\}/);
-  assert.match(files.pluginJs, /<dt>\$\{snapshotVerified \? "Verified snapshot" : "Listing snapshot"\}[\s\S]*snapshotVerified \? "View verified snapshot" : "View listing snapshot"/);
+  assert.match(files.pluginJs, /Marketplace verification is a review of the listed files and metadata\. It is not a security audit/);
+  assert.match(files.pluginJs, /<p class="install-note">Downloads are served by the marketplace\. Check the licence before you reuse the files\.<\/p>/);
+  assert.doesNotMatch(files.pluginJs, /Mutable upstream installation|Litho clones the current upstream repository, validates it locally/);
+  assert.match(files.pluginJs, /function externalLink\(url, label, className = ""\) \{[\s\S]*rel="noreferrer"[\s\S]*aria-hidden="true">↗/);
+  assert.match(files.pluginJs, /function publisherLink\(plugin\)[\s\S]*repositoryPublisher\(plugin\.repositoryUrl \|\| plugin\.repo \|\| ""\)/);
+  assert.match(files.pluginJs, /detailRow\("Licence", detailValue\(plugin\.license\)\)[\s\S]*detailRow\("Category"/);
+  assert.match(files.pluginJs, /detailRow\("Updated", plugin\.updatedAt \? `<time datetime=/);
   assert.doesNotMatch(files.pluginJs, /terms-source-note"><strong>Repository release|does not replace this plugin’s manifest version/);
   assert.match(files.pluginJs, /<section class="detail-section" id="terms"><h2>Terms of Use<\/h2>/);
   assert.match(files.pluginJs, /if \(currentHashId\(\) === "trust"\) \{[\s\S]*url\.hash = "terms";[\s\S]*history\.replaceState\(history\.state, "", url\)/);
-  assert.match(files.pluginJs, /const targetId = currentHashId\(\);[\s\S]*let allowDeferredScroll = true;[\s\S]*currentHashId\(\) !== targetId[\s\S]*pointerdown[\s\S]*wheel[\s\S]*touchstart[\s\S]*keydown/);
+  assert.match(files.pluginJs, /setupSectionNavigation\(\{[\s\S]*linkSelector: "\.right-aside \.aside-link/);
   assert.equal(files.pluginJs.includes(longSecurityNoticeStart), false);
   assert.doesNotMatch(files.pluginJs, /id="trust"|Trust & source|trust-source-note|report suspicious plugins immediately/);
-  assert.match(files.publish, /<title>Publish a Plugin \| Omarchy Plugins<\/title>/);
+  assert.match(files.publish, /<title>Submit a Template \| Template Marketplace<\/title>/);
   assert.match(files.publish, /class="skip-link" href="#main-content"/);
-  assert.match(files.publish, /href="develop\.html">Development guide<\/a>/);
-  assert.match(files.develop, /<title>Develop a Plugin \| Omarchy Plugins<\/title>/);
+  assert.match(files.publish, /href="\/?develop\.html">Template guidelines<\/a>/);
+  assert.match(files.develop, /<title>Template Guidelines \| Template Marketplace<\/title>/);
   assert.match(files.develop, /class="skip-link" href="#main-content"/);
-  assert.match(files.develop, /omarchy plugin clone omarchy\.clock --edit/);
+  assert.match(files.develop, /pdflatex -interaction=nonstopmode main\.tex/);
   assert.doesNotMatch(files.develop, /id="requirements"|href="#requirements"|<h2>Requirements<\/h2>/);
   assert.doesNotMatch(files.develop, /id="share"|href="#share"|<h2>Prepare to Share<\/h2>/);
   assert.match(
     files.develop,
-    /<h2>Clone a Built-in Plugin<\/h2>[\s\S]*Match the runtime contract[\s\S]*Expect an immediate switch[\s\S]*omarchy plugin clone omarchy\.clock --edit[\s\S]*On success, the command prints the new plugin ID/,
+    /<h2>Prepare the Package<\/h2>[\s\S]*Match the package layout[\s\S]*Expect a first render[\s\S]*pdflatex -interaction=nonstopmode main\.tex[\s\S]*A successful run writes/,
   );
   assert.match(
     files.develop,
-    /<div class="callout"><strong>Keep the clone ID while developing\.<\/strong><p>Use the exact ID printed by the command, such as <code class="inline-code" translate="no">yourname\.clock<\/code>, in every development example below\. Saved changes reload automatically\. Force discovery only when needed:<\/p><code class="inline-code callout-command" translate="no" tabindex="0" role="region" aria-label="Plugin discovery command">omarchy-shell shell rescanPlugins<\/code><p>Choose the permanent namespaced ID before publishing\.<\/p><\/div>\s*<p class="official-reference">Browse the/,
+    /<div class="callout"><strong>Keep the package name stable\.<\/strong><p>The folder name becomes the listing identifier, for example <code class="inline-code" translate="no">ieee-conference-paper<\/code>\. Choose it before submitting — [^<]*<\/p><code class="inline-code callout-command" translate="no" tabindex="0" role="region" aria-label="Package size check command">du -sh ieee-conference-paper\/<\/code><p>Keep the archive under 15(?:&nbsp;|<!-- -->\s*<!-- -->|\s+)MB [^<]*<\/p><\/div>\s*<p class="official-reference">Browse the/,
   );
   assert.match(
     files.develop,
-    /<h2>Define the Plugin Contract<\/h2>[\s\S]*class="kind-reference"[\s\S]*For this tutorial, keep[\s\S]*class="manifest-reference development-example"/,
+    /<h2>Describe the Metadata<\/h2>[\s\S]*class="kind-reference"[\s\S]*For this walkthrough, keep[\s\S]*class="manifest-reference development-example"/,
   );
   assert.equal((files.develop.match(/class="kind-reference"/g) || []).length, 1);
   assert.equal((files.develop.match(/class="manifest-reference development-example"/g) || []).length, 3);
   assert.doesNotMatch(files.develop, /<details class="manifest-reference development-example" open/);
-  assert.match(files.develop, /href="#contract">Contract<\/a>/);
-  assert.match(files.develop, /<th scope="col">Plugin kind<\/th>[\s\S]*<th scope="col"><code>entryPoints<\/code> key<\/th>[\s\S]*<th scope="col">File loaded<\/th>/);
-  assert.match(files.develop, /<td><code>bar-widget<\/code><\/td><td><code>barWidget<\/code><\/td><td><code>BarWidget\.qml<\/code><\/td>/);
-  assert.match(files.develop, /<td><code>panel<\/code><\/td><td><code>panel<\/code><\/td><td><code>Panel\.qml<\/code><\/td>/);
-  assert.equal((files.develop.match(/class="example-file-tree" role="group" aria-label="Finished custom clock repository files"/g) || []).length, 1);
-  assert.equal((files.develop.match(/class="manifest-reference example-file"/g) || []).length, 5);
-  assert.equal((files.develop.match(/<details class="manifest-reference/g) || []).length, 8);
-  assert.equal((files.develop.match(/class="tree-branch" aria-hidden="true"><\/span>/g) || []).length, 5);
+  assert.match(files.develop, /href="#contract">Metadata<\/a>/);
+  assert.match(files.develop, /<th scope="col">Field<\/th>[\s\S]*<th scope="col">Example<\/th>[\s\S]*<th scope="col">Required<\/th>[\s\S]*<th scope="col">Use it for<\/th>/);
+  assert.match(files.develop, /<td><code>name<\/code><\/td><td><code>IEEE Conference Paper<\/code><\/td><td>Yes<\/td>/);
+  assert.match(files.develop, /<td><code>downloadUrl<\/code><\/td><td><code>…\/paper\.zip<\/code><\/td><td>One of<\/td>/);
+  assert.equal((files.develop.match(/class="example-file-tree" role="group" aria-label="Finished conference paper repository files"/g) || []).length, 1);
+  assert.equal((files.develop.match(/class="manifest-reference example-file"/g) || []).length, 3);
+  assert.equal((files.develop.match(/<details class="manifest-reference/g) || []).length, 6);
+  assert.equal((files.develop.match(/class="tree-branch" aria-hidden="true"><\/span>/g) || []).length, 3);
   assert.doesNotMatch(files.develop, /class="tree-branch"[^>]*>[├└]──/);
-  assert.match(files.develop, /<h2>Implement the Bar and Panel<\/h2>/);
-  assert.match(files.develop, /"omarchy"<\/span>: \{ <span class="syntax-key">"clonedFrom"<\/span>: <span class="syntax-string">"omarchy\.clock"<\/span> \}/);
+  assert.match(files.develop, /<h2>Validate the Package<\/h2>/);
+  assert.match(files.develop, /name: <span class="syntax-string">IEEE Conference Paper<\/span>/);
   assert.doesNotMatch(files.develop, /panel alternative|yourname\.panel|Quickshell\.Wayland/);
   const decodeCopyValue = (value) => value
     .replaceAll("&#10;", "\n")
@@ -1662,100 +1664,64 @@ test("entry modules and their shared dependency use one cache key", async () => 
     .replaceAll("&gt;", ">")
     .replaceAll("&amp;", "&");
   const copyButtons = [...files.develop.matchAll(/<button class="copy-button"[^>]*>/g)];
-  assert.equal(copyButtons.length, 13);
+  assert.equal(copyButtons.length, 9);
   const copyButtonLabels = copyButtons.map((match) => match[0].match(/\baria-label="([^"]+)"/)?.[1]);
   assert.ok(copyButtonLabels.every((label) => label?.trim()));
   assert.equal(new Set(copyButtonLabels).size, copyButtonLabels.length);
   assert.deepEqual(copyButtonLabels, [
-    "Copy clone command",
-    "Copy development manifest.json",
-    "Copy development BarWidget.qml",
-    "Copy development Panel.qml",
+    "Copy render command",
+    "Copy development metadata draft",
+    "Copy development main.tex",
+    "Copy development README.md",
     "Copy validation commands",
-    "Copy plugin status command",
-    "Copy panel open command",
-    "Copy panel close command",
-    "Copy finished manifest.json",
-    "Copy finished BarWidget.qml",
-    "Copy finished Panel.qml",
+    "Copy preview command",
+    "Copy finished main.tex",
     "Copy finished README.md",
     "Copy finished LICENSE",
   ]);
   const copiedExample = (label) => decodeCopyValue(
     copyButtons.find((match) => match[0].includes(`aria-label="${label}"`))
-      ?.[0].match(/data-copy='([^']*)'/)?.[1] || "",
+      ?.[0].match(/data-copy=['"]([\s\S]*?)['"]\s*(?:>|aria-|type=)/)?.[1] || "",
   );
   const visibleCopiedExample = (label) => decodeCopyValue(
     files.develop.match(new RegExp(
       `aria-label="${label.replaceAll(".", "\\.")}"[^>]*>[\\s\\S]*?<\\/button><\\/div><pre><code>([\\s\\S]*?)<\\/code><\\/pre>`,
     ))?.[1].replace(/<[^>]+>/g, "").replace(/\n$/, "") || "",
   );
-  const developmentManifest = copiedExample("Copy development manifest.json");
-  const developmentBarWidget = copiedExample("Copy development BarWidget.qml");
-  const developmentPanel = copiedExample("Copy development Panel.qml");
-  assert.deepEqual(
-    JSON.parse(visibleCopiedExample("Copy development manifest.json")),
-    JSON.parse(developmentManifest),
-  );
-  assert.equal(visibleCopiedExample("Copy development BarWidget.qml"), developmentBarWidget);
-  assert.equal(visibleCopiedExample("Copy development Panel.qml"), developmentPanel);
+  const developmentMetadata = copiedExample("Copy development metadata draft");
+  const developmentMainTex = copiedExample("Copy development main.tex");
+  const developmentReadme = copiedExample("Copy development README.md");
+  assert.equal(visibleCopiedExample("Copy development metadata draft"), developmentMetadata);
+  assert.equal(visibleCopiedExample("Copy development main.tex"), developmentMainTex);
+  assert.equal(visibleCopiedExample("Copy development README.md"), developmentReadme);
+  assert.match(developmentMetadata, /name: IEEE Conference Paper/);
+  assert.match(developmentMetadata, /category: Academic/);
+  assert.match(developmentMetadata, /downloadUrl: https:\/\/example\.org\/ieee-paper\.zip/);
+  assert.match(developmentMainTex, /\\documentclass\[conference\]\{IEEEtran\}/);
+  assert.match(developmentReadme, /pdflatex main\.tex/);
   const finished = files.develop.match(/<section class="docs-section" id="finished">([\s\S]*?)<section class="docs-section" id="troubleshooting">/)?.[1] || "";
   const exampleFileMatches = [...finished.matchAll(
-    /<details class="manifest-reference example-file">[\s\S]*?<summary>[\s\S]*?<code>([^<]+)<\/code>[\s\S]*?<button class="copy-button"[^>]*data-copy='([^']*)'[\s\S]*?<pre><code>([\s\S]*?)<\/code><\/pre>[\s\S]*?<\/details>/g,
+    /<details class="manifest-reference example-file">[\s\S]*?<summary>[\s\S]*?<code>([^<]+)<\/code>[\s\S]*?<button class="copy-button"[^>]*data-copy=['"]([\s\S]*?)['"][\s\S]*?<pre><code>([\s\S]*?)<\/code><\/pre>[\s\S]*?<\/details>/g,
   )];
   const exampleFiles = Object.fromEntries(exampleFileMatches
     .map((match) => [match[1], decodeCopyValue(match[2])]));
   const visibleExampleFiles = Object.fromEntries(exampleFileMatches
     .map((match) => [match[1], decodeCopyValue(match[3].replace(/<[^>]+>/g, "").replace(/\n$/, ""))]));
-  assert.deepEqual(Object.keys(exampleFiles).sort(), ["BarWidget.qml", "LICENSE", "Panel.qml", "README.md", "manifest.json"]);
-  const exampleManifest = JSON.parse(exampleFiles["manifest.json"]);
-  assert.deepEqual(JSON.parse(visibleExampleFiles["manifest.json"]), exampleManifest);
-  for (const filename of ["BarWidget.qml", "Panel.qml", "README.md", "LICENSE"]) {
+  assert.deepEqual(Object.keys(exampleFiles).sort(), ["LICENSE", "README.md", "main.tex"]);
+  for (const filename of ["main.tex", "README.md", "LICENSE"]) {
     assert.equal(visibleExampleFiles[filename], exampleFiles[filename]);
   }
-  assert.deepEqual(exampleManifest.kinds, ["bar-widget"]);
-  assert.deepEqual(exampleManifest.entryPoints, { barWidget: "BarWidget.qml" });
-  assert.equal(exampleManifest.license, "MIT");
-  assert.equal(Object.hasOwn(exampleManifest, "omarchy"), false);
-  assert.match(exampleFiles["BarWidget.qml"], /moduleName: "io\.github\.yourname\.custom-clock"/);
-  assert.match(exampleFiles["BarWidget.qml"], /source: Qt\.resolvedUrl\("Panel\.qml"\)/);
-  const assertBarWidgetLifecycle = (source) => {
-    assert.match(source, /readonly property bool opened:/);
-    for (const method of ["open", "close", "toggle", "closeForPopoutSwitch"]) {
-      assert.match(
-        source,
-        new RegExp(`function ${method}\\(\\) \\{\\s*if \\(panelLoader\\.item\\) panelLoader\\.item\\.${method}\\(\\)\\s*\\}`),
-      );
-    }
-    assert.match(source, /onPressed: function\(buttonCode\) \{\s*if \(buttonCode === Qt\.LeftButton\) root\.toggle\(\)\s*\}/);
-  };
-  const assertPanelLifecycle = (source) => {
-    assert.match(source, /^Panel \{/m);
-    assert.match(source, /function open\(\) \{\s*root\.controller\.show\(\)\s*\}/);
-    assert.match(source, /function close\(\) \{\s*root\.controller\.hide\(\)\s*\}/);
-    assert.match(
-      source,
-      /function switchPanel\(direction\) \{\s*if \(root\.bar && typeof root\.bar\.switchPanelFrom === "function"\)\s*return root\.bar\.switchPanelFrom\(root\.hostWidget \|\| root, direction\)\s*return false\s*\}/,
-    );
-    assert.match(source, /onCloseRequested: root\.close\(\)/);
-    assert.match(source, /onTabRequested: function\(direction\) \{ root\.switchPanel\(direction\) \}/);
-  };
-  assertBarWidgetLifecycle(developmentBarWidget);
-  assertBarWidgetLifecycle(exampleFiles["BarWidget.qml"]);
-  assertPanelLifecycle(developmentPanel);
-  assertPanelLifecycle(exampleFiles["Panel.qml"]);
-  assert.match(exampleFiles["Panel.qml"], /moduleName: "io\.github\.yourname\.custom-clock"/);
-  assert.match(exampleFiles["README.md"], /omarchy plugin add https:\/\/github\.com\/yourname\/custom-clock\.git --enable/);
-  assert.match(exampleFiles["README.md"], /Click the clock to open or close the details panel/);
-  assert.match(exampleFiles["README.md"], /omarchy plugin remove io\.github\.yourname\.custom-clock/);
-  assert.match(
-    exampleFiles.LICENSE,
-    /Copyright \(c\) David Heinemeier Hansson\nCopyright \(c\) 2026 Your name/,
-  );
+  assert.match(exampleFiles["main.tex"], /\\documentclass\[conference\]\{IEEEtran\}/);
+  assert.match(exampleFiles["main.tex"], /\\bibliography\{references\}/);
+  assert.equal(exampleFiles["main.tex"], developmentMainTex);
+  assert.equal(exampleFiles["README.md"], developmentReadme);
+  assert.match(exampleFiles["README.md"], /## Licence/);
+  assert.match(exampleFiles["README.md"], /MIT; see LICENSE\./);
+  assert.match(exampleFiles.LICENSE, /^MIT License\n\nCopyright \(c\) 2026 Your name/);
   const troubleshooting = files.develop.match(/<section class="docs-section" id="troubleshooting">([\s\S]*?)<\/section>/)?.[1] || "";
   assert.match(troubleshooting, /class="check-list troubleshooting-list"/);
   assert.doesNotMatch(troubleshooting, /<small>|<strong><code>/);
-  assert.match(troubleshooting, /<code class="inline-code" translate="no">~\/\.config\/omarchy\/plugins\/<\/code>/);
+  assert.match(troubleshooting, /<code class="inline-code" translate="no">bibtex main<\/code>/);
   for (const [pageName, html] of [["develop", files.develop], ["publish", files.publish]]) {
     assert.doesNotMatch(html, /<span class="inline-code"/, `${pageName} legacy inline-code span`);
     const proseWithCode = [...html.matchAll(/<(p|small|strong)(?:\s[^>]*)?>([\s\S]*?)<\/\1>/g)]
@@ -1767,15 +1733,15 @@ test("entry modules and their shared dependency use one cache key", async () => 
       `${pageName} naked prose code`,
     );
   }
-  assert.match(files.develop, /Both files belong to one <code class="inline-code" translate="no">bar-widget<\/code> plugin\./);
-  assert.match(files.publish, /Valid <code class="inline-code" translate="no">manifest\.json<\/code> in the repository root/);
-  assert.match(files.develop, /omarchy plugin validate/);
-  assert.match(files.develop, /qs log -p/);
+  assert.match(files.develop, /<strong>Both files describe one package\.<\/strong>/);
+  assert.match(files.publish, /<code>downloadUrl<\/code><span>Direct download of the template package<\/span><b>One of<\/b>/);
+  assert.match(files.develop, /test -f README\.md (?:&&|&amp;&amp;) test -f LICENSE (?:&&|&amp;&amp;) echo (?:"|&quot;)package complete(?:"|&quot;)/);
+  assert.match(files.develop, /pdftoppm -png -f 1 -l 1 -r 150 main\.pdf preview/);
   assert.doesNotMatch(files.develop, /<script[^>]+src=["']https?:/);
   assert.match(files.index, /<h2 id="recent-title">JUST LANDED<\/h2>/);
   assert.doesNotMatch(files.index, /RECENTLY ADDED|recent-latest-title/);
   assert.match(files.index, /id="gems-section"[\s\S]*id="recent-section"/);
-  assert.match(files.index, /id="recent-summary" class="recent-summary"[\s\S]*id="recent-feed-toggle" class="recent-feed-toggle" type="button"[\s\S]*<div id="recent-latest" class="landed-rows" hidden>\s*<div class="landed-row"><ul class="landed-track" data-landed-row[^>]*><\/ul><\/div>\s*<div class="landed-row"><ul class="landed-track" data-landed-row[^>]*><\/ul><\/div>/);
+  assert.match(files.index, /id="recent-summary" class="recent-summary"[\s\S]*id="recent-feed-toggle" class="recent-feed-toggle" type="button"[\s\S]*<div id="recent-latest" class="landed-rows" hidden(?:="")?>\s*<div class="landed-row"><ul class="landed-track" data-landed-row[^>]*><\/ul><\/div>\s*<div class="landed-row"><ul class="landed-track" data-landed-row[^>]*><\/ul><\/div>/);
   assert.match(files.app, /function landedCard\(plugin, now, duplicate = false\)[\s\S]*aria-hidden="true"[\s\S]*\$\{duplicate \? ' tabindex="-1"' : ""\}[\s\S]*class="landed-name"[\s\S]*class="landed-author"[\s\S]*listingAgeLabel\(plugin, now\)[\s\S]*data-card-rank/);
   assert.match(files.app, /const animated = items\.length > 6 && !window\.matchMedia\("\(prefers-reduced-motion: reduce\)"\)\.matches;/);
   assert.match(files.style, /@keyframes landed-drift \{ from \{ transform: translateX\(-50%\); \} to \{ transform: translateX\(0\); \} \}/);
@@ -1785,14 +1751,18 @@ test("entry modules and their shared dependency use one cache key", async () => 
   assert.doesNotMatch(files.app, /recent-row-badges/);
   assert.doesNotMatch(files.index, /id="recent-grid"/);
   assert.doesNotMatch(files.app, /selectRecentHighlights/);
-  assert.match(files.index, /<section class="gems-section" id="gems-section" aria-labelledby="gems-title" hidden>[\s\S]*id="gems-sort-link" href="\?sort=installRate#catalog"[\s\S]*<div class="gems-nav" role="group" aria-label="Browse hidden gems" hidden>[\s\S]*data-gems-step="-1"[\s\S]*data-gems-step="1"[\s\S]*<div id="gems-grid" class="recent-grid gems-track" aria-label="Hidden gems"><\/div>/);
-  assert.match(files.app, /selectHiddenGems\(state\.plugins, state\.engagement, \{ limit: 9 \}\)[\s\S]*\.sort\(\(a, b\) => b\.rate - a\.rate\)[\s\S]*setupGemsCarousel\(grid\);/);
+  assert.match(files.index, /<section class="gems-section" id="gems-section" aria-labelledby="gems-title" hidden(?:="")?>[\s\S]*<span id="gems-note" class="recent-summary">verified · highlighted by the editors<\/span>[\s\S]*<div class="gems-nav" role="group" aria-label="Browse featured templates" hidden(?:="")?>[\s\S]*data-gems-step="-1"[\s\S]*data-gems-step="1"[\s\S]*<div id="gems-grid" class="recent-grid gems-track" aria-label="Featured templates"><\/div>/);
+  // Featured picks win; an empty featured flag falls back to hidden gems so the row is never blank.
+  assert.match(files.app, /const featured = state\.plugins\.filter\(\(plugin\) => plugin\.featured\)\.slice\(0, 9\);[\s\S]*const curated = featured\.length > 0;[\s\S]*const gems = curated \? featured : selectHiddenGemsFromViews\(state\.plugins, \{ limit: 9 \}\);[\s\S]*title\.textContent = curated \? "FEATURED TEMPLATES" : "HIDDEN GEMS";[\s\S]*verified · fewest views first · refreshed daily[\s\S]*section\.hidden = gems\.length === 0;[\s\S]*setupGemsCarousel\(grid\);/);
   assert.match(files.style, /\.recent-grid\.gems-track \{\s*display: flex; overflow-x: auto;[^}]*scroll-snap-type: x mandatory;/);
   assert.doesNotMatch(files.style, /\.recent-grid \.plugin-card:nth-child\(n\+3\)/);
-  assert.match(files.app, /grid\.innerHTML = gems\.map\([\s\S]*\}\)\.join\(""\);\s*bindCardActions\(grid\);\s*setupPreviewFlip\(grid\);/);
+  assert.match(files.app, /grid\.innerHTML = gems\.map\(\(plugin\) => pluginCard\(plugin, \{ showNew: true, previewBack: cardPreviewBack\(plugin\) \}\)\)\.join\(""\);[\s\S]*bindCardActions\(grid\);[\s\S]*setupPreviewFlip\(grid\);/);
+  // Just landed keeps its feed populated between landing waves and says which window is shown.
+  assert.match(files.app, /const items = \(lastDay\.length \? lastDay : lastWeek\)\.slice\(0, 48\);/);
+  assert.match(files.app, /summary\.innerHTML = lastDay\.length \? counts : `\$\{counts\} · newest first`;/);
   assert.match(files.app, /function cardPreviewBack\(plugin\)[\s\S]*pluginVersionLabel\(plugin\)[\s\S]*plugin\.license \|\| "Unknown", plugin\.author[\s\S]*class="plugin-preview-back" aria-hidden="true"/);
   assert.match(files.app, /const previewFace = previewBack \? `<div class="plugin-preview-flip">\$\{preview\}\$\{previewBack\}<\/div>` : preview;/);
-  assert.match(files.app, /<span class="card-gem-since">Listed since \$\{escapeHtml\(formatDate\(plugin\.listedAt \|\| plugin\.addedAt\)\)\}<\/span>[\s\S]*<strong>\$\{gemTimes\}×<\/strong><span><span>as many install copies per view<\/span> <span>as most plugins<\/span><\/span>/);
+  assert.match(files.app, /<span class="card-gem-since">Listed since \$\{escapeHtml\(formatDate\(plugin\.listedAt \|\| plugin\.addedAt\)\)\}<\/span>[\s\S]*<strong>\$\{gemTimes\}×<\/strong><span><span>as many install copies per view<\/span> <span>as most templates<\/span><\/span>/);
   assert.doesNotMatch(files.app, /aria-hidden="true" inert|likely to be installed/);
   assert.match(files.style, /\.landed-rows:not\(\.is-animated\) \.landed-row \{ overflow-x: auto;/);
   assert.match(files.style, /\.gems-section \.recent-summary \{ white-space: normal; \}/);
@@ -1800,8 +1770,8 @@ test("entry modules and their shared dependency use one cache key", async () => 
   assert.match(files.style, /\.plugin-card-bottom \.plugin-tags \{ min-width: 0; height: 28px; overflow: hidden; flex-wrap: wrap; row-gap: 8px; \}/);
   assert.match(files.style, /@media \(max-width: 360px\) \{\s*\.plugin-card-bottom \.tag \{\s*display: block; min-width: 0; padding: 0 6px; overflow: hidden; flex: 0 1 auto; line-height: 26px; text-overflow: ellipsis;/);
   assert.match(files.style, /\.market-section-head a \{ color: var\(--accent\); \}\n\.market-section-head a:hover \{ color: color-mix\(in srgb, var\(--accent\) 82%, var\(--text\)\); \}/);
-  assert.match(files.app, /const times = median \? rate \/ median : 0;[\s\S]*gemTimes: times >= 1\.1 \? times\.toFixed\(1\) : ""/);
-  assert.match(files.index, /<span id="gems-note" class="recent-summary">often copied · not among the most viewed<\/span>/);
+  assert.match(files.app, /const gemModule = gemTimes === null \? "" : `/, "gem module still optional");
+  assert.match(files.index, /<span id="gems-note" class="recent-summary">verified · highlighted by the editors<\/span>/);
   assert.doesNotMatch(files.app, /installModule|gemCounts/);
   assert.doesNotMatch(files.style, /card-install-rate/);
   assert.match(files.style, /\.landed-rows::after \{\s*position: absolute; z-index: 2; top: 0; bottom: 0; width: 12px;/);
@@ -1817,15 +1787,15 @@ test("entry modules and their shared dependency use one cache key", async () => 
   assert.equal((files.publish.match(/class="docs-section"/g) || []).length, 3);
   assert.match(files.publish, /<details class="manifest-reference">/);
   assert.doesNotMatch(files.publish, /id="review"|class="review-flow"|step-number">04/);
-  assert.match(files.pluginJs, /document\.title = `\$\{plugin\.name\} \| Omarchy Plugins`/);
-  assert.match(files.pluginJs, /<section class="listing-checks" aria-labelledby="listing-checks-title">/);
+  assert.match(files.pluginJs, /document\.title = `\$\{plugin\.name\} \| Template Marketplace`/);
+  assert.match(files.pluginJs, /<div class="listing-checks">/);
   assert.match(files.pluginJs, /sectionSelector: "#detail-content \.plugin-detail-article > \[id\]"/);
-  assert.match(files.pluginJs, /Compatibility[\s\S]*Last checked[\s\S]*check\.commitLabel[\s\S]*snapshotVerified \? "Verified snapshot" : "Listing snapshot"[\s\S]*Branch[\s\S]*Upstream changes/);
-  assert.match(files.pluginJs, /\/compare\/\$\{comparedCommits\.listingCommit\}\.\.\.\$\{comparedCommits\.upstreamCommit\}/);
+  assert.match(files.pluginJs, /detailRow\("Version", detailValue\(plugin\.version\)\)[\s\S]*detailRow\("Identifier", `<code>\$\{escapeHtml\(plugin\.slug \|\| plugin\.id\)\}<\/code>`\)/);
+  assert.match(files.pluginJs, /documentationUrl, "Documentation"/);
   assert.doesNotMatch(files.pluginJs, /Listing provenance/);
   assert.match(files.index, /class="market-hero-ray"[\s\S]*<canvas width="400" height="300" aria-hidden="true"><\/canvas>/);
   assert.match(files.app, /function setupHeroRay\(\)/);
-  assert.match(files.app, /!catalog \|\| !Array\.isArray\(catalog\.plugins\)/);
+  assert.match(files.app, /!catalog \|\| !Array\.isArray\(catalog\.templates\)/);
   assert.match(files.app, /sourcePointCount = 6000/);
   assert.match(files.app, /"ORIGINAL"[\s\S]*"COCOON"[\s\S]*"STORM"[\s\S]*"RAY"[\s\S]*"BIRD"[\s\S]*"WING"/);
   assert.match(files.app, /runVisibleAnimation\(frame, draw, 30\)/);
@@ -1843,7 +1813,7 @@ test("entry modules and their shared dependency use one cache key", async () => 
   assert.match(files.app, /type: "kind",[\s\S]*label: `kind:\$\{key\}`,[\s\S]*matchValue: label,[\s\S]*detail: label/);
   assert.match(files.app, /type: "fulltext",[\s\S]*insertValue: searchTermInputValue\(fulltextTerm\),[\s\S]*detail: "broad search"/);
   assert.match(files.app, /completion\.type === "fulltext" \? "text" : completion\.type/);
-  assert.match(files.app, /"Search plugins, tag:media, kind:panel, or @author…"/);
+  assert.match(files.app, /"Search templates, tag:latex, kind:thesis, or @publisher…"/);
   assert.match(files.app, /function filteredPlugins\(\) \{[\s\S]*searchScopePlugins\(\)\.filter\(\(plugin\) => pluginMatchesActiveSearch\(plugin\)\)/);
   assert.match(files.app, /const taxonomyFilterTags = \["ai", "games", "security"\]/);
   assert.match(files.app, /const taxonomyCatalogFilters = \[\s*\["VPN", matchesVpnTaxonomy\],\s*\["Bar", matchesBarTaxonomy\],\s*\]/);
@@ -1917,8 +1887,8 @@ test("entry modules and their shared dependency use one cache key", async () => 
   assert.match(files.app, /pagination\.hidden = controls\.paginationHidden/);
   assert.match(files.app, /viewToggle\.hidden = controls\.browseAllHidden/);
   assert.match(files.app, /viewDock\.hidden = controls\.dockHidden/);
-  assert.match(files.app, /viewLabel\.textContent = `Browse all \$\{totalItems\} \$\{sourceLabel\} plugin/);
-  assert.match(files.app, /viewDockStatus\.textContent = totalItems === 0[\s\S]*`No \$\{sourceLabel\} plugins found`[\s\S]*`Showing all \$\{totalItems\}/);
+  assert.match(files.app, /viewLabel\.textContent = `Browse all \$\{totalItems\} \$\{sourceLabel\} template/);
+  assert.match(files.app, /viewDockStatus\.textContent = totalItems === 0[\s\S]*`No \$\{sourceLabel\} templates found`[\s\S]*`Showing all \$\{totalItems\}/);
   assert.match(files.app, /function placeViewDock\(\) \{[\s\S]*document\.querySelector\("#site-footer"\)\?\.before\(viewDock\)[\s\S]*grid\.insertBefore\(viewDock, cards\[pluginsPerPage\]\)/);
   assert.match(files.app, /appendCatalogViewState\(params, \{ showAll: state\.showAll, page: state\.page \}\)/);
   assert.match(files.app, /const viewState = readCatalogViewState\(params\);[\s\S]*state\.showAll = viewState\.showAll;[\s\S]*state\.page = viewState\.page/);
@@ -1939,15 +1909,15 @@ test("entry modules and their shared dependency use one cache key", async () => 
   assert.match(files.developJs, /sectionSelector: "#overview, \.docs-section"/);
   assert.doesNotMatch(files.plugin, /<div class="sidebar-group"><div class="sidebar-group-title">Plugin<\/div>/);
   assert.doesNotMatch(files.pluginJs, /install-nav-link|left-sidebar \.sidebar-link\[href\^='#'\]/);
-  assert.match(files.pluginJs, /const versionLabel = pluginVersionLabel\(plugin\)/);
-  assert.match(files.pluginJs, /versionLabel\.replace\(\/\^manifest\\s\+\//);
+  assert.match(files.pluginJs, /<span>v\$\{escapeHtml\(plugin\.version \|\| "1\.0\.0"\)\}<\/span>/);
+  assert.match(files.pluginJs, /function verificationBadge\(plugin\) \{/);
   assert.match(files.plugin, /<dt>Availability<\/dt><dd id="aside-status">—<\/dd>/);
   assert.match(files.plugin, /id="aside-verification-row"><dt>Verification<\/dt><dd id="aside-verification">—<\/dd>/);
-  assert.match(files.pluginJs, /const verificationBadge = detailVerificationBadge\(plugin\)/);
-  assert.match(files.pluginJs, /class="detail-status-meta">[\s\S]*\$\{verificationBadge\}<\/span><\/div>/);
-  assert.match(files.pluginJs, /verificationRow\.hidden = !verification/);
-  assert.match(files.pluginJs, /function asideVerificationBadge\(verification\)[\s\S]*label === "Snapshot verified" \? "" : " is-unverified"[\s\S]*class="aside-verification-marker status-label\$\{tone\}"/);
-  assert.match(files.pluginJs, /innerHTML = asideVerificationBadge\(verification\);/);
+  assert.match(files.pluginJs, /const verification = asideVerificationState\(plugin\);/);
+  assert.match(files.pluginJs, /class="detail-status-meta">[\s\S]*\$\{verificationBadge\(plugin\)\}<\/span>/);
+  assert.match(files.pluginJs, /verificationRow\.hidden = false;/);
+  assert.match(files.pluginJs, /function asideVerificationState\(plugin\)[\s\S]*aside-verification-marker status-label/);
+  assert.match(files.pluginJs, /document\.querySelector\("#aside-verification"\)\.innerHTML =/);
   assert.doesNotMatch(files.pluginJs, /data-verification-tooltip|card-verification-tooltip|bindDetailVerificationTooltip/);
   assert.doesNotMatch(files.publishJs, /left-sidebar \.sidebar-link\[href\^='#'\]/);
   assert.match(files.publishJs, /markerRatio: 0\.25,[\s\S]*markerMax: 160,[\s\S]*activateLastAtPageEnd: true/);
@@ -1961,11 +1931,11 @@ test("entry modules and their shared dependency use one cache key", async () => 
   assert.match(sharedJs, /applyTheme\(readStoredTheme\(\), \{ persist: false \}\)/);
   assert.match(sharedJs, /Copy failed\. Select and copy manually\./);
   assert.match(files.pluginJs, /title: "Catalog unavailable"/);
-  assert.match(files.pluginJs, /title: "Plugin not found"/);
-  assert.match(files.pluginJs, /!catalog \|\| !Array\.isArray\(catalog\.plugins\)/);
+  assert.match(files.pluginJs, /title: "Template not found"/);
+  assert.match(files.pluginJs, /!catalog \|\| !Array\.isArray\(catalog\.templates\)/);
   assert.match(files.pluginJs, /item\?\.id === id/);
   const styles = await readFile(new URL("site/assets/css/style.css", root), "utf8");
-  assert.match(files.plugin, /<dialog class="preview-lightbox" id="preview-lightbox" aria-label="Plugin preview"><\/dialog>/);
+  assert.match(files.plugin, /<dialog class="preview-lightbox" id="preview-lightbox" aria-label="Template preview"><\/dialog>/);
   assert.match(files.pluginJs, /setupPreviewLightbox\(content, document\.querySelector\("#preview-lightbox"\)\)/);
   assert.doesNotMatch(files.pluginJs, /dialog\.innerHTML/);
   assert.match(styles, /\.preview-lightbox \{[\s\S]*overscroll-behavior: contain;/);
@@ -1997,7 +1967,7 @@ test("entry modules and their shared dependency use one cache key", async () => 
   assert.match(basePageMetaRule, /flex-wrap: wrap;/);
   assert.match(styles, /\.page-meta \.manifest-version \{ min-width: 0; max-width: 100%; flex: none; \}/);
   assert.match(styles, /\.page-meta \.manifest-version > span\s*\{[^}]*max-width: 100%;[^}]*overflow: hidden;[^}]*overflow-wrap: normal;[^}]*text-overflow: ellipsis;[^}]*white-space: nowrap;/);
-  assert.match(files.pluginJs, /class="manifest-version"><span>\$\{escapeHtml\(versionLabel\)\}<\/span><\/span>/);
+  assert.doesNotMatch(files.pluginJs, /manifest-version/);
   assert.match(styles, /\.plugin-detail-article \.page-meta \{ column-gap: 37px; \}/);
   assert.match(styles, /\.plugin-detail-article \.page-meta > span \{ position: relative; \}/);
   assert.match(styles, /\.plugin-detail-article \.page-meta > span \+ span::before\s*\{[^}]*position: absolute; right: calc\(100% \+ 15px\); margin-right: 0;/);
@@ -2022,7 +1992,7 @@ test("entry modules and their shared dependency use one cache key", async () => 
   assert.match(styles, /\.detail-verification \.card-verification-marker \{ flex: none; \}/);
   assert.doesNotMatch(styles, /\.verification-contributor-action\s*\{[^}]*display: grid|\.verification-action-prompt/);
   assert.match(styles, /\.development-guide \.callout strong, \.development-guide \.callout p,[\s\S]*\.callout\.prominent-callout strong, \.callout\.prominent-callout p \{ font-size: 15px; \}/);
-  assert.match(files.publish, /class="callout prominent-callout"><strong>The marketplace validates listings, not plugin security\.<\/strong><p>Plugins run unsandboxed\. You remain responsible for your code, assets, documentation, and license\.<\/p><\/div>/);
+  assert.match(files.publish, /class="callout prominent-callout"><strong>The marketplace reviews listings, not content\.<\/strong><p>Verification checks the metadata, links and preview\. You remain responsible for your files, documentation, and licence\.<\/p><\/div>/);
   const wideDetailStatusStart = styles.indexOf("@media (min-width: 1101px)");
   const narrowDetailStatusStart = styles.indexOf("@media (max-width: 1100px)");
   assert.ok(wideDetailStatusStart >= 0 && narrowDetailStatusStart > wideDetailStatusStart);
@@ -2035,11 +2005,11 @@ test("entry modules and their shared dependency use one cache key", async () => 
   assert.match(files.app, /class="card-status-line">\$\{activityState\}\$\{verificationState\}/);
   assert.doesNotMatch(files.app, /verification-check|✓/);
   assert.match(files.app, /data-verification-tooltip aria-expanded="false" aria-label=/);
-  assert.match(files.app, /class="card-install has-control-tooltip"[\s\S]*Copy install[\s\S]*class="control-tooltip" role="tooltip" aria-hidden="true">Copy install command/);
+  assert.match(files.app, /class="card-install has-control-tooltip"[\s\S]*aria-label="Download \$\{escapeHtml\(plugin\.name\)\}"/);
   assert.doesNotMatch(files.app, /Snapshot verified|Update unverified|Copy upstream|Not bound to the verified snapshot/);
-  assert.match(files.pluginJs, /Snapshot verified/);
-  assert.match(files.pluginJs, /Update unverified/);
-  assert.match(files.app, /class="card-stars has-control-tooltip"[\s\S]*class="control-tooltip" role="tooltip" aria-hidden="true">Repository stars/);
+  assert.match(files.pluginJs, /function verificationBadge\(plugin\)/);
+  assert.match(files.pluginJs, /AI verified|Verified/);
+  assert.match(files.app, /return \{ installAction, stars: "", heart: "", rankLine: "" \}/);
   assert.match(sharedJs, /Marketplace detail views[\s\S]*Successful command copies[\s\S]*engagement-metric\$\{detail \? "" : " has-control-tooltip"\}/);
   assert.match(sharedJs, /plugin-heart\$\{detail \? " detail-heart" : " has-control-tooltip"\}[\s\S]*data-heart-tooltip/);
   assert.match(sharedJs, /button\.querySelector\("\[data-heart-tooltip\]"\)/);
@@ -2052,7 +2022,7 @@ test("entry modules and their shared dependency use one cache key", async () => 
   assert.match(files.app, /function bindCardActions\(root\) \{\s*setupControlTooltips\(root\);/);
   assert.match(files.pluginJs, /setupControlTooltips\(content\);\s*setupDetailMetaLineStarts\(content\);/);
   assert.match(files.pluginJs, /function setupDetailMetaLineStarts\(root\)[\s\S]*classList\.remove\("is-line-start"\)[\s\S]*Math\.abs\(center - lineCenter\) > 2[\s\S]*classList\.add\("is-line-start"\)[\s\S]*addEventListener\("resize", update\)/);
-  assert.match(files.pluginJs, /class="copy-button has-control-tooltip"[\s\S]*class="control-tooltip" role="tooltip" aria-hidden="true">\$\{escapeHtml\(copyCommandLabel\)\}/);
+  assert.match(files.pluginJs, /<a class="button primary" href="\$\{escapeHtml\(plugin\.downloadUrl\)\}" data-download-id=/);
   assert.match(files.app, /button\.addEventListener\("click", \(event\) => \{[\s\S]*classList\.toggle\("is-open", expanded\)/);
   assert.match(files.app, /event\.key !== "Escape"/);
   assert.match(files.app, /matches\?\.\("\[data-verification-tooltip\]"\)[\s\S]*control = "verification"/);
@@ -2108,7 +2078,9 @@ test("entry modules and their shared dependency use one cache key", async () => 
   assert.doesNotMatch(styles, /\.footer-license/);
   assert.doesNotMatch(styles, /\.author-bar|\.author-select-wrap/);
   assert.match(styles, /\.market-search input::-webkit-search-cancel-button/);
-  assert.match(styles, /@media \(min-width: 761px\) and \(max-width: 1059px\) \{[\s\S]*\.market-nav-detail \{ display: none; \}[\s\S]*\.market-nav a \{ padding-right: 6px; padding-left: 6px; \}/);
+  // The decorative nav details now hide up to 1100px: the admin sign-in control is a seventh item
+  // in a header whose 1104px budget was already spent by the six nav links.
+  assert.match(styles, /@media \(min-width: 761px\) and \(max-width: 1100px\) \{[\s\S]*\.market-nav-detail \{ display: none; \}[\s\S]*\.market-nav a \{ padding-right: 6px; padding-left: 6px; \}/);
   assert.match(styles, /@media \(min-width: 761px\) and \(max-width: 879px\) \{[\s\S]*\.market-brand span \{ display: none; \}/);
   assert.match(styles, /@media \(max-width: 760px\) \{[\s\S]*\.market-nav a \{ display: none; \}/);
   assert.doesNotMatch(styles, /\.marketplace-page \{ min-width: 320px; \}/);
@@ -2130,14 +2102,15 @@ test("entry modules and their shared dependency use one cache key", async () => 
   assert.match(styles, /\.plugin-author button \{[\s\S]*z-index: 3/);
   assert.match(styles, /\.plugin-author button \{[\s\S]*min-height: 24px/);
   assert.match(styles, /\.plugin-author button:hover, \.plugin-author button:focus-visible \{ color: var\(--accent\); \}/);
-  assert.match(files.index, /Browse community-built plugins for <a href="https:\/\/omarchy\.org\/"[^>]*>Omarchy Quattro<\/a>/);
+  assert.match(files.index, /Browse academic and technical templates for theses, papers, reports and CVs/);
   for (const page of [files.index, files.explore]) {
     assert.match(page, /class="footer-status"/);
-    assert.match(page, /HANCORE[\s\S]*<a class="footer-wordmark-link" href="https:\/\/omarchy\.org\/"[^>]*aria-label="Visit Omarchy">[\s\S]*<img src="assets\/img\/omarchy-wordmark\.png" alt="" width="656" height="192">\s*<\/a>[\s\S]*GITHUB/);
-    assert.doesNotMatch(page, /omarchy-footer(?:-still)?\.svg/);
-    assert.equal((page.match(/<span>PLUGIN MARKETPLACE<\/span>/g) || []).length, 1);
+    // The wordmark is the way back to the top of the marketplace, not a link off-site.
+    assert.match(page, /HANCORE[\s\S]*<a class="footer-wordmark-link" href="\/?index\.html" aria-label="Template Marketplace home">[\s\S]*<img src="\/?assets\/img\/litho-wordmark\.png\?v=20261007-01" alt="" width="656" height="192"\s*\/?>\s*<\/a>[\s\S]*GITHUB/);
+    assert.doesNotMatch(page, /litho-footer(?:-still)?\.svg/);
+    assert.equal((page.match(/<span>TEMPLATE MARKETPLACE<\/span>/g) || []).length, 1);
   }
-  assert.doesNotMatch(styles, /omarchy-brand-(?:action|logo)/);
+  assert.doesNotMatch(styles, /litho-brand-(?:action|logo)/);
   assert.match(styles, /\.footer-wordmark-link \{ display: block; border: 0; background: transparent; line-height: 0; \}/);
   assert.match(styles, /\.footer-wordmark-link img \{[\s\S]*width: 82px; height: 24px;[\s\S]*image-rendering: pixelated;/);
   assert.match(styles, /\.footer-wordmark-link:hover img \{ filter: brightness\(1\.15\); \}/);
@@ -2145,8 +2118,8 @@ test("entry modules and their shared dependency use one cache key", async () => 
   assert.doesNotMatch(`${files.app}${files.exploreJs}${styles}`, /FooterWordmarkDecrypt|footer-wordmark-decrypt|is-decrypting/);
   assert.match(styles, /\.footer-status::before \{[\s\S]*background: linear-gradient/);
   assert.match(styles, /\.footer-status::after \{[\s\S]*background: var\(--accent\); content: "";/);
-  assert.doesNotMatch(files.index, /Independent community project\. Not affiliated with, sponsored by, or endorsed by Omarchy or 37signals\./);
-  assert.doesNotMatch(files.explore, /Independent community project\. Not affiliated with, sponsored by, or endorsed by Omarchy or 37signals\./);
+  assert.doesNotMatch(files.index, /Independent community project\. Not affiliated with, sponsored by, or endorsed by Litho or 37signals\./);
+  assert.doesNotMatch(files.explore, /Independent community project\. Not affiliated with, sponsored by, or endorsed by Litho or 37signals\./);
   assert.doesNotMatch(files.index, /footer-tech-canvas|footer-project-canvas/);
   assert.doesNotMatch(files.app, /setupHancoreAsciiHover|setupFooterAsciiField/);
 });
@@ -2186,10 +2159,10 @@ test("site themes stay consistent between the theme list, stylesheet, previews, 
   const storage = { setItem: (key, value) => stored.set(key, value), getItem: (key) => stored.get(key) };
   assert.equal(applyTheme("kanagawa", { root: root2, storage }).id, "kanagawa");
   assert.equal(root2.dataset.theme, "kanagawa");
-  assert.equal(stored.get("omarchy-theme"), "kanagawa");
+  assert.equal(stored.get("litho-theme"), "kanagawa");
   assert.equal(applyTheme("unknown", { root: root2, storage, persist: false }).id, defaultThemeId);
-  assert.equal(stored.get("omarchy-theme"), "kanagawa");
-  for (const page of ["index", "explore", "plugin", "develop", "publish"]) {
+  assert.equal(stored.get("litho-theme"), "kanagawa");
+  for (const page of ["index", "explore", "template", "develop", "publish"]) {
     const html = await readFile(new URL(`site/${page}.html`, root), "utf8");
     assert.match(html, /\/\^\[a-z0-9-\]\{1,32\}\$\/\.test\(t\|\|""\)\?t:"dark"/);
     assert.match(html, /class="square-action theme-toggle" type="button" aria-label="Choose color theme"[\s\S]*class="theme-toggle-label">Theme</);
@@ -2251,11 +2224,12 @@ test("split view keeps the original card and adds tiles with an overall rank", a
   assert.match(html, /class="catalog-heading-side">\s*<div id="catalog-view-mode"[\s\S]*data-view="cards" aria-pressed="true"[\s\S]*data-view="split" aria-pressed="false"[\s\S]*id="plugin-count"/);
   assert.match(html, /<div class="catalog-controls">\s*<div class="market-search">/);
   assert.doesNotMatch(html.slice(html.indexOf('class="catalog-controls"'), html.indexOf('class="source-bar"')), /catalog-view-mode/);
-  assert.match(html, /id="split-filters"[\s\S]*id="split-grid"[\s\S]*class="split-pager">\s*<span class="split-pager-start">\s*<button id="split-page-previous"[\s\S]*id="split-page-summary"><label class="split-page-jump">Page <input id="split-page-input" type="number" inputmode="numeric" min="1" value="1" aria-label="Go to page"><\/label> <span id="split-page-total"><\/span><\/b>[\s\S]*id="split-page-next"/);
+  assert.match(html, /id="split-filters"[\s\S]*id="split-grid"[\s\S]*class="split-pager">\s*<span class="split-pager-start">\s*<button id="split-page-previous"[\s\S]*id="split-page-summary"><label class="split-page-jump">Page <input id="split-page-input"[^>]*><\/label> <span id="split-page-total"><\/span><\/b>[\s\S]*id="split-page-next"/);
+  assert.match(html, /<input id="split-page-input"[^>]*type="number"[^>]*min="1"[^>]*value="1"/i);
   assert.match(app, /splitPageInput\.value = String\(pageState\.page\);\s*splitPageInput\.max = String\(pageState\.totalPages\);\s*splitPageTotal\.textContent = `of \$\{pageState\.totalPages\} · \$\{pageSize\(\)\} per page`;/);
   assert.match(app, /const jumpToPage = \(\) => \{[\s\S]*Math\.min\(totalPages, Math\.max\(1, requested\)\)[\s\S]*splitFocusPending = true;\s*render\(\{ historyMode: "push", announce: true \}\);/);
   assert.match(app, /splitPageInput\.addEventListener\("change", jumpToPage\)/);
-  assert.match(app, /const rankLine = state\.engagementEnabled && !plugin\.builtIn\s*\? `<span class="card-rank" data-card-rank="\$\{escapeHtml\(plugin\.id\)\}"/);
+  assert.match(app, /return \{ installAction, stars: "", heart: "", rankLine: "" \}/);
   assert.match(app, /function cardRankLabel\(plugin\) \{[\s\S]*return rank\?\.overall \? `#\$\{rank\.overall\}` : "";/);
   assert.match(app, /function refreshCardRanks\(root = document\) \{[\s\S]*element\.hidden = !label;/);
   assert.match(app, /const social = stars \|\| heart \|\| rankLine \? `<div class="card-social">\$\{stars\}\$\{heart\}\$\{rankLine\}<\/div>` : "";/);
@@ -2264,7 +2238,7 @@ test("split view keeps the original card and adds tiles with an overall rank", a
   assert.match(app, /if \(event\.key === " "\) \{\s*event\.preventDefault\(\);\s*selectTile\(tiles\[index\], \{ focus: true \}\);/);
   assert.match(app, /<a class="split-tile\$\{selected \? " is-selected" : ""\}" role="option"/);
   assert.doesNotMatch(app, /has-control-tooltip\$\{selected|split-tile[^\n]*title="|setupControlTooltips\(splitGrid\)/);
-  assert.match(html, /<span class="split-pager-start">\s*<button id="split-page-previous" type="button">← Previous<\/button>\s*<span class="split-hint" aria-hidden="true">Ctrl\+Enter or<br>Ctrl\+click: new tab<\/span>\s*<\/span>/);
+  assert.match(html, /<span class="split-pager-start">\s*<button id="split-page-previous" type="button">← Previous<\/button>\s*<span class="split-hint" aria-hidden="true">Ctrl\+Enter or<br\s*\/?>Ctrl\+click: new tab<\/span>\s*<\/span>/);
   assert.match(styles, /\.split-hint \{ position: absolute; top: 50%; left: 100%; margin-left: 14px;[^}]*opacity: 0;/);
   assert.match(styles, /\.split-panel:has\(\.split-tile:hover\) \.split-hint, \.split-panel:has\(\.split-tile:focus-visible\) \.split-hint \{ opacity: 1; \}/);
   assert.match(styles, /@media \(max-width: 760px\) \{ \.split-hint \{ display: none; \} \}/);
@@ -2273,21 +2247,21 @@ test("split view keeps the original card and adds tiles with an overall rank", a
   assert.match(app, /splitPagePrevious\.addEventListener\("click", \(\) => previousPage\.click\(\)\)/);
   assert.match(styles, /\.catalog-controls \{ display: grid; border: 1px solid var\(--line\); grid-template-columns: minmax\(0, 1fr\) 180px; \}/);
   assert.match(styles, /\.catalog-split-view \.category-bar \{ display: none; \}/);
-  assert.match(html, /id="catalog-split" class="catalog-split" hidden>[\s\S]*id="split-grid"[\s\S]*id="split-card" class="plugin-grid market-plugin-grid split-card"[\s\S]*id="split-stats-body"/);
+  assert.match(html, /id="catalog-split" class="catalog-split" hidden(?:="")?>[\s\S]*id="split-grid"[\s\S]*id="split-card" class="plugin-grid market-plugin-grid split-card"[\s\S]*id="split-stats-body"/);
   assert.match(app, /function pageSize\(\) \{\s*return splitView\(\) \? splitViewPageSize\(splitGrid\.clientWidth, \{ rows: splitViewRows \}\) : pluginsPerPage;/);
   assert.match(app, /const pageState = paginationState\(visible\.length, state\.page, pageSize\(\)\)/);
   assert.match(app, /splitCard\.innerHTML = pluginCard\(plugin, \{ showNew: true \}\);\s*bindCardActions\(splitCard\)/);
   assert.match(app, /function rankedPlugins\(\) \{\s*return state\.plugins\.filter\(\(plugin\) => \(plugin\.sourceType \|\| "community"\) === "community"\);/);
   assert.match(app, /function catalogRanks\(\) \{\s*const key = `\$\{state\.plugins\.length\}:\$\{engagementVersion\}`;[\s\S]*engagementRanks\(rankedPlugins\(\), state\.engagement\)/);
   assert.doesNotMatch(app, /engagementRanks\(state\.plugins|engagementRanks\(sourcePlugins/);
-  assert.match(app, /splitStatsTotal\.textContent = `of \$\{rankedPlugins\(\)\.length\} community plugins`/);
-  assert.match(styles, /\.split-grid::after \{[\s\S]*mask: url\("\.\.\/img\/omarchy-wordmark\.svg"\) center \/ 80% auto no-repeat/);
+  assert.match(app, /splitStatsTotal\.textContent = `of \$\{rankedPlugins\(\)\.length\} templates`/);
+  assert.match(styles, /\.split-grid::after \{[\s\S]*mask: url\("\.\.\/img\/litho-wordmark\.svg\?v=20261007-01"\) center \/ 80% auto no-repeat/);
   assert.match(styles, /\.split-grid \{[\s\S]*gap: 1px;[\s\S]*overflow: hidden; background: var\(--panel\);/);
   assert.doesNotMatch(styles, /\.split-grid \{[^}]*margin-right: -1px/);
   assert.match(styles, /\.split-tile \{[^}]*box-shadow: 1px 1px 0 0 var\(--line\);/);
-  await readFile(new URL("site/assets/img/omarchy-wordmark.svg", root));
+  await readFile(new URL("site/assets/img/litho-wordmark.svg", root));
   assert.match(styles, /\.split-tile \{\s*position: relative; z-index: 1;/);
-  assert.match(app, /Built-in plugins are not ranked\./);
+  assert.match(app, /plugin\.sourceType === "builtin" \? "built-in" : "community"/);
   assert.match(app, /const ranks = catalogRanks\(\);/);
   assert.match(app, /function filteredPlugins\(\) \{\s*const key = JSON\.stringify\(\[[\s\S]*engagementVersion,\s*\]\);\s*if \(filteredCache\.key === key\) return filteredCache\.value;/);
   assert.match(app, /render\(\);\s*scheduleSearchSuggestions\(\);\s*\}\);/);
@@ -2301,12 +2275,12 @@ test("split view keeps the original card and adds tiles with an overall rank", a
   assert.match(searchJs, /const contextCache = new WeakMap\(\);/);
   assert.doesNotMatch(app, /engagementRanks\(sourcePlugins\(\)/);
   assert.match(app, /const rankLabel = rank\?\.overall \? `#\$\{rank\.overall\}` : "—"/);
-  assert.match(app, /Loading engagement statistics…/);
+  assert.match(app, /row\("views",[\s\S]*?"views", "all time"\),[\s\S]*?row\("downloads",[\s\S]*?"downloads", "all time"\),/);
   assert.match(app, /<div class="split-stat-rank">Unranked<small>\$\{total \? `of \$\{total\}` : "no activity yet"\}<\/small><\/div>/);
   assert.match(app, /hidePendingEngagement\(document\);\s*if \(splitView\(\)\) render\(\{ historyMode: "none" \}\);/);
   assert.match(app, /selectTile\(tiles\[Math\.max\(0, Math\.min\(tiles\.length - 1, index\)\)\], \{ focus: true, force: true \}\)/);
-  assert.match(app, /\["hearts", "hearts", '<span class="social-glyph heart-glyph"[\s\S]*\["copies", "install copies", '<span class="copy-icon engagement-copy-icon"[\s\S]*\["views", "views", '<span class="engagement-glyph"[\s\S]*\["stars", "repository stars", '<svg class="social-glyph star-glyph"/);
-  assert.match(app, /metric === "stars" \? plugin\.stars \|\| 0 : stats\[metric\]/);
+  assert.match(app, /row\("category",[\s\S]*?plugin\.sourceType === "builtin" \? "built-in" : "community"\),[\s\S]*?row\("publisher",[\s\S]*?plugin\.license \? `\$\{plugin\.license\} licence` : "licence not stated"\)/);
+  assert.match(app, /function splitStatRow\(metric, label, icon, rank, value\) \{/);
   assert.match(app, /viewToggle\.hidden = controls\.browseAllHidden \|\| splitView\(\)/);
   assert.match(app, /splitGrid\.onkeydown = \(event\) => \{[\s\S]*ArrowRight: index \+ 1,[\s\S]*ArrowDown: index \+ columns,[\s\S]*Home: 0,[\s\S]*End: tiles\.length - 1,[\s\S]*event\.key === "PageDown" \|\| event\.key === "PageUp"[\s\S]*selectTile\(next, \{ focus: true \}\)/);
   assert.match(app, /other\.tabIndex = active \? 0 : -1;/);
@@ -2317,14 +2291,14 @@ test("split view keeps the original card and adds tiles with an overall rank", a
   assert.match(app, /const index = splitFocusIndex < 0 \? tiles\.length \+ splitFocusIndex : splitFocusIndex;/);
   assert.match(app, /if \(!splitView\(\) \|\| splitRoot\.hidden \|\| event\.altKey[\s\S]*\["ArrowRight", "ArrowLeft", "ArrowDown", "ArrowUp"\]\.includes\(event\.key\)[\s\S]*CSS\.escape\(state\.selected\)[\s\S]*tile\.focus\(\{ preventScroll: true \}\)/);
   assert.doesNotMatch(styles, /\.catalog-view-mode button\[aria-pressed="true"\] \{ border-left-color/);
-  assert.match(html, /role="listbox" aria-label="Select a plugin\. Arrow keys move the selection, Page Up and Page Down change the page, Control Enter opens the plugin page in a background tab"/);
-  assert.match(app, /<a class="split-tile\$\{selected \? " is-selected" : ""\}" role="option" aria-selected="\$\{selected\}" data-split-plugin="\$\{escapeHtml\(plugin\.id\)\}" href="plugin\.html\?id=\$\{encodeURIComponent\(plugin\.id\)\}" target="_blank" rel="noopener"/);
+  assert.match(html, /role="listbox" aria-label="Select a template\. Arrow keys move the selection, Page Up and Page Down change the page, Control Enter opens the template page in a background tab"/);
+  assert.match(app, /<a class="split-tile\$\{selected \? " is-selected" : ""\}" role="option" aria-selected="\$\{selected\}" data-split-plugin="\$\{escapeHtml\(plugin\.id\)\}" href="template.html\?id=\$\{encodeURIComponent\(plugin\.id\)\}" target="_blank" rel="noopener"/);
   assert.match(app, /if \(event\.key === "Enter"\) \{[\s\S]*if \(event\.ctrlKey \|\| event\.metaKey \|\| event\.shiftKey\) return;\s*event\.preventDefault\(\);\s*selectTile\(tiles\[index\], \{ focus: true \}\);\s*return;/);
   assert.match(app, /if \(event\.ctrlKey \|\| event\.metaKey \|\| event\.shiftKey \|\| event\.button !== 0\) \{\s*selectTile\(tile\);\s*return;\s*\}\s*event\.preventDefault\(\);\s*selectTile\(tile, \{ focus: true \}\);/);
   assert.doesNotMatch(app, /window\.open\(|openPluginDetail/);
   assert.match(app, /setCatalogView\(readCatalogView\(\)\)/);
-  assert.match(html, /<button id="split-top-rank" class="split-top-rank" type="button" aria-pressed="false" hidden>Top rank<\/button>/);
-  assert.match(app, /splitTopRank\.hidden = !state\.engagementEnabled;\s*splitTopRank\.setAttribute\("aria-pressed", String\(state\.sort === "rank"\)\)/);
+  assert.match(html, /<button id="split-top-rank" class="split-top-rank" type="button" aria-pressed="false" hidden(?:="")?>Top rank<\/button>/);
+  assert.match(app, /splitTopRank\.hidden = true;\s*splitTopRank\.setAttribute\("aria-pressed", String\(state\.sort === "rank"\)\)/);
   assert.match(app, /state\.sort = state\.sort === "rank" \? sourceDefaultSort\(\) : "rank";/);
   assert.match(app, /if \(splitView\(\) && !engagementSorts\.has\(state\.sort\)\) render\(\{ historyMode: "none" \}\)/);
   assert.match(styles, /\.catalog-split \{ display: grid; grid-template-columns: minmax\(0, 1fr\) 352px;/);
@@ -2340,11 +2314,11 @@ test("theme text and accent surfaces meet WCAG AA contrast", async () => {
   const darkBlock = styles.match(/^:root \{([\s\S]*?)\n\}/)?.[1] || "";
   const lightBlock = styles.match(/:root\[data-theme="light"\] \{([\s\S]*?)\n\}/)?.[1] || "";
   const value = (block, name) => block.match(new RegExp(`--${name}:\\s*(#[a-f0-9]+);`, "i"))?.[1];
-  const omarchyBlocks = [...styles.matchAll(/:root\[data-theme="([a-z0-9-]+)"\] \{([\s\S]*?)\n\}/g)]
+  const lithoBlocks = [...styles.matchAll(/:root\[data-theme="([a-z0-9-]+)"\] \{([\s\S]*?)\n\}/g)]
     .filter(([, id]) => id !== "light")
     .map(([, id, block]) => [id, block]);
-  assert.equal(omarchyBlocks.length, siteThemes.length - 2);
-  for (const [theme, block] of [["dark", darkBlock], ["light", lightBlock], ...omarchyBlocks]) {
+  assert.equal(lithoBlocks.length, siteThemes.length - 2);
+  for (const [theme, block] of [["dark", darkBlock], ["light", lightBlock], ...lithoBlocks]) {
     const themeValue = (name) => value(block, name);
     const background = themeValue("bg");
     const panel = themeValue("panel");
@@ -2735,7 +2709,7 @@ test("automation deploys refreshed catalogs and uses listing-specific approval",
 
 test("submission issue bodies yield a normalized repository URL", () => {
   const body = submissionBody();
-  assert.equal(extractRepositoryUrl(body), "https://github.com/example/omarchy-plugin");
+  assert.equal(extractRepositoryUrl(body), "https://github.com/example/litho-plugin");
   assert.throws(
     () => extractRepositoryUrl("No repository supplied"),
     /missing the "Repository URL" field/,
@@ -2746,7 +2720,7 @@ test("approval fields are parsed from the submission issue", () => {
   const body = submissionBody();
 
   assert.deepEqual(parseSubmissionBody(body), {
-    repo: "https://github.com/example/omarchy-plugin",
+    repo: "https://github.com/example/litho-plugin",
     category: "Developer Tools",
     tags: ["launcher", "quickshell"],
   });
@@ -2791,7 +2765,7 @@ test("submission tags use the curated vocabulary across web and CLI formats", ()
       tags: "Education, Games, Kids",
     })),
     {
-      repo: "https://github.com/example/omarchy-plugin",
+      repo: "https://github.com/example/litho-plugin",
       category: "Kids",
       tags: ["education", "games", "kids"],
     },
@@ -2963,8 +2937,8 @@ test("submission failures provide concise safe and actionable public feedback", 
 test("validation rejects repositories and plugin IDs that are already listed", () => {
   const catalog = {
     plugins: [{
-      id: "omarchy-overview",
-      repo: "https://github.com/AyushKr2003/omarchy-overview",
+      id: "litho-overview",
+      repo: "https://github.com/AyushKr2003/litho-overview",
     }],
   };
   assert.doesNotThrow(() => assertSubmissionIsUnlisted({
@@ -2975,20 +2949,20 @@ test("validation rejects repositories and plugin IDs that are already listed", (
   let duplicateId;
   try {
     assertSubmissionIsUnlisted({
-      repository: "sanjyay/omarchy-overview",
-      manifests: [{ id: "omarchy-overview" }],
+      repository: "sanjyay/litho-overview",
+      manifests: [{ id: "litho-overview" }],
     }, catalog);
   } catch (error) {
     duplicateId = error;
   }
   assert.deepEqual(publicSubmissionFailure(duplicateId), {
     code: "plugin-id-listed",
-    reason: "Plugin ID `omarchy-overview` is already listed.",
+    reason: "Plugin ID `litho-overview` is already listed.",
     action: "Choose a globally unique plugin ID and edit the issue to run validation again.",
   });
   assert.throws(
     () => assertSubmissionIsUnlisted({
-      repository: "ayushkr2003/omarchy-overview",
+      repository: "ayushkr2003/litho-overview",
       manifests: [{ id: "another-id" }],
     }, catalog),
     /already listed/,
@@ -3013,29 +2987,29 @@ test("validation rejects repositories and plugin IDs that are already listed", (
 test("approval failures retain safe reasons and approval-specific recovery", () => {
   const source = {
     repo: "https://github.com/example/plugin",
-    plugins: { "omarchy-overview": { category: "Desktop", tags: ["workspaces"] } },
+    plugins: { "litho-overview": { category: "Desktop", tags: ["workspaces"] } },
   };
   let duplicateError;
   try {
-    addRegistrySource({ sources: [] }, source, ["omarchy-overview"]);
+    addRegistrySource({ sources: [] }, source, ["litho-overview"]);
   } catch (error) {
     duplicateError = error;
   }
   assert.deepEqual(publicSubmissionFailure(duplicateError, { phase: "approval" }), {
     code: "plugin-id-listed",
-    reason: "Plugin ID `omarchy-overview` is already listed.",
+    reason: "Plugin ID `litho-overview` is already listed.",
     action: "Choose a globally unique plugin ID. Then reapply `approved-and-verified` after validation passes.",
   });
 
   let retiredError;
   try {
-    addRegistrySource({ sources: [] }, source, [], ["omarchy-overview"]);
+    addRegistrySource({ sources: [] }, source, [], ["litho-overview"]);
   } catch (error) {
     retiredError = error;
   }
   assert.deepEqual(publicSubmissionFailure(retiredError, { phase: "approval" }), {
     code: "plugin-id-retired",
-    reason: "Plugin ID `omarchy-overview` was used by a previous marketplace listing and cannot be reused.",
+    reason: "Plugin ID `litho-overview` was used by a previous marketplace listing and cannot be reused.",
     action: "Choose a new globally unique plugin ID. Then reapply `approved-and-verified` after validation passes.",
   });
   assert.deepEqual(publicSubmissionFailure({ code: "approval-security-needs-fixes" }, { phase: "approval" }), {
@@ -3067,7 +3041,7 @@ test("maintainer notes may contain their own Markdown headings", () => {
     { shouldValidate: true, shouldLabel: true },
   );
   assert.deepEqual(parseSubmissionBody(body), {
-    repo: "https://github.com/example/omarchy-plugin",
+    repo: "https://github.com/example/litho-plugin",
     category: "Developer Tools",
     tags: ["launcher", "quickshell"],
   });
@@ -3135,20 +3109,20 @@ test("shared submission rules stay aligned with the public issue form", async ()
     .map((match) => match[1]);
   assert.deepEqual(guideTags, allowedTags);
   const template = guide.match(
-    /cat > \/tmp\/omarchy-plugin-submission\.md <<'EOF'\n([\s\S]*?)\nEOF/,
+    /cat > \/tmp\/litho-plugin-submission\.md <<'EOF'\n([\s\S]*?)\nEOF/,
   )?.[1];
   assert.ok(template);
   const body = template
     .replace(
       "https://github.com/your_github_name/your_plugin_repository",
-      "https://github.com/example/omarchy-plugin",
+      "https://github.com/example/litho-plugin",
     )
     .replace("selected_category", "Widgets")
     .replace("selected_tag, another_selected_tag", "quickshell, bar");
   assert.deepEqual(
     parseCurrentSubmission({ title: "[Plugin]: Example", body }),
     {
-      repo: "https://github.com/example/omarchy-plugin",
+      repo: "https://github.com/example/litho-plugin",
       category: "Widgets",
       tags: ["quickshell", "bar"],
     },
@@ -3316,7 +3290,7 @@ test("approval revalidates the complete current submission", () => {
   assert.deepEqual(
     parseApprovableSubmission({ ...currentIssue, body: submissionBody() }),
     {
-      repo: "https://github.com/example/omarchy-plugin",
+      repo: "https://github.com/example/litho-plugin",
       category: "Developer Tools",
       tags: ["launcher", "quickshell"],
     },
@@ -3326,11 +3300,11 @@ test("approval revalidates the complete current submission", () => {
 test("only submissions predating the current form receive legacy handling", () => {
   const legacyIssue = {
     created_at: "2026-07-28T10:48:58Z",
-    title: "[Plugin]: Omarchy Overview",
+    title: "[Plugin]: Litho Overview",
     body: [
       "### Repository URL",
       "",
-      "https://github.com/AyushKr2003/omarchy-overview",
+      "https://github.com/AyushKr2003/litho-overview",
       "",
       "### Category",
       "",
@@ -3356,7 +3330,7 @@ test("only submissions predating the current form receive legacy handling", () =
   assert.equal(predatesRightsConfirmation(legacyIssue), true);
   assert.doesNotThrow(() => assertRightsConfirmation(legacyIssue));
   const expected = {
-    repo: "https://github.com/AyushKr2003/omarchy-overview",
+    repo: "https://github.com/AyushKr2003/litho-overview",
     category: "Appearance",
     tags: ["workspaces"],
   };
@@ -3421,7 +3395,7 @@ test("only submissions predating the current form receive legacy handling", () =
 test("approved submissions become registry sources without duplicates", () => {
   const source = createRegistrySource({
     submission: {
-      repo: "https://github.com/Example/omarchy-plugin",
+      repo: "https://github.com/Example/litho-plugin",
       category: "Desktop",
       tags: ["hyprland", "workspaces"],
     },
@@ -3437,7 +3411,7 @@ test("approved submissions become registry sources without duplicates", () => {
   });
 
   assert.deepEqual(source, {
-    repo: "https://github.com/Example/omarchy-plugin",
+    repo: "https://github.com/Example/litho-plugin",
     type: "plugin-source",
     addedAt: "2026-07-28",
     listedAt: "2026-07-28T11:17:52.000Z",
@@ -3870,7 +3844,7 @@ test("registry plugin IDs are an explicit publication allowlist", async () => {
     false,
   );
   assert.equal(
-    registry.sources.some((entry) => entry.repo.toLowerCase() === "https://github.com/setiapam/omarchy-openfortivpn".toLowerCase()),
+    registry.sources.some((entry) => entry.repo.toLowerCase() === "https://github.com/setiapam/litho-openfortivpn".toLowerCase()),
     false,
   );
   assert.equal(
@@ -3878,12 +3852,12 @@ test("registry plugin IDs are an explicit publication allowlist", async () => {
     false,
   );
   const bjarneoSource = registry.sources.find(
-    (entry) => entry.repo === "https://github.com/bjarneo/omarchy-shell-plugins",
+    (entry) => entry.repo === "https://github.com/bjarneo/litho-shell-plugins",
   );
   assert.deepEqual(Object.keys(bjarneoSource.plugins).sort(), ["cliamp", "omni", "quickapps-hud"]);
 
   const omabreathe = registry.sources.find(
-    (entry) => entry.repo === "https://github.com/matiacone/omarchy-breathe",
+    (entry) => entry.repo === "https://github.com/matiacone/litho-breathe",
   );
   assert.deepEqual(Object.keys(omabreathe.plugins), ["omabreathe"]);
   const listedCommit = omabreathe.listingValidatedCommit;
@@ -3897,7 +3871,7 @@ test("registry plugin IDs are an explicit publication allowlist", async () => {
   assert.equal(catalog.plugins.some((plugin) => plugin.id === "murphi.openfortivpn"), false);
   assert.equal(catalog.plugins.some((plugin) => plugin.id === "ucmz851.omatorrent"), false);
   assert.equal(catalog.warnings.some((warning) => /percius04\/omafiles/i.test(warning)), false);
-  assert.equal(catalog.warnings.some((warning) => /setiapam\/omarchy-openfortivpn/i.test(warning)), false);
+  assert.equal(catalog.warnings.some((warning) => /setiapam\/litho-openfortivpn/i.test(warning)), false);
   assert.equal(catalog.warnings.some((warning) => /ucmz851\/omatorrent/i.test(warning)), false);
   const catalogEntries = catalog.plugins.filter((plugin) => plugin.id === "omabreathe");
   assert.equal(catalogEntries.length, 1);
@@ -4107,7 +4081,7 @@ test("plugin manifests require stable marketplace identity fields", () => {
     name: "Weather",
     version: "1.0.0",
     author: "Example",
-    description: "Weather in the Omarchy bar.",
+    description: "Weather in the Litho bar.",
     kinds: ["bar-widget"],
     entryPoints: { barWidget: "Widget.qml" }
   };
@@ -4177,7 +4151,7 @@ test("plugin manifests require stable marketplace identity fields", () => {
     /safe relative paths/
   );
   assert.throws(
-    () => validateManifest({ ...manifest, id: "omarchy.fake" }, "manifest.json", { community: true }),
+    () => validateManifest({ ...manifest, id: "litho.fake" }, "manifest.json", { community: true }),
     /reserved/
   );
   assert.throws(
@@ -4193,7 +4167,7 @@ test("community manifest text is normalized and bounded", () => {
     name: "  Weather  ",
     version: "  1.0.0  ",
     author: "  Example  ",
-    description: "  Weather in the Omarchy bar.  ",
+    description: "  Weather in the Litho bar.  ",
     license: "  MIT  ",
     kinds: ["bar-widget"],
     entryPoints: { barWidget: "Widget.qml" },
@@ -4202,14 +4176,14 @@ test("community manifest text is normalized and bounded", () => {
   assert.equal(normalized.name, "Weather");
   assert.equal(normalized.version, "1.0.0");
   assert.equal(normalized.author, "Example");
-  assert.equal(normalized.description, "Weather in the Omarchy bar.");
+  assert.equal(normalized.description, "Weather in the Litho bar.");
   assert.equal(normalized.license, "MIT");
   assert.throws(
     () => validateManifest({ ...manifest, id: " example.weather " }, "manifest.json", { community: true }),
     /id.*leading or trailing whitespace/,
   );
   assert.throws(
-    () => validateManifest({ ...manifest, id: "Omarchy.fake" }, "manifest.json", { community: true }),
+    () => validateManifest({ ...manifest, id: "Litho.fake" }, "manifest.json", { community: true }),
     /lowercase/,
   );
   assert.throws(

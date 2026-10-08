@@ -59,7 +59,7 @@ const tagAliases = new Map([
   ["laptop", "system"],
   ["music", "media"],
   ["ollama", "ai"],
-  ["omarchy", null],
+  ["litho", null],
   ["overlay", "quickshell"],
   ["overviews", "workspaces"],
   ["plugin", null],

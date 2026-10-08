@@ -140,7 +140,7 @@ export function verificationReviewRecord(baseline, reviewRequest) {
   }
 }
 
-const standardInstallationNote = "Omarchy clones the current upstream repository, validates it locally, and only then installs and enables the plugin.";
+const standardInstallationNote = "Litho clones the current upstream repository, validates it locally, and only then installs and enables the plugin.";
 
 function isValidManualInstallationOverride(installation) {
   return Boolean(
@@ -242,7 +242,7 @@ function catalogWithStandardInstallation(catalog, source, pluginId) {
       ...plugin,
       repositoryLayout: "root-plugin",
       installAvailable: true,
-      installCommand: `omarchy plugin add ${repositoryUrl} --enable`,
+      installCommand: `litho plugin add ${repositoryUrl} --enable`,
       installNote: standardInstallationNote,
       status: "Available",
     };

@@ -1,4 +1,4 @@
-export const themeStorageKey = "omarchy-theme";
+export const themeStorageKey = "litho-theme";
 export const defaultThemeId = "dark";
 
 export const siteThemes = Object.freeze([

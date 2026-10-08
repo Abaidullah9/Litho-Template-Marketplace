@@ -18,15 +18,15 @@ test("plugin delisting is manual, main-bound, and authorized only for HANCORE-li
   assert.match(trigger, /plugin_ids:[\s\S]*required: true[\s\S]*confirm_delisting:[\s\S]*type: boolean/);
   assert.equal((workflow.match(/github\.actor == 'HANCORE-linux'/g) || []).length, 2);
   assert.equal((workflow.match(/github\.triggering_actor == 'HANCORE-linux'/g) || []).length, 2);
-  assert.equal((workflow.match(/github\.repository == 'omacom\/omarchy-plugin-marketplace'/g) || []).length, 2);
+  assert.equal((workflow.match(/github\.repository == 'litho-templates\/litho-template-marketplace'/g) || []).length, 2);
   assert.match(workflow, /github\.ref == 'refs\/heads\/main'/);
   assert.match(workflow, /github\.run_attempt == 1/);
   assert.match(workflow, /inputs\.confirm_delisting == true/);
-  assert.equal((workflow.match(/test "\$REPOSITORY" = omacom\/omarchy-plugin-marketplace/g) || []).length, 2);
+  assert.equal((workflow.match(/test "\$REPOSITORY" = litho-templates\/litho-template-marketplace/g) || []).length, 2);
   assert.equal((workflow.match(/test "\$ACTOR" = HANCORE-linux/g) || []).length, 2);
   assert.equal((workflow.match(/test "\$TRIGGERING_ACTOR" = HANCORE-linux/g) || []).length, 2);
   assert.equal((workflow.match(/test "\$REF" = refs\/heads\/main/g) || []).length, 2);
-  assert.doesNotMatch(workflow, /HANCORE-linux\/omarchy-plugin-marketplace/);
+  assert.doesNotMatch(workflow, /HANCORE-linux\/litho-plugin-marketplace/);
   assert.match(workflow, /group: >-[\s\S]*plugin-catalog-writes[\s\S]*ignored-plugin-delisting/);
   assert.doesNotMatch(workflow, /pull_request_target|workflow_run/);
 });
@@ -82,7 +82,7 @@ test("delisting deployment binds authorization, marker, catalog, and Explorer id
   assert.match(deploy, /if: >-[\s\S]*needs\.delist\.result == 'success'[\s\S]*needs\.publish\.result == 'success'/);
   for (const authorization of [
     "github.event_name == 'workflow_dispatch'",
-    "github.repository == 'omacom/omarchy-plugin-marketplace'",
+    "github.repository == 'litho-templates\/litho-template-marketplace'",
     "github.ref == 'refs/heads/main'",
     "github.actor == 'HANCORE-linux'",
     "github.triggering_actor == 'HANCORE-linux'",

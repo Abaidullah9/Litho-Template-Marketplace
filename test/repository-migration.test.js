@@ -201,15 +201,15 @@ test("current registry and catalog contain complete active or retired repository
   }
   assert.deepEqual(
     identifiedSources.find((source) => (
-      source.repo === "https://github.com/omarchy-QOL/omarchy-btop-activity"
+      source.repo === "https://github.com/litho-QOL/litho-btop-activity"
     )).repositoryIdentity.previousRepositories,
-    ["ilyaZar/btop-quattro-plugin", "ilyaZar/omarchy-btop-activity"],
+    ["ilyaZar/btop-quattro-plugin", "ilyaZar/litho-btop-activity"],
   );
   assert.deepEqual(
     identifiedSources.find((source) => (
-      source.repo === "https://github.com/omarchy-QOL/syncshell"
+      source.repo === "https://github.com/litho-QOL/syncshell"
     )).repositoryIdentity.previousRepositories,
-    ["ilyaZar/omarchy-syncthing", "ilyaZar/syncshell"],
+    ["ilyaZar/litho-syncthing", "ilyaZar/syncshell"],
   );
 });
 

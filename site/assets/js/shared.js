@@ -77,9 +77,38 @@ export function displayTaxonomyTag(value) {
 }
 
 export async function loadCatalog() {
-  const response = await fetch("catalog.json", { cache: "no-store" });
-  if (!response.ok) throw new Error(`Catalog request failed: ${response.status}`);
-  return response.json();
+  // The generated registry (Supabase → registry.json) is the marketplace catalog.
+  // The legacy catalog.json stays as a fallback so the site still renders before
+  // the first registry generation.
+  const sources = ["registry.json", "catalog.json"];
+  let lastError = null;
+  for (const source of sources) {
+    let response;
+    try {
+      response = await fetch(source, { cache: "no-store" });
+    } catch (error) {
+      lastError = error;
+      continue;
+    }
+    if (!response.ok) {
+      lastError = new Error(`Catalog request failed: ${response.status}`);
+      continue;
+    }
+    try {
+      const document = await response.json();
+      if (!Array.isArray(document.templates) && Array.isArray(document.plugins)) {
+        document.templates = document.plugins;
+      }
+      if (!Array.isArray(document.templates)) {
+        lastError = new Error("Catalog has no template list");
+        continue;
+      }
+      return document;
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  throw lastError || new Error("Catalog request failed");
 }
 
 export function formatDate(value) {
@@ -109,7 +138,7 @@ export function formatEngagementCount(value = 0) {
 }
 
 export function comparePluginEngagement(first, second, stats = {}, metric = "views") {
-  const key = ["views", "copies", "hearts"].includes(metric) ? metric : "views";
+  const key = ["views", "copies", "hearts", "downloads"].includes(metric) ? metric : "views";
   const value = (plugin) => engagementCount(stats?.[plugin?.id]?.[key]);
   return value(second) - value(first)
     || String(first?.name || "").localeCompare(String(second?.name || ""))
@@ -175,6 +204,39 @@ export function selectHiddenGems(plugins, stats = {}, { limit = 3, viewShare = .
     .slice(0, limit);
 }
 
+/** Deterministic 32-bit string hash (FNV-1a) used to rotate tied selections. */
+function stableHash(value) {
+  let hash = 2166136261;
+  for (let index = 0; index < value.length; index += 1) {
+    hash ^= value.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+}
+
+/**
+ * Hidden gems ranked from the registry alone.
+ *
+ * The engagement service is optional, so install rates and ratings may be
+ * unavailable; this uses the counters the marketplace itself records. It keeps
+ * the original intent — verified community templates that ship a screenshot but
+ * that few people have seen yet — and breaks ties (a freshly migrated catalogue
+ * has almost no views) with a daily rotation so the row is not always the same
+ * alphabetical slice.
+ */
+export function selectHiddenGemsFromViews(plugins, { limit = 9, now = Date.now() } = {}) {
+  const day = Math.floor(now / 86_400_000);
+  return (plugins || [])
+    .filter((plugin) => plugin && !plugin.builtIn && !plugin.placeholder
+      && (plugin.sourceType || "community") === "community")
+    .filter((plugin) => plugin.verificationStatus === "verified" || plugin.verified === true)
+    .filter((plugin) => Boolean(plugin.previewThumbnail || plugin.previewImage))
+    .sort((first, second) => Number(first.views || 0) - Number(second.views || 0)
+      || stableHash(`${day}:${first.id || first.slug}`) - stableHash(`${day}:${second.id || second.slug}`)
+      || String(first.name).localeCompare(String(second.name)))
+    .slice(0, limit);
+}
+
 function engagementMetric(type, count, detail) {
   const views = type === "views";
   const label = views ? "marketplace detail views" : "successful command copies";
@@ -189,14 +251,23 @@ function engagementMetric(type, count, detail) {
   return `<span class="engagement-metric${detail ? "" : " has-control-tooltip"}" data-engagement-metric="${type}"${detail ? tooltip : ""}><span class="engagement-visual" aria-hidden="true">${icon}<span data-engagement-value>${formatEngagementCount(count)}</span>${detail ? `<span class="engagement-name">${visibleName}</span>` : ""}</span><span class="sr-only" data-engagement-accessible>${count} ${label}</span>${detail ? "" : tooltip}</span>`;
 }
 
+// Downloads metric: template file downloads recorded by the marketplace API.
+function downloadsMetric(count, detail = false) {
+  const total = engagementCount(count);
+  const tooltip = detail
+    ? ""
+    : '<span class="control-tooltip" role="tooltip" aria-hidden="true">Template downloads</span>';
+  return `<span class="engagement-metric${detail ? "" : " has-control-tooltip"}" data-engagement-metric="downloads"><span class="engagement-visual" aria-hidden="true"><span class="engagement-glyph download-glyph" aria-hidden="true">&#8595;</span><span data-engagement-value>${formatEngagementCount(total)}</span>${detail ? '<span class="engagement-name">downloads</span>' : ""}</span><span class="sr-only" data-engagement-accessible>${total} template downloads</span>${detail ? "" : tooltip}</span>`;
+}
+
 export function engagementSummary(plugin, stats = {}, {
   detail = false,
   pending = false,
 } = {}) {
   const views = engagementCount(stats.views);
-  const copies = engagementCount(stats.copies);
-  const hasCommand = Boolean(plugin?.builtIn ? plugin.officialCommand : plugin?.installCommand);
-  return `<div class="plugin-engagement${detail ? " detail-engagement" : ""}${pending ? " is-pending" : ""}" data-plugin-engagement="${escapeHtml(plugin?.id || "")}"${pending ? ' aria-busy="true"' : ""}>${engagementMetric("views", views, detail)}${hasCommand ? engagementMetric("copies", copies, detail) : ""}</div>`;
+  const downloads = engagementCount(stats.downloads ?? plugin?.downloads);
+  const hasDownloads = Boolean(plugin?.downloadUrl || plugin?.repositoryUrl || downloads);
+  return `<div class="plugin-engagement${detail ? " detail-engagement" : ""}${pending ? " is-pending" : ""}" data-plugin-engagement="${escapeHtml(plugin?.id || "")}"${pending ? ' aria-busy="true"' : ""}>${engagementMetric("views", views, detail)}${hasDownloads ? downloadsMetric(downloads, detail) : ""}</div>`;
 }
 
 export function pluginHeartButton(plugin, stats = {}, {
@@ -332,7 +403,13 @@ export function setupControlTooltips(root) {
 export function updateEngagementSummary(root, pluginId, stats = {}) {
   const values = {
     views: engagementCount(stats.views),
+    downloads: engagementCount(stats.downloads),
     copies: engagementCount(stats.copies),
+  };
+  const labels = {
+    views: "marketplace detail views",
+    downloads: "template downloads",
+    copies: "successful command copies",
   };
   root.querySelectorAll("[data-plugin-engagement]").forEach((summary) => {
     if (summary.dataset.pluginEngagement !== pluginId) return;
@@ -343,7 +420,7 @@ export function updateEngagementSummary(root, pluginId, stats = {}) {
       const type = metric.dataset.engagementMetric;
       if (!Object.hasOwn(values, type)) return;
       const count = values[type];
-      const label = type === "views" ? "marketplace detail views" : "successful command copies";
+      const label = labels[type] || "marketplace interactions";
       const value = metric.querySelector("[data-engagement-value]");
       if (value) value.textContent = formatEngagementCount(count);
       const accessible = metric.querySelector("[data-engagement-accessible]");
@@ -464,7 +541,7 @@ export function pluginVerificationState(plugin) {
   return {
     status: "unverified",
     label: "Unverified",
-    explanation: "No current verification record is available for the listed commit. This does not mean the plugin is malicious.",
+    explanation: "No current verification record is available for the listed commit. This does not mean the template is malicious.",
   };
 }
 
@@ -508,7 +585,7 @@ export function pluginVerificationDetailState(plugin) {
     coverage: "unverified",
     label: "Unverified",
     markerLabels: ["Unverified"],
-    explanation: "No current verification record is available for the listed snapshot. This does not mean the plugin is malicious.",
+    explanation: "No current verification record is available for the listed snapshot. This does not mean the template is malicious.",
   };
 }
 
@@ -587,7 +664,7 @@ export function splitViewPageSize(gridWidth, { tileWidth = 140, rows = 3, fallba
 
 export function readCatalogView(storage = globalThis.localStorage) {
   try {
-    return storage?.getItem("omarchy-catalog-view") === "split" ? "split" : "cards";
+    return storage?.getItem("litho-catalog-view") === "split" ? "split" : "cards";
   } catch {
     return "cards";
   }
@@ -595,7 +672,7 @@ export function readCatalogView(storage = globalThis.localStorage) {
 
 export function storeCatalogView(view, storage = globalThis.localStorage) {
   try {
-    storage?.setItem("omarchy-catalog-view", view === "split" ? "split" : "cards");
+    storage?.setItem("litho-catalog-view", view === "split" ? "split" : "cards");
   } catch {
     /* storage unavailable */
   }
@@ -772,7 +849,7 @@ export function setupThemeToggle() {
   const picker = document.createElement("div");
   picker.className = "theme-picker";
   picker.hidden = true;
-  picker.setAttribute("aria-label", "Choose an Omarchy theme");
+  picker.setAttribute("aria-label", "Choose an Litho theme");
   picker.innerHTML = `
     <div class="theme-picker-strip">${siteThemes.map((theme) => `
       <button class="theme-picker-item" type="button" tabindex="-1" aria-pressed="false" data-theme-value="${escapeHtml(theme.id)}" aria-label="${escapeHtml(theme.name)}">

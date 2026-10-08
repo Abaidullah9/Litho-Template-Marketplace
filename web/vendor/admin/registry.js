@@ -20,9 +20,7 @@ await requireSession();
 
 shell.body.innerHTML = `
   <div class="notice">
-    <strong>Supabase is the source of truth.</strong> The registry is a generated, read-only snapshot
-    (site/registry.json) that the public marketplace loads. Regenerating never writes back to the
-    database — if generation fails, the previous registry stays untouched.
+    The marketplace catalog registry is generated from published templates. Regenerate below to publish catalog updates.
   </div>
   <div id="registry-status"><div class="empty"><h3>Reading registry…</h3></div></div>
 `;

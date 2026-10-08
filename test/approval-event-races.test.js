@@ -23,7 +23,7 @@ const removed = transition(101, "2026-09-04T21:49:30Z", "unlabeled");
 const second = transition(102, secondTime);
 const initial = { approver: actor, expectedRequestedAt: firstTime };
 const productionIssue = Object.freeze({
-  repository: "omacom/omarchy-plugin-marketplace",
+  repository: "litho-templates/litho-template-marketplace",
   number: "3322",
   title: "[Plugin]: Steelseries mouse controllers",
   submissionRepository: "Djjamonconqueso/steelseries.mouse-controller",
@@ -43,10 +43,10 @@ const productionApprovalHistory = Object.freeze([
   transition(productionIssue.eventId, productionIssue.requestedAt, "labeled", productionIssue.approver),
 ]);
 const productionIssue4116 = Object.freeze({
-  repository: "omacom/omarchy-plugin-marketplace",
+  repository: "litho-templates/litho-template-marketplace",
   number: "4116",
   title: "[Plugin]: Plugin Switcher",
-  submissionRepository: "houz42/omarchy-plugin-switcher",
+  submissionRepository: "houz42/litho-plugin-switcher",
   approver: "HANCORE-linux",
   manualSetup: false,
   triggeredAt: "2026-09-05T18:43:59Z",
@@ -339,7 +339,7 @@ test("the final write-token recheck enforces both production incidents, revocati
     const output = join(directory, "output");
     await writeFile(ghCalls, "");
     await writeFile(gitCalls, "");
-    await writeFile(join(bin, "gh"), `#!${process.execPath}
+    await writeFile(join(bin, "gh"), `#!/usr/bin/env node
 const { appendFileSync } = require("node:fs");
 const args = process.argv.slice(2);
 appendFileSync(process.env.GH_CALLS, JSON.stringify(args) + "\\n");
@@ -441,7 +441,7 @@ if (endpoint === issueEndpoint) {
   console.log("a".repeat(40));
 } else process.exit(92);
 `);
-    await writeFile(join(bin, "git"), `#!${process.execPath}
+    await writeFile(join(bin, "git"), `#!/usr/bin/env node
 const { appendFileSync } = require("node:fs");
 const args = process.argv.slice(2);
 appendFileSync(process.env.GIT_CALLS, JSON.stringify(args) + "\\n");
@@ -454,9 +454,11 @@ else if (!args.includes("push")) process.exit(93);
       "bash",
       ["--noprofile", "--norc", "-e", "-o", "pipefail"],
       {
-        input: script, encoding: "utf8", timeout: 10000, cwd: directory,
+        // Windows spawns this stub chain (bash → env → node) through the
+        // antivirus filter, so one workflow run needs far more than Linux CI.
+        input: script, encoding: "utf8", timeout: 120000, cwd: directory,
         env: {
-          PATH: `${bin}:/usr/bin:/bin`, HOME: directory,
+          PATH: `${bin}:${process.env.PATH}`, HOME: directory,
           GH_TOKEN: "inert-token", GITHUB_TOKEN: "inert-token",
           GH_CALLS: ghCalls, GIT_CALLS: gitCalls, GITHUB_OUTPUT: output,
           GITHUB_REPOSITORY: productionIssue.repository, ISSUE_NUMBER: productionIssue.number,
@@ -592,7 +594,7 @@ test("failure reporting cannot clear a newer approval or overwrite a newer repor
     const statePath = join(directory, "state.json");
     const callsPath = join(directory, "calls.jsonl");
     const stub = join(bin, "gh");
-    await writeFile(stub, `#!${process.execPath}
+    await writeFile(stub, `#!/usr/bin/env node
 const { readFileSync, writeFileSync, appendFileSync } = require("node:fs");
 const args = process.argv.slice(2);
 appendFileSync(process.env.GH_CALLS, JSON.stringify(args) + "\\n");
@@ -613,9 +615,11 @@ writeFileSync(process.env.GH_STATE, JSON.stringify(state));
       await writeFile(statePath, JSON.stringify(current));
       await writeFile(callsPath, "");
       const result = spawnSync("bash", ["--noprofile", "--norc", "-e", "-o", "pipefail"], {
-        input: script, encoding: "utf8", timeout: 10000, cwd: directory,
+        // Windows spawns this stub chain (bash → env → node) through the
+        // antivirus filter, so one workflow run needs far more than Linux CI.
+        input: script, encoding: "utf8", timeout: 120000, cwd: directory,
         env: {
-          PATH: `${bin}:/usr/bin:/bin`, HOME: directory,
+          PATH: `${bin}:${process.env.PATH}`, HOME: directory,
           GH_TOKEN: "", GITHUB_TOKEN: "", GH_STATE: statePath, GH_CALLS: callsPath,
           RUNNER_TEMP: directory, GITHUB_RUN_ID: "33922836925", ISSUE_NUMBER: "3380",
           GITHUB_REPOSITORY: "example/marketplace", GH_REPO: "example/marketplace",
@@ -661,7 +665,7 @@ test("successful finalization preserves historical reports from multiple runs", 
     const historical = ["100", "102"].map((id) => `<!-- marketplace-publication-status -->\n<!-- marketplace-publication-run:${id} -->\nHistorical failure.`);
     await writeFile(statePath, JSON.stringify({ comments: historical, labels: ["submission", "validated", "approved-and-verified"], closed: false }));
     const stub = join(bin, "gh");
-    await writeFile(stub, `#!${process.execPath}
+    await writeFile(stub, `#!/usr/bin/env node
 const { readFileSync, writeFileSync } = require("node:fs");
 const args = process.argv.slice(2);
 const state = JSON.parse(readFileSync(process.env.GH_STATE, "utf8"));
@@ -686,9 +690,11 @@ writeFileSync(process.env.GH_STATE, JSON.stringify(state));
         : step.match(/        run: (.+)/)?.[1];
       assert.ok(script, name);
       const result = spawnSync("bash", ["--noprofile", "--norc", "-e", "-o", "pipefail"], {
-        input: script, encoding: "utf8", timeout: 10000, cwd: directory,
+        // Windows spawns this stub chain (bash → env → node) through the
+        // antivirus filter, so one workflow run needs far more than Linux CI.
+        input: script, encoding: "utf8", timeout: 120000, cwd: directory,
         env: {
-          PATH: `${bin}:/usr/bin:/bin`, HOME: directory,
+          PATH: `${bin}:${process.env.PATH}`, HOME: directory,
           GH_STATE: statePath, GH_TOKEN: "", GITHUB_TOKEN: "", RUNNER_TEMP: directory,
           GITHUB_REPOSITORY: "example/marketplace", ISSUE_NUMBER: "3380",
           PLUGIN_ID: "example.plugin", PLUGIN_NAME_MARKDOWN: "Example",

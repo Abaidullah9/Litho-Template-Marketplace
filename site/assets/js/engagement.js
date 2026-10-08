@@ -1,15 +1,15 @@
 const productionSiteHosts = new Set([
-  "plugins.omarchy.org",
-  "omarchyplugins.com",
-  "www.omarchyplugins.com",
+  "plugins.litho.org",
+  "lithoplugins.com",
+  "www.lithoplugins.com",
 ]);
 const localSiteHosts = new Set(["127.0.0.1", "localhost"]);
 const eventTypes = new Set(["view", "copy", "heart"]);
 const pluginIdPattern = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
 const unsafeObjectKeys = new Set(["__proto__", "constructor", "prototype"]);
-const viewStoragePrefix = "omarchy-plugin-view:";
-const copyStoragePrefix = "omarchy-plugin-copy:";
-const heartStoragePrefix = "omarchy-plugin-heart:";
+const viewStoragePrefix = "litho-plugin-view:";
+const copyStoragePrefix = "litho-plugin-copy:";
+const heartStoragePrefix = "litho-plugin-heart:";
 const copyRequests = new Map();
 const heartRequests = new Map();
 
@@ -20,7 +20,7 @@ function validPluginId(value) {
 export function engagementApiBaseUrl(locationRef = globalThis.location) {
   const hostname = String(locationRef?.hostname || "").toLowerCase();
   if (localSiteHosts.has(hostname)) return "http://127.0.0.1:8787/v1";
-  if (productionSiteHosts.has(hostname)) return "https://api.omarchyplugins.com/v1";
+  if (productionSiteHosts.has(hostname)) return "https://api.lithoplugins.com/v1";
   return "";
 }
 

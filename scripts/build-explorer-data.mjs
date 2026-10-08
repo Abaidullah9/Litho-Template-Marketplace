@@ -40,7 +40,7 @@ const clusterDefinitions = [
   ["other", "Other", "#8c8c93", []],
 ].map(([id, label, color, keywords]) => ({ id, label, color, keywords }));
 
-const stopWords = new Set(`a an and are as at be been by can for from has have in into is it its of on or that the their this to with your you plugin plugins omarchy community bar widget widgets shows show lets using use`.split(" "));
+const stopWords = new Set(`a an and are as at be been by can for from has have in into is it its of on or that the their this to with your you plugin plugins litho community bar widget widgets shows show lets using use`.split(" "));
 
 function normalizedText(plugin) {
   return ` ${[plugin.name, plugin.id, plugin.category, plugin.description, ...(plugin.tags || [])].filter(Boolean).join(" ").toLowerCase()} `;
@@ -394,7 +394,7 @@ const output = {
   generatedAt: catalog.generatedAt,
   method: "Local TF-IDF similarity",
   scope: "community",
-  release: { date: "2026-08-14", label: "Omarchy Quattro v4.0.0 release" },
+  release: { date: "2026-08-14", label: "Litho Quattro v4.0.0 release" },
   world,
   clusters,
   nodes,

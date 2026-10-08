@@ -568,7 +568,7 @@ test("catalog write admission accepts only complete bounded live queue state", a
   });
   await assert.rejects(
     fetchCatalogWriteQueue({
-      repository: "omacom/omarchy-plugin-marketplace",
+      repository: "litho-templates\/litho-template-marketplace",
       token: "token",
       fetchImpl: async () => new Response(declaredOversizedStream, {
         status: 200,
@@ -582,7 +582,7 @@ test("catalog write admission accepts only complete bounded live queue state", a
   for (const malformedLength of ["-1", "1.0", "1e3"]) {
     await assert.rejects(
       fetchCatalogWriteQueue({
-        repository: "omacom/omarchy-plugin-marketplace",
+        repository: "litho-templates\/litho-template-marketplace",
         token: "token",
         fetchImpl: async () => new Response("x", {
           status: 200,
@@ -597,7 +597,7 @@ test("catalog write admission accepts only complete bounded live queue state", a
   const exactLimitBody = response(1).padEnd(1024 * 1024, " ");
   assert.equal(
     (await fetchCatalogWriteQueue({
-      repository: "omacom/omarchy-plugin-marketplace",
+      repository: "litho-templates\/litho-template-marketplace",
       token: "token",
       fetchImpl: async () => new Response(exactLimitBody, {
         status: 200,
@@ -608,7 +608,7 @@ test("catalog write admission accepts only complete bounded live queue state", a
   );
   assert.equal(
     (await fetchCatalogWriteQueue({
-      repository: "omacom/omarchy-plugin-marketplace",
+      repository: "litho-templates\/litho-template-marketplace",
       token: "token",
       fetchImpl: async () => new Response(response(1), { status: 200 }),
     })).depth,
@@ -618,7 +618,7 @@ test("catalog write admission accepts only complete bounded live queue state", a
   let requestedOptions;
   assert.equal(
     (await fetchCatalogWriteQueue({
-      repository: "omacom/omarchy-plugin-marketplace",
+      repository: "litho-templates\/litho-template-marketplace",
       token: "token",
       fetchImpl: async (url, options) => {
         requestedUrl = url;
@@ -630,7 +630,7 @@ test("catalog write admission accepts only complete bounded live queue state", a
   );
   assert.equal(
     requestedUrl,
-    "https://api.github.com/repos/omacom/omarchy-plugin-marketplace/actions/concurrency_groups/plugin-catalog-writes",
+    "https://api.github.com/repos/litho-templates\/litho-template-marketplace/actions/concurrency_groups/plugin-catalog-writes",
   );
   assert.equal(requestedOptions.redirect, "error");
   assert.ok(requestedOptions.signal instanceof AbortSignal);
@@ -638,7 +638,7 @@ test("catalog write admission accepts only complete bounded live queue state", a
   for (const timeoutMilliseconds of [0, 15_001, 1.5]) {
     await assert.rejects(
       fetchCatalogWriteQueue({
-        repository: "omacom/omarchy-plugin-marketplace",
+        repository: "litho-templates\/litho-template-marketplace",
         token: "token",
         timeoutMilliseconds,
       }),
@@ -675,7 +675,7 @@ test("catalog write admission accepts only complete bounded live queue state", a
   try {
     await assert.rejects(
       fetchCatalogWriteQueue({
-        repository: "omacom/omarchy-plugin-marketplace",
+        repository: "litho-templates\/litho-template-marketplace",
         token: "token",
         timeoutMilliseconds: 2_000,
         fetchImpl: (_url, options) => fetch(`${localOrigin}/redirect`, options),
@@ -685,7 +685,7 @@ test("catalog write admission accepts only complete bounded live queue state", a
     assert.equal(redirectedTargetRequests, 0);
     await assert.rejects(
       fetchCatalogWriteQueue({
-        repository: "omacom/omarchy-plugin-marketplace",
+        repository: "litho-templates\/litho-template-marketplace",
         token: "token",
         timeoutMilliseconds: 20,
         fetchImpl: (_url, options) => fetch(`${localOrigin}/slow`, options),
@@ -698,7 +698,7 @@ test("catalog write admission accepts only complete bounded live queue state", a
   }
   await assert.rejects(
     fetchCatalogWriteQueue({
-      repository: "omacom/omarchy-plugin-marketplace",
+      repository: "litho-templates\/litho-template-marketplace",
       token: "token",
       fetchImpl: async () => new Response(new Uint8Array([0xc3, 0x28]), { status: 200 }),
     }),
@@ -710,7 +710,7 @@ test("catalog write admission accepts only complete bounded live queue state", a
       token: "token",
       fetchImpl: async () => new Response("", { status: 404 }),
     }),
-    /must be omacom\/omarchy-plugin-marketplace/,
+    /must be litho-templates\/litho-template-marketplace/,
   );
 
   let cancelled = false;
@@ -726,7 +726,7 @@ test("catalog write admission accepts only complete bounded live queue state", a
   });
   await assert.rejects(
     fetchCatalogWriteQueue({
-      repository: "omacom/omarchy-plugin-marketplace",
+      repository: "litho-templates\/litho-template-marketplace",
       token: "token",
       fetchImpl: async () => new Response(oversizedStream, { status: 200 }),
     }),

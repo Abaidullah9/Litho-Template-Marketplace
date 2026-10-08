@@ -104,7 +104,7 @@ function fakeCache() {
 }
 
 function eventHeaders({
-  origin = "https://omarchyplugins.com",
+  origin = "https://lithoplugins.com",
   ip = "192.0.2.1",
 } = {}) {
   const headers = {
@@ -115,8 +115,8 @@ function eventHeaders({
   return headers;
 }
 
-const productionLocation = { hostname: "plugins.omarchy.org" };
-const legacyProductionLocation = { hostname: "omarchyplugins.com" };
+const productionLocation = { hostname: "plugins.litho.org" };
+const legacyProductionLocation = { hostname: "lithoplugins.com" };
 const localLocation = { hostname: "127.0.0.1" };
 const testMinuteLimitVars = {
   VIEW_MINUTE_EVENT_LIMIT: "2",
@@ -125,18 +125,18 @@ const testMinuteLimitVars = {
 };
 
 test("engagement API routing supports canonical and legacy production hosts exactly", () => {
-  assert.equal(engagementApiBaseUrl(productionLocation), "https://api.omarchyplugins.com/v1");
-  assert.equal(engagementApiBaseUrl(legacyProductionLocation), "https://api.omarchyplugins.com/v1");
+  assert.equal(engagementApiBaseUrl(productionLocation), "https://api.lithoplugins.com/v1");
+  assert.equal(engagementApiBaseUrl(legacyProductionLocation), "https://api.lithoplugins.com/v1");
   assert.equal(
-    engagementApiBaseUrl({ hostname: "www.omarchyplugins.com" }),
-    "https://api.omarchyplugins.com/v1",
+    engagementApiBaseUrl({ hostname: "www.lithoplugins.com" }),
+    "https://api.lithoplugins.com/v1",
   );
   assert.equal(engagementApiBaseUrl(localLocation), "http://127.0.0.1:8787/v1");
   for (const hostname of [
     "preview.example",
-    "plugins.omarchy.org.evil.example",
-    "www.plugins.omarchy.org",
-    "plugins.omarchy.org.",
+    "plugins.litho.org.evil.example",
+    "www.plugins.litho.org",
+    "plugins.litho.org.",
   ]) {
     assert.equal(engagementApiBaseUrl({ hostname }), "");
   }
@@ -151,26 +151,26 @@ test("engagement counts and summaries stay compact, accessible, and command-awar
   assert.equal(formatStars(1000), "1k");
   assert.equal(formatStars(1200), "1.2k");
   const installable = engagementSummary({
-    id: "example.plugin",
-    installCommand: "omarchy plugin add example",
-  }, { views: 1200, copies: 4 }, { detail: true });
-  assert.match(installable, /data-plugin-engagement="example\.plugin"/);
+    id: "example.latex-report",
+    downloadUrl: "https://example.test/report.zip",
+  }, { views: 1200, downloads: 4 }, { detail: true });
+  assert.match(installable, /data-plugin-engagement="example\.latex-report"/);
   assert.match(installable, /<span class="engagement-glyph" aria-hidden="true"><\/span>/);
-  assert.match(installable, /class="copy-icon engagement-copy-icon" aria-hidden="true"><\/span>/);
+  assert.match(installable, /data-engagement-metric="downloads"/);
   assert.match(installable, /data-engagement-accessible>1200 marketplace detail views</);
-  assert.match(installable, /data-engagement-accessible>4 successful command copies</);
+  assert.match(installable, /data-engagement-accessible>4 template downloads</);
   assert.match(installable, />1\.2k</);
   assert.match(installable, /class="engagement-visual" aria-hidden="true">[\s\S]*class="engagement-name">views</);
   const cardSummary = engagementSummary({
-    id: "example.plugin",
-    installCommand: "omarchy plugin add example",
-  }, { views: 1200, copies: 4 });
+    id: "example.latex-report",
+    downloadUrl: "https://example.test/report.zip",
+  }, { views: 1200, downloads: 4 });
   assert.match(cardSummary, /class="engagement-metric has-control-tooltip" data-engagement-metric="views"/);
   assert.match(cardSummary, /class="control-tooltip" role="tooltip" aria-hidden="true">Marketplace detail views/);
-  assert.match(cardSummary, /class="control-tooltip" role="tooltip" aria-hidden="true">Successful command copies/);
-  const manual = engagementSummary({ id: "manual.plugin", installCommand: "" }, {}, { pending: true });
+  assert.match(cardSummary, /class="control-tooltip" role="tooltip" aria-hidden="true">Template downloads/);
+  const manual = engagementSummary({ id: "manual.template", downloadUrl: "" }, {}, { pending: true });
   assert.match(manual, /data-engagement-metric="views"/);
-  assert.doesNotMatch(manual, /data-engagement-metric="copies"/);
+  assert.doesNotMatch(manual, /data-engagement-metric="downloads"/);
   assert.match(manual, /class="plugin-engagement is-pending"/);
   assert.match(manual, /aria-busy="true"/);
 
@@ -242,7 +242,7 @@ test("engagement client loads public stats without credentials", async () => {
     },
   });
   assert.deepEqual(result, { "example.plugin": { views: 2, copies: 1, hearts: 6 } });
-  assert.equal(request[0], "https://api.omarchyplugins.com/v1/stats");
+  assert.equal(request[0], "https://api.lithoplugins.com/v1/stats");
   assert.equal(request[1].cache, "no-store");
   assert.equal(request[1].credentials, "omit");
   assert.equal(request[1].headers.Authorization, undefined);
@@ -264,7 +264,7 @@ test("engagement events contain only the plugin ID and fixed action type", async
     recorded: true,
     stats: { views: 9, copies: 4, hearts: 3 },
   });
-  assert.equal(request[0], "https://api.omarchyplugins.com/v1/events");
+  assert.equal(request[0], "https://api.lithoplugins.com/v1/events");
   assert.deepEqual(JSON.parse(request[1].body), {
     pluginId: "example.plugin",
     type: "copy",
@@ -305,7 +305,7 @@ test("plugin copies are recorded once per browser session and retry after failur
     stats: null,
   });
   assert.equal(requests, 1);
-  assert.equal(values.get("omarchy-plugin-copy:example.plugin"), "1");
+  assert.equal(values.get("litho-plugin-copy:example.plugin"), "1");
 
   const failed = await recordPluginCopy("failed.plugin", {
     ...options,
@@ -315,7 +315,7 @@ test("plugin copies are recorded once per browser session and retry after failur
     },
   });
   assert.equal(failed, null);
-  assert.equal(values.has("omarchy-plugin-copy:failed.plugin"), false);
+  assert.equal(values.has("litho-plugin-copy:failed.plugin"), false);
 });
 
 test("parallel plugin copies share one in-flight request", async () => {
@@ -387,7 +387,7 @@ test("plugin views are recorded once per browser session and retry after failure
     },
   };
   assert.equal(await recordPluginView("another.plugin", failing), null);
-  assert.equal(values.has("omarchy-plugin-view:another.plugin"), false);
+  assert.equal(values.has("litho-plugin-view:another.plugin"), false);
 });
 
 test("plugin hearts are recorded once per browser and only persisted after success", async () => {
@@ -504,8 +504,8 @@ test("Worker exposes aggregate stats with restricted CORS and no credentials", a
     { plugin_id: "example.plugin", views: 8, copies: 3, hearts: 5 },
     { plugin_id: "bad id", views: 99, copies: 99, hearts: 99 },
   ]);
-  const response = await handleRequest(new Request("https://api.omarchyplugins.com/v1/stats", {
-    headers: { Origin: "https://omarchyplugins.com" },
+  const response = await handleRequest(new Request("https://api.lithoplugins.com/v1/stats", {
+    headers: { Origin: "https://lithoplugins.com" },
   }), { ENGAGEMENT_DB: database });
   assert.equal(response.status, 200);
   assert.equal(response.headers.get("Access-Control-Allow-Origin"), "*");
@@ -520,11 +520,11 @@ test("Worker exposes aggregate stats with restricted CORS and no credentials", a
 test("Worker permits canonical and legacy origins exactly", async () => {
   const env = { ENGAGEMENT_DB: fakeDatabase() };
   for (const origin of [
-    "https://plugins.omarchy.org",
-    "https://omarchyplugins.com",
-    "https://www.omarchyplugins.com",
+    "https://plugins.litho.org",
+    "https://lithoplugins.com",
+    "https://www.lithoplugins.com",
   ]) {
-    const response = await handleRequest(new Request("https://api.omarchyplugins.com/v1/events", {
+    const response = await handleRequest(new Request("https://api.lithoplugins.com/v1/events", {
       method: "OPTIONS",
       headers: {
         Origin: origin,
@@ -535,12 +535,12 @@ test("Worker permits canonical and legacy origins exactly", async () => {
     assert.equal(response.headers.get("Access-Control-Allow-Origin"), origin);
   }
   for (const origin of [
-    "http://plugins.omarchy.org",
-    "https://plugins.omarchy.org.evil.example",
-    "https://www.plugins.omarchy.org",
-    "https://plugins.omarchy.org:444",
+    "http://plugins.litho.org",
+    "https://plugins.litho.org.evil.example",
+    "https://www.plugins.litho.org",
+    "https://plugins.litho.org:444",
   ]) {
-    const response = await handleRequest(new Request("https://api.omarchyplugins.com/v1/events", {
+    const response = await handleRequest(new Request("https://api.lithoplugins.com/v1/events", {
       method: "OPTIONS",
       headers: {
         Origin: origin,
@@ -555,7 +555,7 @@ test("Worker permits canonical and legacy origins exactly", async () => {
 test("Worker rejects streamed oversized event bodies without buffering or catalog access", async () => {
   const database = fakeDatabase();
   const rateLimiter = fakeRateLimiter();
-  const request = new Request("https://api.omarchyplugins.com/v1/events", {
+  const request = new Request("https://api.lithoplugins.com/v1/events", {
     method: "POST",
     headers: eventHeaders(),
     body: JSON.stringify({ pluginId: "example.plugin", type: "copy", padding: "x".repeat(1100) }),
@@ -577,12 +577,12 @@ test("Worker rate limiting runs before request body, catalog, and D1 access", as
   const rateLimiter = fakeRateLimiter(false);
   let bodyAccessed = false;
   const request = {
-    url: "https://api.omarchyplugins.com/v1/events",
+    url: "https://api.lithoplugins.com/v1/events",
     method: "POST",
     headers: new Headers({
       "CF-Connecting-IP": "192.0.2.1",
       "Content-Type": "application/json",
-      Origin: "https://omarchyplugins.com",
+      Origin: "https://lithoplugins.com",
     }),
     get body() {
       bodyAccessed = true;
@@ -604,7 +604,7 @@ test("Worker rate limiting runs before request body, catalog, and D1 access", as
 
 test("Worker fails closed when its target limiter is unavailable", async () => {
   const database = fakeDatabase();
-  const response = await handleRequest(new Request("https://api.omarchyplugins.com/v1/events", {
+  const response = await handleRequest(new Request("https://api.lithoplugins.com/v1/events", {
     method: "POST",
     headers: eventHeaders(),
     body: JSON.stringify({ pluginId: "example.plugin", type: "copy" }),
@@ -625,7 +625,7 @@ test("Worker applies a generic target limiter before D1 access", async () => {
   const database = fakeDatabase();
   const outerRateLimiter = fakeRateLimiter();
   const targetRateLimiter = fakeRateLimiter(false);
-  const response = await handleRequest(new Request("https://api.omarchyplugins.com/v1/events", {
+  const response = await handleRequest(new Request("https://api.lithoplugins.com/v1/events", {
     method: "POST",
     headers: eventHeaders({ ip: "192.0.2.8" }),
     body: JSON.stringify({ pluginId: "example.plugin", type: "copy" }),
@@ -648,7 +648,7 @@ test("Worker applies a generic target limiter before D1 access", async () => {
 
 test("Worker fails closed when aggregate limit configuration is unavailable", async () => {
   const database = fakeDatabase();
-  const response = await handleRequest(new Request("https://api.omarchyplugins.com/v1/events", {
+  const response = await handleRequest(new Request("https://api.lithoplugins.com/v1/events", {
     method: "POST",
     headers: eventHeaders(),
     body: JSON.stringify({ pluginId: "example.plugin", type: "view" }),
@@ -667,7 +667,7 @@ test("Worker fails closed when aggregate limit configuration is unavailable", as
 
 test("Worker treats an aggregate event ceiling as a real no-op", async () => {
   const database = fakeDatabase([], { recorded: null });
-  const response = await handleRequest(new Request("https://api.omarchyplugins.com/v1/events", {
+  const response = await handleRequest(new Request("https://api.lithoplugins.com/v1/events", {
     method: "POST",
     headers: eventHeaders(),
     body: JSON.stringify({ pluginId: "example.plugin", type: "view" }),
@@ -689,7 +689,7 @@ test("Worker treats an aggregate event ceiling as a real no-op", async () => {
 
 test("Worker returns no success when its transactional write-and-totals batch fails", async () => {
   const database = fakeDatabase([], { batchError: new Error("totals failed") });
-  const response = await handleRequest(new Request("https://api.omarchyplugins.com/v1/events", {
+  const response = await handleRequest(new Request("https://api.lithoplugins.com/v1/events", {
     method: "POST",
     headers: eventHeaders(),
     body: JSON.stringify({ pluginId: "example.plugin", type: "heart" }),
@@ -858,8 +858,8 @@ test("Worker caches aggregate stats at the edge while disabling browser storage"
     cache,
     waitUntil: (promise) => pending.push(promise),
   };
-  const request = new Request("https://api.omarchyplugins.com/v1/stats", {
-    headers: { Origin: "https://omarchyplugins.com" },
+  const request = new Request("https://api.lithoplugins.com/v1/stats", {
+    headers: { Origin: "https://lithoplugins.com" },
   });
   const first = await handleRequest(request, { ENGAGEMENT_DB: database }, options);
   assert.equal(first.headers.get("Access-Control-Allow-Origin"), "*");
@@ -885,8 +885,8 @@ test("Worker records only known catalog plugins from allowed origins", async () 
     ...testMinuteLimitVars,
   };
   const fetchImpl = async () => responseJson({ plugins: [{ id: "example.plugin" }] });
-  const request = (pluginId, origin = "https://omarchyplugins.com", type = "heart") => new Request(
-    "https://api.omarchyplugins.com/v1/events",
+  const request = (pluginId, origin = "https://lithoplugins.com", type = "heart") => new Request(
+    "https://api.lithoplugins.com/v1/events",
     {
       method: "POST",
       headers: eventHeaders({ origin }),
@@ -913,12 +913,12 @@ test("Worker records only known catalog plugins from allowed origins", async () 
   assert.match(targetRateLimiter.keys[0], /^target:/);
 
   const canonical = await handleRequest(
-    request("example.plugin", "https://plugins.omarchy.org", "copy"),
+    request("example.plugin", "https://plugins.litho.org", "copy"),
     env,
     { cache: fakeCache(), fetchImpl },
   );
   assert.equal(canonical.status, 202);
-  assert.equal(canonical.headers.get("Access-Control-Allow-Origin"), "https://plugins.omarchy.org");
+  assert.equal(canonical.headers.get("Access-Control-Allow-Origin"), "https://plugins.litho.org");
 
   const unknown = await handleRequest(request("unknown.plugin"), env, { fetchImpl });
   assert.equal(unknown.status, 404);
@@ -932,11 +932,11 @@ test("Worker rejects events without a usable client address before reading the b
   const rateLimiter = fakeRateLimiter();
   let bodyAccessed = false;
   const request = {
-    url: "https://api.omarchyplugins.com/v1/events",
+    url: "https://api.lithoplugins.com/v1/events",
     method: "POST",
     headers: new Headers({
       "Content-Type": "application/json",
-      Origin: "https://omarchyplugins.com",
+      Origin: "https://lithoplugins.com",
     }),
     get body() {
       bodyAccessed = true;
@@ -952,7 +952,7 @@ test("Worker rejects events without a usable client address before reading the b
   assert.equal(rateLimiter.keys.length, 0);
   assert.equal(database.calls.length, 0);
 
-  const invalid = await handleRequest(new Request("https://api.omarchyplugins.com/v1/events", {
+  const invalid = await handleRequest(new Request("https://api.lithoplugins.com/v1/events", {
     method: "POST",
     headers: eventHeaders({ ip: "not-an-ip" }),
     body: JSON.stringify({ pluginId: "example.plugin", type: "heart" }),
@@ -1046,7 +1046,7 @@ test("Worker address windows stop repeat hearts from one address without D1 acto
     fetchImpl: async () => responseJson({ plugins: [{ id: "example.plugin" }] }),
     now,
   };
-  const request = () => new Request("https://api.omarchyplugins.com/v1/events", {
+  const request = () => new Request("https://api.lithoplugins.com/v1/events", {
     method: "POST",
     headers: eventHeaders(),
     body: JSON.stringify({ pluginId: "example.plugin", type: "heart" }),
@@ -1094,7 +1094,7 @@ test("Worker serializes concurrent address-window consumption", async () => {
     CATALOG_URL: "https://catalog-concurrent-address.example/catalog.json",
     ...testMinuteLimitVars,
   };
-  const post = () => handleRequest(new Request("https://api.omarchyplugins.com/v1/events", {
+  const post = () => handleRequest(new Request("https://api.lithoplugins.com/v1/events", {
     method: "POST",
     headers: eventHeaders(),
     body: JSON.stringify({ pluginId: "example.plugin", type: "heart" }),
@@ -1121,7 +1121,7 @@ test("Worker counts an address window only after D1 records the event", async ()
     CATALOG_URL: "https://catalog-address-rollback.example/catalog.json",
     ...testMinuteLimitVars,
   });
-  const post = (database, ip) => handleRequest(new Request("https://api.omarchyplugins.com/v1/events", {
+  const post = (database, ip) => handleRequest(new Request("https://api.lithoplugins.com/v1/events", {
     method: "POST",
     headers: eventHeaders({ ip }),
     body: JSON.stringify({ pluginId: "example.plugin", type: "heart" }),
@@ -1155,7 +1155,7 @@ test("Worker shares IPv6 /64 quota across interface IDs", async () => {
     CATALOG_URL: "https://catalog-v6.example/catalog.json",
     ...testMinuteLimitVars,
   };
-  const post = (ip) => handleRequest(new Request("https://api.omarchyplugins.com/v1/events", {
+  const post = (ip) => handleRequest(new Request("https://api.lithoplugins.com/v1/events", {
     method: "POST",
     headers: eventHeaders({ ip }),
     body: JSON.stringify({ pluginId: "example.plugin", type: "heart" }),
@@ -1182,7 +1182,7 @@ test("Worker address windows are per plugin and cap IPv6 /56 networks", async ()
     ...testMinuteLimitVars,
   };
   const plugins = [{ id: "alpha.plugin" }, { id: "beta.plugin" }, { id: "gamma.plugin" }];
-  const post = (pluginId, ip = "192.0.2.30") => handleRequest(new Request("https://api.omarchyplugins.com/v1/events", {
+  const post = (pluginId, ip = "192.0.2.30") => handleRequest(new Request("https://api.lithoplugins.com/v1/events", {
     method: "POST",
     headers: eventHeaders({ ip }),
     body: JSON.stringify({ pluginId, type: "heart" }),
@@ -1217,7 +1217,7 @@ test("Worker counts views once per address and plugin per hour and copies once p
     CATALOG_URL: "https://catalog-windows.example/catalog.json",
     ...testMinuteLimitVars,
   };
-  const recorded = async (type, offset, ip = "192.0.2.40") => (await (await handleRequest(new Request("https://api.omarchyplugins.com/v1/events", {
+  const recorded = async (type, offset, ip = "192.0.2.40") => (await (await handleRequest(new Request("https://api.lithoplugins.com/v1/events", {
     method: "POST",
     headers: eventHeaders({ ip }),
     body: JSON.stringify({ pluginId: "example.plugin", type }),
@@ -1242,7 +1242,7 @@ test("Worker counts views once per address and plugin per hour and copies once p
 test("Worker refuses events on workers.dev, where the Cache API has no effect", async () => {
   const database = fakeDatabase();
   const rateLimiter = fakeRateLimiter();
-  const response = await handleRequest(new Request("https://omarchy-plugin-engagement.example.workers.dev/v1/events", {
+  const response = await handleRequest(new Request("https://litho-plugin-engagement.example.workers.dev/v1/events", {
     method: "POST",
     headers: eventHeaders(),
     body: JSON.stringify({ pluginId: "example.plugin", type: "heart" }),
@@ -1263,7 +1263,7 @@ test("Worker refuses events on workers.dev, where the Cache API has no effect", 
 
 test("Worker fails closed when the address-window cache is unavailable", async () => {
   const database = fakeDatabase();
-  const response = await handleRequest(new Request("https://api.omarchyplugins.com/v1/events", {
+  const response = await handleRequest(new Request("https://api.lithoplugins.com/v1/events", {
     method: "POST",
     headers: eventHeaders(),
     body: JSON.stringify({ pluginId: "example.plugin", type: "copy" }),
@@ -1318,7 +1318,7 @@ test("Worker deployment files contain placeholders but no credentials", async ()
   assert.match(checkMigration, /substr\(views_minute, 1, 4\) NOT GLOB '\*\[\^0-9\]\*'/);
   assert.match(checkMigration, /substr\(hearts_minute, 15, 2\) NOT GLOB '\*\[\^0-9\]\*'/);
   assert.doesNotMatch(checkMigration, /actor|browser|ip_address/i);
-  assert.doesNotMatch(`${workerSource}${clientSource}`, /actorId|actor_hash|omarchy-plugin-actor/i);
+  assert.doesNotMatch(`${workerSource}${clientSource}`, /actorId|actor_hash|litho-plugin-actor/i);
   assert.match(workerSource, /engagement-quota\.invalid/);
   assert.match(workerSource, /normalizeClientAddress/);
   assert.doesNotMatch(engagementUpsertStatement(), /ip_address|client_address|quota/i);

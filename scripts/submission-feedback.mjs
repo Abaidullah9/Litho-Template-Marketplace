@@ -53,7 +53,7 @@ const feedback = Object.freeze({
     action: "Add or correct the declared entry-point file and edit the issue to retry.",
   },
   "reserved-plugin-id": {
-    reason: "The plugin ID uses the reserved `omarchy.*` namespace.",
+    reason: "The plugin ID uses the reserved `litho.*` namespace.",
     action: "Choose a globally unique, non-reserved plugin ID and edit the issue to retry.",
   },
   "readme-missing": {

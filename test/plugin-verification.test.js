@@ -691,7 +691,7 @@ test("standard installation verification removes only an eligible manual root ov
   assert.equal(result.installationChanged, true);
   assert.equal(result.registry.sources[0].plugins["example.plugin"].installation, undefined);
   assert.equal(result.catalog.plugins[0].installAvailable, true);
-  assert.equal(result.catalog.plugins[0].installCommand, "omarchy plugin add https://github.com/example/plugin.git --enable");
+  assert.equal(result.catalog.plugins[0].installCommand, "litho plugin add https://github.com/example/plugin.git --enable");
   assert.equal(result.catalog.plugins[0].status, "Available");
   assert.match(result.catalog.plugins[0].installNote, /clones the current upstream repository/);
   assert.match(buildVerificationReport(result), /manual installation override was removed/);
@@ -1811,7 +1811,7 @@ test("verification issue, workflow, and documentation preserve automatic publica
     assert.match(document, /not a security audit/i);
     assert.match(document, /Unverified/);
   }
-  const requestUrl = "https://github.com/omacom/omarchy-plugin-marketplace/issues/new?template=verify-plugin.yml";
+  const requestUrl = "https://github.com/litho-templates/litho-template-marketplace/issues/new?template=verify-plugin.yml";
   assert.match(guide, new RegExp(requestUrl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   assert.match(readme, new RegExp(requestUrl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   assert.match(submissionGuide, new RegExp(requestUrl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
@@ -1819,8 +1819,8 @@ test("verification issue, workflow, and documentation preserve automatic publica
   assert.match(submissionGuide, /exact match between that report and a fresh scan/);
   assert.doesNotMatch(submissionGuide, /publishes `Verified` only after a complete `passed` result/);
   assert.match(readme, /<p><a[\s\S]*readme-tagline\.png[\s\S]*<\/a><\/p>/);
-  assert.doesNotMatch(readme, /<h1>|readme-header\.png|omarchy-wordmark\.png|<img[^>]+\sheight="/);
-  assert.match(readme, /readme-tagline\.png" alt="Browse and discover community plugins for Omarchy at omarchyplugins\.com" width="660"/);
+  assert.doesNotMatch(readme, /<h1>|readme-header\.png|litho-wordmark\.png|<img[^>]+\sheight="/);
+  assert.match(readme, /readme-tagline\.png" alt="Browse and discover community plugins for Litho at lithoplugins\.com" width="660"/);
   assert.match(readme, /readme-nav\/develop\.png[\s\S]*readme-nav\/submit\.png[\s\S]*readme-nav\/verify\.png/);
   assert.doesNotMatch(readme, /readme-nav\/(?:browse|contribute)\.png|<kbd>/);
   assert.match(readme, /issues\/new\?template=submit-plugin\.yml/);
@@ -1829,7 +1829,7 @@ test("verification issue, workflow, and documentation preserve automatic publica
   assert.match(guide, /maintainer-verified/);
   assert.match(guide, /review-required/);
   assert.match(guide, /`Update unverified`/);
-  assert.match(guide, /current Omarchy command clones the repository's mutable current HEAD/);
+  assert.match(guide, /current Litho command clones the repository's mutable current HEAD/);
   assert.match(guide, /not verification-bound/);
 });
 

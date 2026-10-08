@@ -4,7 +4,7 @@ export const listedSnapshotVerificationAction = "Verify the currently listed sna
 export const standardInstallationVerificationAction = "Verify the listed snapshot and enable standard installation";
 export const upstreamUpdateVerificationAction = "Verify and publish a newer upstream commit";
 export const pluginVerificationAcknowledgment = "I understand that only the exact target commit can become a verified marketplace snapshot and that verification is not a security audit.";
-export const standardInstallationAcknowledgment = "I confirm that this listed root plugin supports the standard Omarchy installation path and does not require manual setup.";
+export const standardInstallationAcknowledgment = "I confirm that this listed root plugin supports the standard installation path and does not require manual setup.";
 export const legacyListedSnapshotAcknowledgment = "I understand that automated verification applies only to the exact listed commit and is not a security audit.";
 export const pluginVerificationRequestHeadings = Object.freeze([
   "Verification action",

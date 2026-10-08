@@ -20,8 +20,7 @@ const state = { page: 1, entity: "" };
 
 shell.body.innerHTML = `
   <div class="notice">
-    Every important admin action is recorded with <code>action</code>, <code>entity</code>,
-    <code>entity_id</code>, <code>timestamp</code> and <code>metadata</code>.
+    System activity log recording administrative events, moderation changes, and updates.
   </div>
   <div class="toolbar" style="border:1px solid var(--line);background:var(--panel);border-bottom:none;margin-bottom:16px">
     <div class="field">

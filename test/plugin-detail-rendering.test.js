@@ -2,63 +2,75 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { detailTemplate, setupPreviewLightbox } from "../site/assets/js/plugin.js";
 
-const verifiedCommit = "1".repeat(40);
-const upstreamCommit = "2".repeat(40);
-
-function communityPlugin(overrides = {}) {
+function templateListing(overrides = {}) {
   return {
-    id: "example.community-plugin",
-    name: "Community Plugin",
-    initials: "CP",
-    category: "Desktop",
+    id: "example-research.latex-report",
+    slug: "latex-report",
+    name: "LaTeX Report",
+    initials: "LR",
+    category: { name: "Academic" },
     author: "Example Maintainer",
-    description: "A community plugin used by rendering tests.",
-    tags: ["desktop"],
+    publisher: { name: "Example Maintainer" },
+    description: "A report template used by rendering tests.",
+    tags: ["latex", "research"],
     accent: "lime",
     version: "1.0.0",
     license: "MIT",
-    sourceType: "community",
-    builtIn: false,
-    placeholder: false,
-    installAvailable: true,
-    installCommand: "omarchy plugin add https://github.com/example/community-plugin.git --enable",
-    installNote: "",
-    status: "Available",
-    repositoryLayout: "root-plugin",
-    verificationStatus: "unverified",
-    verificationSnapshotStatus: "unverified",
-    verificationCoverage: "unverified",
-    repo: "https://github.com/example/community-plugin",
-    sourceUrl: "https://github.com/example/community-plugin",
+    status: "published",
+    verified: false,
+    verificationMethod: "manual",
+    downloadUrl: "https://example.test/latex-report.zip",
+    repositoryUrl: "https://github.com/example/latex-report",
     ...overrides,
   };
 }
 
 function render(overrides = {}) {
-  return detailTemplate(communityPlugin(overrides), { views: 0, copies: 0, hearts: 0 });
+  return detailTemplate(templateListing(overrides), { views: 0, downloads: 0 });
 }
 
-function assertCommunitySectionOrder(html) {
-  const install = html.indexOf('id="install"');
+/** The detail page renders its sections in a fixed reading order. */
+function assertSectionOrder(html) {
+  const download = html.indexOf('id="download"');
+  const details = html.indexOf('id="details"');
   const verification = html.indexOf('id="verification"');
-  const security = html.indexOf('id="security"');
   const terms = html.indexOf('id="terms"');
-  assert.ok(install >= 0 && verification > install && security > verification && terms > security);
+  assert.ok(download >= 0 && details > download && verification > details && terms > verification);
 }
 
-test("installable unverified plugin details render exact snapshot and mutable-install warnings", () => {
+test("template details render download, details, verification, and terms in order", () => {
   const html = render();
 
-  assertCommunitySectionOrder(html);
-  assert.match(html, /<h2>Install<\/h2>/);
-  assert.match(html, /Snapshot unverified:<\/strong> This listed commit has not been verified\./);
-  assert.match(html, /Contributor action:<\/strong> Submit the exact listed commit/);
-  assert.match(html, /This Omarchy command clones the repository’s current HEAD\./);
-  assert.doesNotMatch(html, /Manual installation follows the upstream project’s instructions\./);
-  assert.match(html, /href="https:\/\/github\.com\/omacom\/omarchy-plugin-marketplace\/issues\/new\?template=verify-plugin\.yml"/);
-  assert.match(html, /href="https:\/\/github\.com\/omacom\/omarchy-plugin-marketplace\/security\/advisories\/new"/);
-  assert.doesNotMatch(html, /github\.com\/HANCORE-linux\/omarchy-plugin-marketplace/);
-  assert.match(html, /<section class="detail-section security-notice-section" id="security" aria-labelledby="security-notice-title">[\s\S]*<strong id="security-notice-title">Security Notice<\/strong>/);
+  assertSectionOrder(html);
+  assert.match(html, /<h2>Download<\/h2>/);
+  assert.match(html, /data-download-id="example-research\.latex-report"/);
+  assert.match(html, /Download template/);
+  assert.match(html, /Downloads are served by the marketplace\. Check the licence before you reuse the files\./);
+  assert.match(html, /<h2>Details<\/h2>/);
+  assert.match(html, /<h2>Verification status<\/h2>/);
+  assert.match(html, /<h2>Terms of Use<\/h2>/);
+  assert.match(html, /href="submit\.html"/);
+  assert.doesNotMatch(html, /installCommand|data-install-copy|litho plugin/);
+});
+
+test("listings without any download render the browse-only placeholder", () => {
+  const html = render({ downloadUrl: "", repositoryUrl: "" });
+
+  assertSectionOrder(html);
+  assert.match(html, /<strong>No download yet<\/strong>/);
+  assert.match(html, /listed for browsing only/);
+  assert.doesNotMatch(html, /data-download-id=/);
+});
+
+test("repository, documentation, and sample links ride alongside the download", () => {
+  const html = render({
+    documentationUrl: "https://example.test/docs",
+    sampleFile: "https://example.test/sample.pdf",
+  });
+
+  assert.match(html, /href="https:\/\/example\.test\/docs" target="_blank" rel="noreferrer">Documentation/);
+  assert.match(html, /href="https:\/\/example\.test\/sample\.pdf" target="_blank" rel="noreferrer">Sample file/);
+  assert.match(html, /href="https:\/\/github\.com\/example\/latex-report" target="_blank" rel="noreferrer">Repository/);
 });
 
 test("detail tags use the curated Games, Security, and AI labels", () => {
@@ -69,17 +81,17 @@ test("detail tags use the curated Games, Security, and AI labels", () => {
   assert.match(html, /<span class="tag">quickshell<\/span>/);
 });
 
-test("plugin preview uses an escaped native button", () => {
+test("template preview uses an escaped native button", () => {
   const html = render({
     name: `\"><span data-injected>Unsafe</span>`,
-    previewImage: "assets/img/plugins/example-detail.webp",
+    previewImage: "assets/img/templates/example-detail.webp",
     previewWidth: 1200,
     previewHeight: 800,
   });
 
   assert.match(html, /<button class="detail-preview" type="button" data-preview-open/);
   assert.match(html, /aria-label="Open &quot;&gt;&lt;span data-injected&gt;Unsafe&lt;\/span&gt; preview"/);
-  assert.match(html, /alt="&quot;&gt;&lt;span data-injected&gt;Unsafe&lt;\/span&gt; desktop preview"/);
+  assert.match(html, /alt="&quot;&gt;&lt;span data-injected&gt;Unsafe&lt;\/span&gt; template preview"/);
   assert.doesNotMatch(html, /<figure class="detail-preview"|<span data-injected>/);
 });
 
@@ -96,7 +108,7 @@ test("preview lightbox keeps untrusted alt text inert and restores focus", () =>
       return element;
     },
   };
-  const unsafeAlt = `\"><img src=x onerror=alert(1)> desktop preview`;
+  const unsafeAlt = `\"><img src=x onerror=alert(1)> template preview`;
   const previewImage = {
     alt: unsafeAlt,
     currentSrc: "",
@@ -104,7 +116,7 @@ test("preview lightbox keeps untrusted alt text inert and restores focus", () =>
     getAttribute: (name) => ({ width: "1200", height: "800" })[name] || null,
   };
   const trigger = listenersFor({
-    dataset: { fullSrc: "assets/img/plugins/example-detail.webp" },
+    dataset: { fullSrc: "assets/img/templates/example-detail.webp" },
     querySelector: (selector) => selector === "img" ? previewImage : null,
     focusOptions: null,
     focus(options) { this.focusOptions = options; },
@@ -134,7 +146,7 @@ test("preview lightbox keeps untrusted alt text inert and restores focus", () =>
   assert.equal(closeButton.tagName, "button");
   assert.equal(closeButton.attributes["aria-label"], "Close preview");
   assert.equal(fullImage.tagName, "img");
-  assert.equal(fullImage.src, "assets/img/plugins/example-detail.webp");
+  assert.equal(fullImage.src, "assets/img/templates/example-detail.webp");
   assert.equal(fullImage.alt, unsafeAlt);
   assert.equal(fullImage.width, 1200);
   assert.equal(fullImage.height, 800);
@@ -148,180 +160,88 @@ test("preview lightbox keeps untrusted alt text inert and restores focus", () =>
   assert.deepEqual(trigger.focusOptions, { preventScroll: true });
 });
 
-test("manual setup plugin details render the manual-install security context", () => {
-  const html = render({
-    installAvailable: false,
-    installCommand: "",
-    installNote: "Follow the upstream installation instructions.",
-    status: "Manual setup",
-  });
-
-  assertCommunitySectionOrder(html);
-  assert.match(html, /<h2>Availability<\/h2>/);
-  assert.match(html, /<strong>Manual setup<\/strong>/);
-  assert.match(html, /Snapshot unverified:<\/strong> This listed commit has not been verified\./);
-  assert.match(html, /Manual installation follows the upstream project’s instructions\./);
-  assert.doesNotMatch(html, /This Omarchy command clones the repository’s current HEAD\./);
-});
-
-test("verified plugin details render only the exact verified snapshot", () => {
-  const html = render({
-    verificationStatus: "verified",
-    verificationSnapshotStatus: "verified",
-    verificationCoverage: "snapshot-verified",
-    verificationCommit: verifiedCommit,
-    listingValidatedCommit: verifiedCommit,
-    listingValidatedAt: "2026-08-20T12:00:00.000Z",
-    listingValidatedBranch: "main",
-    upstreamCheckStatus: "passed",
-    upstreamValidatedCommit: verifiedCommit,
-    upstreamObservedCommit: verifiedCommit,
-    upstreamObservedBranch: "main",
-    upstreamCheckedAt: "2026-08-20T12:00:00.000Z",
-  });
-
-  assertCommunitySectionOrder(html);
-  assert.match(html, /Snapshot verified:<\/strong> Marketplace verification covers only the exact commit/);
-  assert.match(html, new RegExp(`<dt>Verified snapshot<\\/dt><dd><a href="https:\\/\\/github\\.com\\/example\\/community-plugin\\/commit\\/${verifiedCommit}"[\\s\\S]*<code>1111111<\\/code>`));
-  assert.doesNotMatch(html, /Snapshot unverified:|Update unverified:|Contributor action:/);
-});
-
-test("changed upstream details preserve the verified snapshot and flag the update", () => {
-  const html = render({
-    verificationStatus: "unverified",
-    verificationSnapshotStatus: "verified",
-    verificationCoverage: "update-unverified",
-    verificationCommit: verifiedCommit,
-    listingValidatedCommit: verifiedCommit,
-    listingValidatedAt: "2026-08-20T12:00:00.000Z",
-    listingValidatedBranch: "main",
-    upstreamCheckStatus: "passed",
-    upstreamValidatedCommit: upstreamCommit,
-    upstreamObservedCommit: upstreamCommit,
-    upstreamObservedBranch: "main",
-    upstreamCheckedAt: "2026-08-21T12:00:00.000Z",
-  });
-
-  assertCommunitySectionOrder(html);
-  assert.match(html, /Snapshot verified:<\/strong>/);
-  assert.match(html, /Update unverified:<\/strong> The latest upstream changes have not been verified\./);
-  assert.match(html, /Contributor action:<\/strong> Submit the new exact commit/);
-});
-
-test("observed commit drift overrides stale snapshot coverage", () => {
-  const html = render({
-    verificationStatus: "verified",
-    verificationSnapshotStatus: "verified",
-    verificationCoverage: "snapshot-verified",
-    verificationCommit: verifiedCommit,
-    listingValidatedCommit: verifiedCommit,
-    upstreamObservedCommit: upstreamCommit,
-  });
-
-  assert.match(html, /Snapshot verified:<\/strong>/);
-  assert.match(html, /Update unverified:<\/strong> The latest upstream changes have not been verified\./);
-  assert.match(html, /Contributor action:<\/strong> Submit the new exact commit/);
-});
-
-test("detail checks use a valid fallback when observed commit metadata is malformed", () => {
-  const html = render({
-    verificationStatus: "verified",
-    verificationSnapshotStatus: "verified",
-    verificationCoverage: "snapshot-verified",
-    verificationCommit: verifiedCommit,
-    listingValidatedCommit: verifiedCommit,
-    upstreamObservedCommit: "malformed",
-    upstreamValidatedCommit: upstreamCommit.toUpperCase(),
-    upstreamCheckStatus: "passed",
-  });
-
-  assert.match(html, /Update unverified:<\/strong>/);
-  assert.match(html, new RegExp(`/compare/${verifiedCommit}\\.\\.\\.${upstreamCommit}`));
-  assert.doesNotMatch(html, /No changes detected|Could not determine/);
-});
-
-test("detail checks fail closed when current commit metadata is invalid", () => {
-  const html = render({
-    verificationStatus: "verified",
-    verificationSnapshotStatus: "verified",
-    verificationCoverage: "snapshot-verified",
-    verificationCommit: verifiedCommit,
-    listingValidatedCommit: verifiedCommit,
-    upstreamObservedCommit: "malformed",
-    upstreamValidatedCommit: "also-malformed",
-    upstreamCheckStatus: "passed",
-  });
-
-  assert.match(html, /Update unverified:<\/strong>/);
-  assert.match(html, /Could not determine/);
-  assert.doesNotMatch(html, /View changes|No changes detected/);
-});
-
-test("compatibility failures override stale manual status and install commands", () => {
-  const html = render({
-    installAvailable: false,
-    installCommand: "omarchy plugin add https://github.com/example/stale.git --enable",
-    installNote: "The latest compatibility check failed.",
-    status: "Manual setup",
-    upstreamCheckStatus: "failed",
-  });
-
-  assertCommunitySectionOrder(html);
-  assert.match(html, /<strong>Compatibility failed<\/strong>/);
-  assert.match(html, /Marketplace installation is unavailable because compatibility has not been confirmed\./);
-  assert.match(html, /Installation through another method is not bound to the marketplace’s listed or verified snapshot/);
-  assert.doesNotMatch(html, /Manual installation follows the upstream project’s instructions\.|data-install-copy/);
-});
-
-test("mismatched snapshot commits fail closed as unverified", () => {
-  const html = render({
-    verificationStatus: "verified",
-    verificationSnapshotStatus: "verified",
-    verificationCoverage: "snapshot-verified",
-    verificationCommit: verifiedCommit,
-    listingValidatedCommit: upstreamCommit,
-  });
-
-  assert.match(html, /Snapshot unverified:<\/strong>/);
-  assert.match(html, /Contributor action:<\/strong> Submit the exact listed commit/);
-  assert.match(html, /<dt>Listing snapshot<\/dt>/);
-  assert.doesNotMatch(html, /Snapshot verified:|Update unverified:|<dt>Verified snapshot<\/dt>/);
-});
-
-test("suite listings do not offer the unsupported verification workflow", () => {
-  const html = render({
-    installAvailable: false,
-    installCommand: "",
-    installNote: "Follow the suite installation instructions.",
-    status: "Manual setup",
-    repositoryLayout: "suite",
-    verificationStatus: "unverified",
-    verificationSnapshotStatus: "verified",
-    verificationCoverage: "update-unverified",
-    verificationCommit: verifiedCommit,
-    listingValidatedCommit: verifiedCommit,
-    upstreamObservedCommit: upstreamCommit,
-  });
-
-  assert.match(html, /Verification unavailable:<\/strong> Suite listings are outside the plugin verification workflow\./);
-  assert.doesNotMatch(html, /Snapshot verified:|Snapshot unverified:|Update unverified:|Contributor action:|plugin verification form|detail-verification/);
-});
-
-test("community plugin author links to the marketplace author filter", () => {
+test("unverified listings fail closed with the review-pending notice", () => {
   const html = render();
 
-  assert.match(html, /<span>by <a href="index\.html\?author=example" aria-label="Show all plugins by @example">Example Maintainer<\/a><\/span>/);
+  assertSectionOrder(html);
+  assert.match(html, /<li class="verification-unverified"><strong>Unverified:<\/strong> This listing has not been reviewed yet\. Review the files before you use them\.<\/li>/);
+  assert.match(html, /<strong>Method:<\/strong> manual/);
+  assert.doesNotMatch(html, /<strong>Verified:<\/strong>|<strong>Score:<\/strong>/);
+  assert.doesNotMatch(html, /card-verification is-verified/);
 });
 
-test("built-in plugin author renders as plain text", () => {
+test("verified listings render the reason, method, date, and score", () => {
   const html = render({
-    builtIn: true,
-    repo: "https://github.com/basecamp/omarchy",
-    sourceType: "builtin",
-    officialCommand: "omarchy plugin enable example.community-plugin",
-    officialCommandLabel: "Enable plugin",
+    verified: true,
+    verificationReason: "An administrator checked the repository and preview.",
+    verificationMethod: "manual",
+    verificationScore: 0.87,
+    verifiedAt: "2026-08-20T12:00:00.000Z",
+  });
+
+  assertSectionOrder(html);
+  assert.match(html, /<li class="verification-snapshot"><strong>Verified:<\/strong> An administrator checked the repository and preview\.<\/li>/);
+  assert.match(html, /<strong>Method:<\/strong> manual · checked /);
+  assert.match(html, /<strong>Score:<\/strong> 87%/);
+  assert.match(html, /aria-label="Verified"[\s\S]*card-verification-marker">Verified</);
+  assert.doesNotMatch(html, /verification-unverified/);
+});
+
+test("AI verification labels itself without changing the section contract", () => {
+  const html = render({
+    verified: true,
+    verificationMethod: "ai",
+    verificationReason: "Automated checks matched the declared files.",
+  });
+
+  assert.match(html, /aria-label="AI verified"[\s\S]*card-verification-marker">AI verified</);
+  assert.match(html, /<strong>Method:<\/strong> ai/);
+  assertSectionOrder(html);
+});
+
+test("the header status distinguishes published from draft listings", () => {
+  const published = render();
+  assert.match(published, /<span class="status "><i class="status-dot" aria-hidden="true"><\/i>Available<\/span>/);
+
+  const draft = render({ status: "draft" });
+  assert.match(draft, /<span class="status is-caution"><i class="status-dot" aria-hidden="true"><\/i>draft<\/span>/);
+});
+
+test("details rows carry version, licence, category, publisher, tags, and identifier", () => {
+  const html = render({ updatedAt: "2026-08-20T12:00:00.000Z" });
+
+  assert.match(html, /<dt>Version<\/dt><dd>1\.0\.0<\/dd>/);
+  assert.match(html, /<dt>Licence<\/dt><dd>MIT<\/dd>/);
+  assert.match(html, /<dt>Category<\/dt><dd>Academic<\/dd>/);
+  assert.match(html, /<dt>Publisher<\/dt><dd>/);
+  assert.match(html, /<dt>Tags<\/dt><dd><span class="tag">latex<\/span> <span class="tag">research<\/span><\/dd>/);
+  assert.match(html, /<dt>Updated<\/dt><dd><time datetime="2026-08-20T12:00:00\.000Z">/);
+  assert.match(html, /<dt>Identifier<\/dt><dd><code>latex-report<\/code><\/dd>/);
+});
+
+test("a github publisher links to the marketplace author filter", () => {
+  const html = render();
+
+  assert.match(html, /<span>by <a href="index\.html\?author=example" aria-label="Show all templates by Example Maintainer">Example Maintainer<\/a><\/span>/);
+});
+
+test("a publisher without a github repository renders as plain text", () => {
+  const html = render({
+    repositoryUrl: "https://gitlab.com/example/latex-report",
+    repo: "https://gitlab.com/example/latex-report",
   });
 
   assert.match(html, /<span>by Example Maintainer<\/span>/);
   assert.doesNotMatch(html, /<a href="index\.html\?author=/);
+});
+
+test("the engagement cluster shows views and downloads for the listing", () => {
+  const html = detailTemplate(templateListing(), { views: 12, downloads: 3 }, { engagementEnabled: true });
+
+  assert.match(html, /data-engagement-metric="views"/);
+  assert.match(html, /data-engagement-metric="downloads"/);
+  assert.match(html, /data-plugin-engagement="example-research\.latex-report"/);
+
+  const withoutEngagement = detailTemplate(templateListing(), {}, { engagementEnabled: false });
+  assert.doesNotMatch(withoutEngagement, /detail-engagement-cluster/);
 });

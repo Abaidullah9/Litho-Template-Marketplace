@@ -291,7 +291,7 @@ test("a confirmed new identity remains update-unverified across later network fa
   const previous = priorPlugin(activeSource, {
     repositoryLayout: "root-plugin",
     installAvailable: true,
-    installCommand: "omarchy plugin add https://github.com/example/plugin.git --enable",
+    installCommand: "litho plugin add https://github.com/example/plugin.git --enable",
     status: "Available",
     upstreamObservedCommit: oldCommit,
     upstreamValidatedCommit: oldCommit,
@@ -648,7 +648,7 @@ test("tree and raw failures preserve a GraphQL-observed newer commit", async () 
       listedAt: activeSource.listedAt,
       repositoryLayout: "root-plugin",
       installAvailable: true,
-      installCommand: "omarchy plugin add https://github.com/example/plugin.git --enable",
+      installCommand: "litho plugin add https://github.com/example/plugin.git --enable",
       status: "Available",
       upstreamObservedCommit: oldCommit,
       upstreamValidatedCommit: oldCommit,
@@ -952,7 +952,7 @@ test("a built-in bar widget is listed with the plugin enable command", async () 
   const previewDirectory = join(directory, "site/assets/img/plugins");
   const manifest = JSON.stringify({
     schemaVersion: 1,
-    id: "omarchy.clock",
+    id: "litho.clock",
     name: "Clock",
     version: "1.0.0",
     kinds: ["bar-widget"],
@@ -1026,9 +1026,9 @@ test("a built-in bar widget is listed with the plugin enable command", async () 
       graphqlBudgetReserve: 0,
     });
     const { plugins } = JSON.parse(await readFile(catalogPath, "utf8"));
-    const plugin = plugins.find((entry) => entry.id === "omarchy.clock");
+    const plugin = plugins.find((entry) => entry.id === "litho.clock");
     assert.equal(plugin?.builtIn, true);
-    assert.equal(plugin.officialCommand, "omarchy plugin enable omarchy.clock");
+    assert.equal(plugin.officialCommand, "litho plugin enable litho.clock");
     assert.equal(plugin.officialCommandLabel, "Enable plugin");
   } finally {
     globalThis.fetch = originalFetch;

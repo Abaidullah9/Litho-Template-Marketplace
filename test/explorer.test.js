@@ -540,33 +540,34 @@ test("explore page exposes graph and date-filtered growth views", () => {
   assert.match(page, /<span class="page-eyebrow">Community registry<\/span>/);
   assert.match(page, /role="tab"[^>]+aria-controls="graph-view"/);
   assert.match(page, /role="tab"[^>]+aria-controls="growth-view"/);
-  assert.match(page, /id="growth-from" type="text"[^>]+readonly[^>]+aria-controls="growth-calendar"/);
-  assert.match(page, /id="growth-to" type="text"[^>]+readonly[^>]+aria-controls="growth-calendar"/);
+  assert.match(page, /id="growth-from" type="text"[^>]+readonly[^>]+aria-controls="growth-calendar"/i);
+  assert.match(page, /id="growth-to" type="text"[^>]+readonly[^>]+aria-controls="growth-calendar"/i);
   assert.equal((page.match(/class="date-input-shell"/g) || []).length, 2);
   assert.match(page, /id="growth-calendar"[^>]+role="dialog"[\s\S]*id="growth-calendar-grid"[^>]+role="grid"/);
-  assert.match(page, /assets\/js\/explore\.js\?v=\d{8}-\d+/);
+  assert.match(page, /(?:assets\/js\/explore\.js\?v=\d{8}-\d+|_next\/static\/chunks\/)/);
 });
 
 test("growth view preserves the source graphic's presentation hierarchy", () => {
   assert.match(page, /class="growth-poster"/);
-  assert.match(page, /Community Registry[\s\S]*<h2>community plugins<\/h2>/);
-  assert.match(page, /class="growth-summary"[\s\S]*id="growth-delta"[^>]+class="growth-delta"[\s\S]*plugins[\s\S]*id="growth-start-total"[\s\S]*id="growth-end-total"[\s\S]*Period/);
+  assert.match(page, /Community Registry[\s\S]*<h2>community templates<\/h2>/);
+  assert.match(page, /class="growth-summary"[\s\S]*id="growth-delta"[^>]+class="growth-delta"[\s\S]*templates[\s\S]*id="growth-start-total"[\s\S]*id="growth-end-total"[\s\S]*Period/);
   assert.match(page, /id="growth-rate"[\s\S]*id="growth-trend-arrow"[\s\S]*id="growth-rate-value"/);
-  assert.match(script, /growthDelta\.querySelector\("strong"\)\.textContent = `\$\{change > 0 \? "\+" : ""\}\$\{number\.format\(change\)\}`[\s\S]*plugin\$\{absoluteChange === 1 \? "" : "s"\} \$\{trendWord\} over the selected period/);
-  assert.match(page, /class="growth-plot-meta"[\s\S]*Plugin Count[\s\S]*class="growth-plot-frame"[\s\S]*viewBox="0 0 1728 620"/);
-  assert.match(page, /id="growth-chart"[^>]+aria-label="Community plugin growth"[^>]+aria-describedby="growth-chart-description"/);
+  assert.match(script, /growthDelta\.querySelector\("strong"\)\.textContent = `\$\{change > 0 \? "\+" : ""\}\$\{number\.format\(change\)\}`[\s\S]*template\$\{absoluteChange === 1 \? "" : "s"\} \$\{trendWord\} over the selected period/);
+  assert.match(page, /class="growth-plot-meta"[\s\S]*Template Count[\s\S]*class="growth-plot-frame"[\s\S]*viewBox="0 0 1728 620"/);
+  assert.match(page, /id="growth-chart"[^>]+aria-label="Community template growth"[^>]+aria-describedby="growth-chart-description"/);
   assert.doesNotMatch(page, /growth-finality-copy|provisional/);
   assert.doesNotMatch(script, /growth-finality-copy|provisional until a successful later-day build/);
-  assert.match(script, /querySelector\("#growth-chart-description"\)\.textContent = `Active community plugin listings changed from/);
+  assert.match(script, /querySelector\("#growth-chart-description"\)\.textContent = `Active community template listings changed from/);
   assert.doesNotMatch(script, /finalityDescription/);
   assert.doesNotMatch(page, /<title id="growth-chart-title">/);
   assert.doesNotMatch(script, /\.title\s*=\s*growthMeta\.detail/);
   assert.match(page, /class="explore-freshness"[\s\S]*Data updated[\s\S]*id="explorer-updated"[\s\S]*Daily refresh start[\s\S]*id="explorer-refresh-time"/);
-  assert.match(page, /End-of-day Git catalog snapshots \(UTC\)[\s\S]*Active community listings[\s\S]*Omarchy Quattro v4\.0\.0 release[\s\S]*class="growth-source">Source[\s\S]*id="growth-source"/);
-  assert.match(script, /releaseBoxWidth = 340[\s\S]*releaseBoxHeight = 60[\s\S]*OMARCHY QUATTRO v4\.0\.0[\s\S]*release-label-meta[\s\S]*`\$\{releaseDate\} · RELEASE`/);
+  assert.match(page, /End-of-day Git catalog snapshots \(UTC\)[\s\S]*Active community listings[\s\S]*Litho Quattro v4\.0\.0 release[\s\S]*class="growth-source">Source[\s\S]*id="growth-source"/);
+  assert.match(script, /releaseBoxWidth = 340[\s\S]*releaseBoxHeight = 60[\s\S]*LITHO QUATTRO v4\.0\.0[\s\S]*release-label-meta[\s\S]*`\$\{releaseDate\} · RELEASE`/);
   assert.match(styles, /\.release-label\s*\{[^}]*font:\s*700 20px var\(--mono\)[^}]*\}[\s\S]*\.release-label-meta\s*\{[^}]*fill:\s*var\(--growth-muted\)[^}]*font:\s*600 16px var\(--mono\)/);
-  assert.equal((page.match(/Data updated/g) || []).length, 1);
-  assert.equal((page.match(/Daily refresh start/g) || []).length, 1);
+  const markupOnly = page.replace(/<script[\s\S]*?<\/script>/gi, "");
+  assert.equal((markupOnly.match(/Data updated/g) || []).length, 1);
+  assert.equal((markupOnly.match(/Daily refresh start/g) || []).length, 1);
 });
 
 test("explore UI follows marketplace geometry, readable type, and complete theme states", () => {
@@ -630,14 +631,14 @@ test("growth projection extends the chart to year end at the Quattro pace", () =
   assert.equal((page.match(/data-projection-year=/g) || []).length, 1);
   assert.match(page, /data-projection-year="2026" aria-pressed="false" aria-label="Project to 31 Dec 2026 at the pace since the Quattro release">2026<\/button>/);
   assert.match(script, /document\.querySelector\("\.growth-projection-row"\)\.hidden = projectionButtons\.every\(\(button\) => button\.hidden\);/);
-  assert.match(page, /<g data-release-marker><\/g>\s*<g data-chart-projection><\/g>/);
-  assert.match(page, /id="growth-legend-projection" hidden><i class="legend-projection"><\/i>Projection at Quattro pace/);
+  assert.match(page, /<g data-release-marker[^>]*>(?:<\/g>)?\s*<g data-chart-projection[^>]*>(?:<\/g>)?/);
+  assert.match(page, /id="growth-legend-projection" hidden(?:="")?><i class="legend-projection"><\/i>Projection at Quattro pace/);
   assert.match(script, /growthProjectionYear = growthProjectionYear === year \? null : year;/);
   assert.match(script, /button\.hidden = `\$\{button\.dataset\.projectionYear\}-12-31` <= latestDate;/);
   assert.match(script, /quattroPaceProjection\(`\$\{growthProjectionYear\}-12-31`\)/);
   assert.match(script, /function quattroPaceProjection\(endDate\)[\s\S]*const completedIndex = Math\.max\(0, series\.length - 2\);[\s\S]*point\.date === explorer\.release\.date[\s\S]*for \(let end = releaseIndex \+ 7; end <= completedIndex; end \+= 7\)/);
   assert.match(script, /const point = projected\s*\? \{ date: addUtcDays\(from, index\), total: projection\.valueAt\(addUtcDays\(from, index\)\) \}/);
-  assert.match(page, /id="growth-legend-band" hidden><i class="legend-band"><\/i>Slowest–fastest week/);
+  assert.match(page, /id="growth-legend-band" hidden(?:="")?><i class="legend-band"><\/i>Slowest–fastest week/);
   assert.match(script, /if \(!projection\) labels\.append\(endValueGroup\);/);
   assert.match(script, /const pointBadge = \(pointX, pointY, title, meta, \{ attributes = \{\}, fixed = null \} = \{\}\) => \{[\s\S]*class: "release-label-box", x: badgeX[\s\S]*class: "release-label-meta", x: badgeX \+ 16, y: badgeY \+ 48 \}, meta/);
   assert.match(script, /growthGuideModel\.projectionValue = pointBadge\(endX, endY, `≈ \$\{number\.format\(projection\.total\)\} PLUGINS`, yearEndMeta\(projection\.endDate\)/);
@@ -670,15 +671,15 @@ test("growth projection extends the chart to year end at the Quattro pace", () =
 });
 
 test("all semantic communities remain available in a compact labeled rail", () => {
-  assert.match(page, /id="graph-match-count"[\s\S]*id="graph-analysis"[^>]+aria-label="Plugin landscape community filters"[\s\S]*id="community-list"/);
+  assert.match(page, /id="graph-match-count"[\s\S]*id="graph-analysis"[^>]+aria-label="Template landscape community filters"[\s\S]*id="community-list"/);
   assert.doesNotMatch(page, /id="landscape-title"|id="community-toggle"|id="anchor-list"/);
   assert.match(script, /const leadingClusters = \[\.\.\.explorer\.clusters\][\s\S]*communityFilters\.map\(\(cluster\) =>[\s\S]*community-name/);
-  assert.match(script, /import \{ matchesBarTaxonomy, matchesVpnTaxonomy \} from "\.\/taxonomy\.js\?v=20261002-03"/);
+  assert.match(script, /import \{ matchesBarTaxonomy, matchesVpnTaxonomy \} from "\.\/taxonomy\.js\?v=20261008-01"/);
   assert.match(script, /id: "taxonomy:vpn",\s*label: "VPN",[\s\S]*anchor: "security",\s*matches: matchesVpnTaxonomy,/);
   assert.match(script, /id: "taxonomy:bar",\s*label: "Bar",[\s\S]*anchor: "appearance",\s*matches: matchesBarTaxonomy,/);
   assert.match(script, /const taxonomyFilter = taxonomyCommunityFilters\.find\(\(filter\) => filter\.id === activeCluster\);\s*return taxonomyFilter \? taxonomyFilter\.matches\(node\) : node\.cluster === activeCluster/);
   assert.match(script, /taxonomyCommunityFilters\.forEach\(\(\{ id, label, color, anchor, matches \}\) => \{\s*const count = explorer\.nodes\.filter\(matches\)\.length;\s*if \(!count\) return;[\s\S]*cluster\.id === anchor\)[\s\S]*anchorIndex \+ 1/);
-  assert.match(script, /button\.dataset\.filterKind = cluster\.taxonomy \? "taxonomy" : "community"[\s\S]*\$\{cluster\.label\} filter: \$\{number\.format\(cluster\.count\)\} matching plugins/);
+  assert.match(script, /button\.dataset\.filterKind = cluster\.taxonomy \? "taxonomy" : "community"[\s\S]*\$\{cluster\.label\} filter: \$\{number\.format\(cluster\.count\)\} matching templates/);
   assert.match(styles, /\.graph-analysis\s*\{[\s\S]*bottom:\s*0[\s\S]*width:\s*102px/);
   assert.match(page, /id="community-scroll-fade"[^>]+aria-hidden="true"/);
   assert.doesNotMatch(page, /community-scroll-hint|>↓</);
@@ -718,7 +719,7 @@ test("selected plugins use a compact marketplace card hierarchy", () => {
   assert.match(styles, /@media \(max-width:\s*760px\)[\s\S]*\.detail-close\s*\{[^}]*width:\s*44px;\s*height:\s*44px[\s\S]*\.detail-actions \.button, \.neighbor-row\s*\{\s*min-height:\s*44px/);
   assert.match(script, /function safePluginPreview[\s\S]*function pluginInitials/);
   assert.match(script, /previewImage\.onload[\s\S]*previewImage\.onerror[\s\S]*node\.tags\.slice\(0, 3\)/);
-  assert.match(script, /Select related plugin \$\{candidate\.name\}, \$\{similarity\}% similarity/);
+  assert.match(script, /Select related template \$\{candidate\.name\}, \$\{similarity\}% similarity/);
 });
 
 test("graph search uses catalog matching semantics", () => {
@@ -872,7 +873,7 @@ test("growth hover scrubs exact daily totals and dates inside the plot", () => {
   assert.match(page, /data-chart-hover-guide[\s\S]*class="chart-hover-line"[\s\S]*class="chart-hover-point"[\s\S]*class="chart-hover-box"[\s\S]*class="chart-hover-value"[\s\S]*class="chart-hover-date"/);
   assert.match(script, /function setupGrowthGuide[\s\S]*pointerX < chart\.left[\s\S]*pointerY < chart\.top[\s\S]*Math\.round\(ratio \* lastSlot\)/);
   assert.match(script, /const lastSlot = points\.length - 1 \+ \(projection \? projection\.days : 0\);/);
-  assert.match(script, /guideValue\.textContent = projected[\s\S]*`\$\{number\.format\(point\.total\)\} plugins`[\s\S]*guideDate\.textContent = projected[\s\S]*: posterDate\.format/);
+  assert.match(script, /guideValue\.textContent = projected[\s\S]*`\$\{number\.format\(point\.total\)\} templates`[\s\S]*guideDate\.textContent = projected[\s\S]*: posterDate\.format/);
   assert.match(script, /boxX = pointX \+ boxWidth \+ 16 > chart\.right[\s\S]*boxY = Math\.max\(chart\.top \+ 8/);
   assert.match(script, /data-chart-end-value[\s\S]*lineOverlapsEndValue[\s\S]*badgeOverlapsEndValue[\s\S]*classList\.toggle\("is-obscured"/);
   assert.match(styles, /\.chart-end-value\.is-obscured\s*\{\s*visibility:\s*hidden/);

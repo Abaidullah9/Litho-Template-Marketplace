@@ -97,7 +97,12 @@ export function matchesBarTaxonomy(plugin) {
 
 export function catalogCategoryTotals(plugins) {
   const totals = new Map();
-  plugins.forEach((plugin) => totals.set(plugin.category, (totals.get(plugin.category) || 0) + 1));
+  plugins.forEach((plugin) => {
+    // Entries without a usable category string (e.g. migrated templates)
+    // must not create `undefined` map keys that crash downstream sorting.
+    if (typeof plugin.category !== "string" || !plugin.category) return;
+    totals.set(plugin.category, (totals.get(plugin.category) || 0) + 1);
+  });
   for (const [category, matches] of [
     ["Kids", matchesKidsTaxonomy],
     ["VPN", matchesVpnTaxonomy],

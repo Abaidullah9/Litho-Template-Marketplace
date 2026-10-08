@@ -4,6 +4,7 @@ import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
+import { fileURLToPath } from "node:url";
 import test from "node:test";
 import {
   securityBaselineEnforcementMode,
@@ -89,7 +90,7 @@ test("verification CLI repairs a stale catalog and emits deterministic workflow 
       `--catalog=${catalogPath}`,
       `--output-dir=${outputDirectory}`,
     ], {
-      cwd: new URL("../", import.meta.url).pathname,
+      cwd: fileURLToPath(new URL("../", import.meta.url)),
       env: {
         ...process.env,
         ISSUE_BODY: issueBody(),
@@ -156,7 +157,7 @@ test("verification CLI preserves maintainer review state for handled errors", as
       `--catalog=${catalogPath}`,
       `--output-dir=${outputDirectory}`,
     ], {
-      cwd: new URL("../", import.meta.url).pathname,
+      cwd: fileURLToPath(new URL("../", import.meta.url)),
       env: {
         ...process.env,
         ISSUE_BODY: "invalid request",

@@ -16,7 +16,7 @@ function githubHeaders(token, accept = "application/vnd.github+json") {
   return {
     Accept: accept,
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    "User-Agent": "omarchy-plugin-marketplace-security-baseline",
+    "User-Agent": "litho-template-marketplace-security-baseline",
     "X-GitHub-Api-Version": "2022-11-28",
     "Accept-Encoding": "identity",
   };

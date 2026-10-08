@@ -26,7 +26,7 @@ import {
   pluginVerificationState,
   readCatalogView,
   readCatalogViewState,
-  selectHiddenGems,
+  selectHiddenGemsFromViews,
   medianInstallRate,
   recentListings,
   setupControlTooltips,
@@ -37,14 +37,14 @@ import {
   storeCatalogView,
   updateEngagementSummary,
   updatePluginHeart
-} from "./shared.js?v=20261002-03";
+} from "./shared.js?v=20261008-01";
 import {
   engagementApiBaseUrl,
   hasPluginHeart,
   loadEngagementStats,
   recordPluginCopy,
   recordPluginHeart,
-} from "./engagement.js?v=20261002-03";
+} from "./engagement.js?v=20261008-01";
 import {
   appendSearchState,
   committedTermsFromDraft,
@@ -73,13 +73,13 @@ import {
   searchTermInputValue,
   searchTermKey,
   selectSearchCompletions,
-} from "./search.js?v=20261002-03";
+} from "./search.js?v=20261008-01";
 import {
   catalogCategoryTotals,
   matchesBarTaxonomy,
   matchesKidsTaxonomy,
   matchesVpnTaxonomy,
-} from "./taxonomy.js?v=20261002-03";
+} from "./taxonomy.js?v=20261008-01";
 
 const pluginsPerPage = 9;
 const splitViewRows = 3;
@@ -127,7 +127,7 @@ function cardTaxonomyLabels(plugin) {
   return labels.length ? labels : [category || "System"];
 }
 
-const engagementSorts = new Set(["views", "copies", "hearts", "rank", "installRate"]);
+const engagementSorts = new Set(["views", "downloads"]);
 const verificationFilters = new Set(["verified", "unverified"]);
 const taxonomyFilterTags = ["ai", "games", "security"];
 const taxonomyCatalogFilters = [
@@ -139,24 +139,18 @@ const sortOptions = {
   community: [
     ["added", "Recently added"],
     ["updated", "Recent activity"],
-    ["stars", "Most starred"],
     ["views", "Most viewed"],
-    ["copies", "Most copied"],
-    ["hearts", "Most hearts"],
-    ["rank", "Top ranked"],
-    ["installRate", "Install rate"],
+    ["downloads", "Most downloaded"],
+    ["featured", "Featured"],
     ["name", "A–Z"],
     ["verified", "Verified"],
     ["unverified", "Unverified"]
   ],
   builtin: [
+    ["added", "Recently added"],
     ["name", "A–Z"],
-    ["kind", "Plugin type"],
     ["views", "Most viewed"],
-    ["copies", "Most copied"],
-    ["hearts", "Most hearts"],
-    ["rank", "Top ranked"],
-    ["installRate", "Install rate"],
+    ["downloads", "Most downloaded"],
     ["verified", "Verified"],
     ["unverified", "Unverified"]
   ]
@@ -474,7 +468,7 @@ function updateSearchAffordances() {
   searchShortcut.hidden = active;
   search.placeholder = state.terms.length
     ? "Narrow by another term…"
-    : "Search plugins, tag:media, kind:panel, or @author…";
+    : "Search templates, tag:latex, kind:thesis, or @publisher…";
 }
 
 function removeSearchTerm(index) {
@@ -629,7 +623,7 @@ function availableSortOptions(source = state.source) {
 }
 
 function allCategoryLabel() {
-  return state.source === "builtin" ? "All built-ins" : "All plugins";
+  return state.source === "builtin" ? "All built-ins" : "All templates";
 }
 
 function matchesCatalogFilter(plugin, filter = state.category) {
@@ -687,6 +681,9 @@ function computeFilteredPlugins() {
     updated: (a, b) => activityTime(b) - activityTime(a) || a.name.localeCompare(b.name),
     stars: (a, b) => (b.stars || 0) - (a.stars || 0) || a.name.localeCompare(b.name),
     views: (a, b) => comparePluginEngagement(a, b, state.engagement, "views"),
+    downloads: (a, b) => comparePluginEngagement(a, b, state.engagement, "downloads"),
+    featured: (a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured))
+      || listingTime(b) - listingTime(a) || a.name.localeCompare(b.name),
     copies: (a, b) => comparePluginEngagement(a, b, state.engagement, "copies"),
     hearts: (a, b) => comparePluginEngagement(a, b, state.engagement, "hearts"),
     installRate: (a, b) => comparePluginInstallRate(a, b, state.engagement),
@@ -830,32 +827,20 @@ function closeVerificationTooltips(except = null) {
   });
 }
 
-// Card badges shared by plugin cards and the Just landed rows.
+// Card actions shared by template cards and the Just landed rows.
 function cardBadges(plugin) {
-  const installAction = plugin.builtIn
-    ? `<a class="card-install builtin-source-action" href="${escapeHtml(plugin.sourceUrl || plugin.repo)}" target="_blank" rel="noreferrer" aria-label="View source for ${escapeHtml(plugin.name)}">View source ↗</a>`
-    : plugin.placeholder
-      ? '<span class="card-install unavailable" aria-label="Installation not yet available"><span class="command-glyph" aria-hidden="true"></span> Preview only</span>'
-      : !plugin.installAvailable
-        ? `<span class="card-install unavailable" aria-label="Automatic installation unavailable"><span class="command-glyph" aria-hidden="true"></span> ${plugin.upstreamCheckStatus === "failed" ? "Unavailable" : "Manual"}</span>`
-        : `<button class="card-install has-control-tooltip" type="button" data-copy-command="${escapeHtml(plugin.installCommand)}" data-plugin-id="${escapeHtml(plugin.id)}" aria-label="Copy install command for ${escapeHtml(plugin.name)}">
-          <span class="command-glyph" aria-hidden="true"></span><span data-copy-label>Copy install</span>
-          <span class="copy-icon" aria-hidden="true"></span>
-          <span class="control-tooltip" role="tooltip" aria-hidden="true">Copy install command</span>
-        </button>`;
-  const stars = plugin.builtIn ? "" : `<span class="card-stars has-control-tooltip" aria-label="${formatStars(plugin.stars)} repository stars"><svg class="social-glyph star-glyph" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 .5 8.9 4.6l4.6.6-3.35 3.15L11 13 7 10.75 3 13l.85-4.65L.5 5.2l4.6-.6Z"/></svg><span class="social-count" aria-hidden="true">${formatStars(plugin.stars)}</span><span class="control-tooltip" role="tooltip" aria-hidden="true">Repository stars</span></span>`;
-  const hearted = hasPluginHeart(plugin.id);
-  const heart = state.engagementEnabled
-    ? pluginHeartButton(plugin, state.engagement[plugin.id], {
-        hearted,
-        pending: !state.engagementLoaded,
-      })
-    : "";
-  const rank = cardRankLabel(plugin);
-  const rankLine = state.engagementEnabled && !plugin.builtIn
-    ? `<span class="card-rank" data-card-rank="${escapeHtml(plugin.id)}" title="Overall rank from hearts, install copies, views, and repository stars"${rank ? "" : " hidden"}>${escapeHtml(rank)}</span>`
-    : "";
-  return { installAction, stars, heart, rankLine };
+  const installAction = plugin.downloadUrl
+    ? `<a class="card-install has-control-tooltip" href="${escapeHtml(plugin.downloadUrl)}" data-download-id="${escapeHtml(plugin.id)}" aria-label="Download ${escapeHtml(plugin.name)}">
+      <span class="command-glyph" aria-hidden="true"></span><span data-copy-label>Download</span>
+      <span class="control-tooltip" role="tooltip" aria-hidden="true">Download template</span>
+    </a>`
+    : plugin.repositoryUrl
+      ? `<a class="card-install has-control-tooltip" href="${escapeHtml(plugin.repositoryUrl)}" target="_blank" rel="noreferrer" aria-label="Open the repository for ${escapeHtml(plugin.name)}">
+        <span class="command-glyph" aria-hidden="true"></span><span>Repository</span>
+        <span class="control-tooltip" role="tooltip" aria-hidden="true">Open repository</span>
+      </a>`
+      : "";
+  return { installAction, stars: "", heart: "", rankLine: "" };
 }
 
 function pluginCard(plugin, { showNew = false, previewBack = "", gemTimes = null } = {}) {
@@ -886,7 +871,7 @@ function pluginCard(plugin, { showNew = false, previewBack = "", gemTimes = null
   const gemModule = gemTimes === null ? "" : `
         <p class="card-gem-facts">
           <span class="card-gem-since">Listed since ${escapeHtml(formatDate(plugin.listedAt || plugin.addedAt))}</span>
-          ${gemTimes ? `<span class="card-gem-times"><strong>${gemTimes}×</strong><span><span>as many install copies per view</span> <span>as most plugins</span></span></span>` : ""}
+          ${gemTimes ? `<span class="card-gem-times"><strong>${gemTimes}×</strong><span><span>as many install copies per view</span> <span>as most templates</span></span></span>` : ""}
         </p>`;
   const previewFace = previewBack ? `<div class="plugin-preview-flip">${preview}${previewBack}</div>` : preview;
   const { installAction, stars, heart, rankLine } = cardBadges(plugin);
@@ -898,7 +883,7 @@ function pluginCard(plugin, { showNew = false, previewBack = "", gemTimes = null
 
   return `
     <article class="plugin-card${plugin.builtIn ? " built-in-card" : ""}" data-card-plugin="${escapeHtml(plugin.id)}" style="--card-accent:${accentColor(plugin.accent)}">
-      <a class="plugin-card-link" href="plugin.html?id=${encodeURIComponent(plugin.id)}" aria-label="View ${escapeHtml(plugin.name)}"></a>
+      <a class="plugin-card-link" href="template.html?id=${encodeURIComponent(plugin.id)}" aria-label="View ${escapeHtml(plugin.name)}"></a>
       ${previewFace}
       <div class="plugin-card-body">
         <div class="plugin-card-content">
@@ -973,7 +958,7 @@ function bindCardActions(root) {
       renderSortOptions();
       renderCategories();
       render();
-      searchSuggestionStatus.textContent = `Showing all plugins by @${publisher}`;
+      searchSuggestionStatus.textContent = `Showing all templates by @${publisher}`;
       document.querySelector("#catalog")?.scrollIntoView({
         behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
         block: "start"
@@ -993,7 +978,7 @@ function landedCard(plugin, now, duplicate = false) {
     : `<span class="landed-mark" aria-hidden="true">${escapeHtml(plugin.initials)}</span>`;
   const rank = cardRankLabel(plugin);
   return `
-    <li${duplicate ? ' aria-hidden="true"' : ""}><a class="landed-card" href="plugin.html?id=${encodeURIComponent(plugin.id)}"${duplicate ? ' tabindex="-1"' : ""} style="--card-accent:${accentColor(plugin.accent)}">
+    <li${duplicate ? ' aria-hidden="true"' : ""}><a class="landed-card" href="template.html?id=${encodeURIComponent(plugin.id)}"${duplicate ? ' tabindex="-1"' : ""} style="--card-accent:${accentColor(plugin.accent)}">
       <span class="landed-media">${media}</span>
       <span class="landed-body">
         <span class="landed-name">${escapeHtml(plugin.name)}</span>
@@ -1037,24 +1022,27 @@ function setupPreviewFlip(root) {
   root.addEventListener("pointerleave", () => sync());
 }
 
+// Landing-page highlights: editor-picked featured templates when any are flagged,
+// otherwise hidden gems, so the row still introduces verified templates that the
+// catalogue has not surfaced yet.
 function renderHiddenGems() {
   const section = document.querySelector("#gems-section");
   const grid = document.querySelector("#gems-grid");
   if (!section || !grid) return;
-  const gems = state.engagementEnabled && state.engagementLoaded ? selectHiddenGems(state.plugins, state.engagement, { limit: 9 }) : [];
-  const median = gems.length ? medianInstallRate(state.plugins, state.engagement) : null;
+  const featured = state.plugins.filter((plugin) => plugin.featured).slice(0, 9);
+  const curated = featured.length > 0;
+  const gems = curated ? featured : selectHiddenGemsFromViews(state.plugins, { limit: 9 });
+  const title = document.querySelector("#gems-title");
+  const note = document.querySelector("#gems-note");
+  if (title) title.textContent = curated ? "FEATURED TEMPLATES" : "HIDDEN GEMS";
+  if (note) {
+    note.textContent = curated
+      ? "verified · highlighted by the editors"
+      : "verified · fewest views first · refreshed daily";
+  }
+  grid.setAttribute("aria-label", curated ? "Featured templates" : "Hidden gems");
   section.hidden = gems.length === 0;
-  const rateOf = (plugin) => {
-    const stats = state.engagement[plugin.id] || {};
-    const views = Math.max(0, Math.trunc(Number(stats.views) || 0));
-    return views ? Math.min(views, Math.max(0, Math.trunc(Number(stats.copies) || 0))) / views : 0;
-  };
-  // The Wilson bound picks the gems; they are shown by the multiple on the card, so the visible numbers descend.
-  grid.innerHTML = gems.map((plugin) => ({ plugin, rate: rateOf(plugin) })).sort((a, b) => b.rate - a.rate).map(({ plugin, rate }) => {
-    // "Most plugins": at least half of all rated plugins have the median rate or less, so the multiple holds for them.
-    const times = median ? rate / median : 0;
-    return pluginCard(plugin, { previewBack: cardPreviewBack(plugin), gemTimes: times >= 1.1 ? times.toFixed(1) : "" });
-  }).join("");
+  grid.innerHTML = gems.map((plugin) => pluginCard(plugin, { showNew: true, previewBack: cardPreviewBack(plugin) })).join("");
   bindCardActions(grid);
   setupPreviewFlip(grid);
   grid.scrollLeft = 0;
@@ -1098,11 +1086,16 @@ function renderRecentlyAdded() {
   const now = Date.now();
   const lastDay = recentListings(state.plugins, now, 24);
   const lastWeek = recentListings(state.plugins, now, 7 * 24);
-  section.hidden = lastDay.length === 0;
-  if (summary) summary.innerHTML = `<b>${lastDay.length.toLocaleString("en-US")}</b> new in 24h · <b>${lastWeek.length.toLocaleString("en-US")}</b> in 7 days`;
+  // Keep the feed populated between landing waves: when nothing landed in the
+  // last day the week's newest templates carry the row, and the summary says so.
+  const items = (lastDay.length ? lastDay : lastWeek).slice(0, 48);
+  section.hidden = items.length === 0;
+  if (summary) {
+    const counts = `<b>${lastDay.length.toLocaleString("en-US")}</b> new in 24h · <b>${lastWeek.length.toLocaleString("en-US")}</b> in 7 days`;
+    summary.innerHTML = lastDay.length ? counts : `${counts} · newest first`;
+  }
   if (!rows || !toggle) return;
 
-  const items = lastDay.slice(0, 48);
   const animated = items.length > 6 && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   rows.hidden = items.length === 0;
   rows.classList.toggle("is-animated", animated);
@@ -1135,10 +1128,10 @@ function renderPagination(totalItems, pageState) {
   viewToggle.hidden = controls.browseAllHidden || splitView();
   viewDock.hidden = controls.dockHidden;
   const sourceLabel = state.source === "builtin" ? "built-in" : "community";
-  viewLabel.textContent = `Browse all ${totalItems} ${sourceLabel} plugin${totalItems === 1 ? "" : "s"}`;
+  viewLabel.textContent = `Browse all ${totalItems} ${sourceLabel} template${totalItems === 1 ? "" : "s"}`;
   viewDockStatus.textContent = totalItems === 0
-    ? `No ${sourceLabel} plugins found`
-    : `Showing all ${totalItems} ${sourceLabel} plugin${totalItems === 1 ? "" : "s"}`;
+    ? `No ${sourceLabel} templates found`
+    : `Showing all ${totalItems} ${sourceLabel} template${totalItems === 1 ? "" : "s"}`;
   viewButton.setAttribute("aria-expanded", "false");
   previousPage.disabled = !pageState.hasPrevious;
   nextPage.disabled = !pageState.hasNext;
@@ -1146,11 +1139,11 @@ function renderPagination(totalItems, pageState) {
   nextPageLabel.textContent = pageState.hasNext ? `Page ${pageState.page + 1}` : "Last page";
   pageSummary.textContent = `${pageState.page} / ${pageState.totalPages}`;
   previousPage.setAttribute("aria-label", pageState.hasPrevious
-    ? `Go to plugin page ${pageState.page - 1}`
-    : "No previous plugin page");
+    ? `Go to template page ${pageState.page - 1}`
+    : "No previous template page");
   nextPage.setAttribute("aria-label", pageState.hasNext
-    ? `Go to plugin page ${pageState.page + 1}`
-    : "No next plugin page");
+    ? `Go to template page ${pageState.page + 1}`
+    : "No next template page");
 }
 
 function splitTile(plugin, rank) {
@@ -1161,7 +1154,7 @@ function splitTile(plugin, rank) {
   const rankLabel = rank?.overall ? `#${rank.overall}` : "—";
   const selected = plugin.id === state.selected;
   return `
-    <a class="split-tile${selected ? " is-selected" : ""}" role="option" aria-selected="${selected}" data-split-plugin="${escapeHtml(plugin.id)}" href="plugin.html?id=${encodeURIComponent(plugin.id)}" target="_blank" rel="noopener" draggable="false" aria-label="${escapeHtml(plugin.name)}, rank ${escapeHtml(rankLabel)}. Control Enter opens the plugin page in a background tab">
+    <a class="split-tile${selected ? " is-selected" : ""}" role="option" aria-selected="${selected}" data-split-plugin="${escapeHtml(plugin.id)}" href="template.html?id=${encodeURIComponent(plugin.id)}" target="_blank" rel="noopener" draggable="false" aria-label="${escapeHtml(plugin.name)}, rank ${escapeHtml(rankLabel)}. Control Enter opens the template page in a background tab">
       ${preview}
       <span class="split-tile-name">${escapeHtml(plugin.name)}</span>
       <span class="split-tile-meta"><span>${escapeHtml(plugin.kind || plugin.category)}</span><b>${escapeHtml(rankLabel)}</b></span>
@@ -1195,7 +1188,7 @@ function renderSplitView(pagePlugins) {
   splitGrid.innerHTML = pagePlugins.map((plugin) => splitTile(plugin, state.engagementLoaded ? ranks.get(plugin.id) : null)).join("");
   splitGrid.classList.toggle("is-full", pagePlugins.length >= pageSize());
   splitPanelCount.textContent = `${pagePlugins.length} of ${sourcePlugins().length}`;
-  splitTopRank.hidden = !state.engagementEnabled;
+  splitTopRank.hidden = true;
   splitTopRank.setAttribute("aria-pressed", String(state.sort === "rank"));
   const tiles = [...splitGrid.querySelectorAll("[data-split-plugin]")];
   const selectTile = (tile, { focus = false, force = false } = {}) => {
@@ -1339,21 +1332,20 @@ function renderSplitSelection() {
 }
 
 function renderSplitStats(plugin) {
-  const stats = state.engagement[plugin.id] || { views: 0, copies: 0, hearts: 0 };
-  const rank = state.engagementLoaded ? catalogRanks().get(plugin.id) : null;
-  splitStatsTotal.textContent = `of ${rankedPlugins().length} community plugins`;
-  splitStatsBody.innerHTML = !state.engagementEnabled
-    ? '<p class="split-stats-empty">Engagement statistics are unavailable here.</p>'
-    : plugin.sourceType === "builtin"
-      ? '<p class="split-stats-empty">Built-in plugins are not ranked.</p>'
-    : !state.engagementLoaded
-      ? '<p class="split-stats-empty" aria-busy="true">Loading engagement statistics…</p>'
-      : [
-      ["hearts", "hearts", '<span class="social-glyph heart-glyph" aria-hidden="true">\uf004</span>'],
-      ["copies", "install copies", '<span class="copy-icon engagement-copy-icon" aria-hidden="true"></span>'],
-      ["views", "views", '<span class="engagement-glyph" aria-hidden="true">\uf441</span>'],
-      ["stars", "repository stars", '<svg class="social-glyph star-glyph" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 .5 8.9 4.6l4.6.6-3.35 3.15L11 13 7 10.75 3 13l.85-4.65L.5 5.2l4.6-.6Z"/></svg>'],
-      ].map(([metric, label, icon]) => splitStatRow(metric, label, icon, rank, metric === "stars" ? plugin.stars || 0 : stats[metric])).join("");
+  const stats = state.engagement[plugin.id] || { views: 0, downloads: 0 };
+  splitStatsTotal.textContent = `of ${rankedPlugins().length} templates`;
+  const row = (metric, icon, value, label, note) => `
+    <div class="split-stat is-unranked" data-split-metric="${metric}">
+      <div class="split-stat-key"><span class="split-stat-icon">${icon}</span><b>${escapeHtml(value)}</b><span class="sr-only">${escapeHtml(label)}</span></div>
+      <div class="split-stat-bar"></div>
+      <div class="split-stat-rank">${escapeHtml(label)}<small>${escapeHtml(note)}</small></div>
+    </div>`;
+  splitStatsBody.innerHTML = [
+    row("views", '<span class="engagement-glyph" aria-hidden="true">\uf441</span>', formatEngagementCount(stats.views), "views", "all time"),
+    row("downloads", '<span class="engagement-glyph download-glyph" aria-hidden="true">&#8595;</span>', formatEngagementCount(stats.downloads), "downloads", "all time"),
+    row("category", '<span class="engagement-glyph" aria-hidden="true">#</span>', plugin.kind || plugin.category || "Other", "category", plugin.sourceType === "builtin" ? "built-in" : "community"),
+    row("publisher", '<span class="engagement-glyph" aria-hidden="true">@</span>', plugin.author || "—", "publisher", plugin.license ? `${plugin.license} licence` : "licence not stated"),
+  ].join("");
 }
 
 function setCatalogView(view) {
@@ -1401,10 +1393,10 @@ function searchResultMessage(action) {
 
 function catalogResultMessage(totalItems, pageState) {
   const sourceLabel = state.source === "builtin" ? "built-in" : "community";
-  if (totalItems === 0) return `No ${sourceLabel} plugins found`;
-  if (state.showAll) return `Showing all ${totalItems} ${sourceLabel} plugin${totalItems === 1 ? "" : "s"}`;
+  if (totalItems === 0) return `No ${sourceLabel} templates found`;
+  if (state.showAll) return `Showing all ${totalItems} ${sourceLabel} template${totalItems === 1 ? "" : "s"}`;
   const shown = Math.min(pageSize(), totalItems - pageState.start);
-  return `Showing ${shown} of ${totalItems} ${sourceLabel} plugins, page ${pageState.page} of ${pageState.totalPages}`;
+  return `Showing ${shown} of ${totalItems} ${sourceLabel} templates, page ${pageState.page} of ${pageState.totalPages}`;
 }
 
 function focusCatalogResult() {
@@ -1469,13 +1461,13 @@ function render({ historyMode = "replace", announce = false } = {}) {
   const hasSearch = state.terms.length > 0 || Boolean(state.query.trim());
   const hasResultFilter = hasSearch || verificationFilters.has(state.sort);
   const authorTerm = state.terms.find((term) => term.type === "author");
-  catalogTitle.textContent = authorTerm ? `plugins by @${authorTerm.value}` : "browse all plugins";
+  catalogTitle.textContent = authorTerm ? `templates by @${authorTerm.value}` : "browse all templates";
   count.textContent = hasResultFilter
     ? `${visible.length} of ${categoryPlugins.length}`
     : String(categoryPlugins.length);
   countLabel.textContent = state.category === "all"
-    ? (state.source === "builtin" ? "built-in plugins" : "community plugins")
-    : `${state.source === "builtin" ? "built-in plugins" : "plugins"} in ${catalogFilterLabel(state.category)}`;
+    ? (state.source === "builtin" ? "built-in templates" : "community templates")
+    : `${state.source === "builtin" ? "built-in templates" : "templates"} in ${catalogFilterLabel(state.category)}`;
   if (splitView()) {
     grid.innerHTML = "";
     renderSplitView(pagePlugins);
@@ -1535,7 +1527,7 @@ function renderSourceFilters() {
       render({ announce: !removedAuthorSearch });
       if (removedAuthorSearch) {
         searchSuggestionStatus.textContent = searchResultMessage(
-          "Removed author search terms because they are unavailable for built-in plugins",
+          "Removed author search terms because they are unavailable for the built-in source",
         );
       }
     });
@@ -1556,7 +1548,7 @@ function renderCategories() {
   const categoryTotals = catalogCategoryTotals(plugins);
   const categoryFilters = [...categoryTotals.entries()]
     .filter(([value]) => !taxonomyCatalogFilterNames.has(value))
-    .sort(([a], [b]) => a.localeCompare(b))
+    .sort(([a], [b]) => String(a ?? "").localeCompare(String(b ?? "")))
     .map(([value, total]) => ({ value, label: value, total }));
   const tagFilters = taxonomyFilterTags
     .map((tag) => ({
@@ -1829,11 +1821,18 @@ async function init() {
 
   try {
     const catalog = await loadCatalog();
-    if (!catalog || !Array.isArray(catalog.plugins)) {
+    if (!catalog || !Array.isArray(catalog.templates)) {
       throw new Error("Catalog response is invalid");
     }
-    state.plugins = catalog.plugins;
-    state.engagementEnabled = Boolean(engagementApiBaseUrl());
+    state.plugins = catalog.templates;
+    // The generated registry carries the marketplace counters, so views and
+    // downloads work without the legacy engagement service.
+    state.engagement = Object.fromEntries(catalog.templates.map((item) => [item.id, {
+      views: Number(item.views || 0),
+      downloads: Number(item.downloads || 0),
+    }]));
+    state.engagementEnabled = true;
+    state.engagementLoaded = true;
     restoreUrl();
     setCatalogView(readCatalogView());
     viewMode.querySelectorAll("[data-view]").forEach((button) => {
@@ -1922,7 +1921,7 @@ async function init() {
           render();
           if (!restorePluginCardFocus(focusToken) && focusToken) focusCatalogResult();
           const label = availableSortOptions().find(([value]) => value === state.sort)?.[1] || state.sort;
-          catalogResultStatus.textContent = `Engagement loaded. Sorted plugins by ${label.toLowerCase()}.`;
+          catalogResultStatus.textContent = `Sorted templates by ${label.toLowerCase()}.`;
         }
       }).catch((reason) => {
         console.warn("Engagement stats unavailable", reason);
@@ -1949,7 +1948,7 @@ async function init() {
     grid.hidden = true;
     empty.hidden = false;
     empty.querySelector("h3").textContent = "Catalog unavailable";
-    empty.querySelector("p").textContent = "The plugin catalog could not be loaded. Please try again.";
+    empty.querySelector("p").textContent = "The template catalog could not be loaded. Please try again.";
   }
 
   search.addEventListener("input", () => {

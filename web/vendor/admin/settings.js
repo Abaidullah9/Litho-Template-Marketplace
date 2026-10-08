@@ -18,8 +18,7 @@ await requireSession();
 
 shell.body.innerHTML = `
   <div class="notice">
-    Settings are stored in the <code>settings</code> table (key → JSON value) and are edited here —
-    secrets such as Supabase keys and the admin password live in <code>.env</code> and are never exposed.
+    Configure marketplace settings and preferences. Application secrets are managed securely and never exposed.
   </div>
   <div id="service-status"></div>
   <section class="panel">

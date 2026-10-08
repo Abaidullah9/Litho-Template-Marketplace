@@ -1,7 +1,7 @@
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
-const marketplaceRepository = "omacom/omarchy-plugin-marketplace";
+const marketplaceRepository = "litho-templates/litho-template-marketplace";
 const catalogWriteGroup = "plugin-catalog-writes";
 const maximumAdmissionDepth = 10;
 const maximumResponseBytes = 1024 * 1024;
