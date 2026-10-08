@@ -1946,11 +1946,16 @@ async function init() {
       });
     }
   } catch (error) {
-    console.error(error);
+    console.error("Failed to load catalog:", error);
     grid.hidden = true;
     empty.hidden = false;
     empty.querySelector("h3").textContent = "Catalog unavailable";
     empty.querySelector("p").textContent = "The template catalog could not be loaded. Please try again.";
+    const emptyReset = document.querySelector("#empty-reset");
+    if (emptyReset) {
+      emptyReset.textContent = "Retry";
+      emptyReset.onclick = () => window.location.reload();
+    }
   }
 
   search.addEventListener("input", () => {

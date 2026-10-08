@@ -96,47 +96,60 @@ export function assetUrl(path) {
 
 export async function loadCatalog() {
   // The generated registry (Supabase → registry.json) is the marketplace catalog.
-  // The legacy catalog.json stays as a fallback so the site still renders before
-  // the first registry generation.
+  // The legacy catalog.json and /api/registry stay as fallbacks.
   const base = getBasePath();
-  const sources = [
+  const candidates = [
     `${base}/registry.json`,
-    `${base}/catalog.json`
+    `${base}/api/registry`,
+    `${base}/catalog.json`,
+    "/registry.json",
+    "/api/registry",
+    "/catalog.json",
+    "/Litho-Template-Marketplace/registry.json",
+    "/Litho-Template-Marketplace/api/registry",
+    "/Litho-Template-Marketplace/catalog.json",
   ];
+  const sources = [...new Set(candidates.filter(Boolean))];
   let lastError = null;
-  for (const source of sources) {
-    let response;
-    try {
-      response = await fetch(source);
-    } catch (error) {
-      lastError = error;
-      continue;
-    }
-    if (!response.ok) {
-      lastError = new Error(`Catalog request failed: ${response.status}`);
-      continue;
-    }
-    try {
-      const document = await response.json();
-      if (!Array.isArray(document.templates) && Array.isArray(document.plugins)) {
-        document.templates = document.plugins;
-      }
-      if (!Array.isArray(document.templates)) {
-        lastError = new Error("Catalog has no template list");
+
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    for (const source of sources) {
+      let response;
+      try {
+        response = await fetch(source);
+      } catch (error) {
+        lastError = error;
         continue;
       }
-      for (const t of document.templates) {
-        if (t.previewImage) t.previewImage = assetUrl(t.previewImage);
-        if (t.previewThumbnail) t.previewThumbnail = assetUrl(t.previewThumbnail);
-        if (t.downloadUrl) t.downloadUrl = assetUrl(t.downloadUrl);
-        if (t.sampleFile) t.sampleFile = assetUrl(t.sampleFile);
-        if (Array.isArray(t.previewImages)) {
-          t.previewImages = t.previewImages.map((img) => assetUrl(img));
-        }
+      if (!response.ok) {
+        lastError = new Error(`Catalog request failed: ${response.status}`);
+        continue;
       }
-      return document;
-    } catch (error) {
-      lastError = error;
+      try {
+        const document = await response.json();
+        if (!Array.isArray(document.templates) && Array.isArray(document.plugins)) {
+          document.templates = document.plugins;
+        }
+        if (!Array.isArray(document.templates)) {
+          lastError = new Error("Catalog has no template list");
+          continue;
+        }
+        for (const t of document.templates) {
+          if (t.previewImage) t.previewImage = assetUrl(t.previewImage);
+          if (t.previewThumbnail) t.previewThumbnail = assetUrl(t.previewThumbnail);
+          if (t.downloadUrl) t.downloadUrl = assetUrl(t.downloadUrl);
+          if (t.sampleFile) t.sampleFile = assetUrl(t.sampleFile);
+          if (Array.isArray(t.previewImages)) {
+            t.previewImages = t.previewImages.map((img) => assetUrl(img));
+          }
+        }
+        return document;
+      } catch (error) {
+        lastError = error;
+      }
+    }
+    if (attempt === 0) {
+      await new Promise((resolve) => setTimeout(resolve, 1200));
     }
   }
   throw lastError || new Error("Catalog request failed");
