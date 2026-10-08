@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Submit an academic or technical template to the marketplace.">
+    <meta name="theme-color" content="#000000">
+    <title>Submit a Template | Template Marketplace</title>
+    <link rel="icon" href="favicon.svg?v=20260728-9" type="image/svg+xml"><link rel="stylesheet" href="assets/css/style.css?v=20261008-01">
+    <script>(function(){var t=null;try{t=localStorage.getItem("litho-theme")}catch(e){}document.documentElement.dataset.theme=/^[a-z0-9-]{1,32}$/.test(t||"")?t:"dark";})();</script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to submission guide</a>
+    <div class="app-shell">
+      <aside class="left-sidebar">
+        <div class="sidebar-brand">
+          <a href="index.html" aria-label="Template Marketplace home"><img src="assets/img/litho-wordmark.png?v=20261007-01" alt="" width="656" height="192"><span>TEMPLATE MARKETPLACE</span></a>
+        </div>
+        <div class="sidebar-section"><span class="label">Workspace</span><div class="workspace-select"><span class="workspace-dot" aria-hidden="true"></span>Document templates</div></div>
+        <div class="sidebar-group"><div class="sidebar-group-title">Authoring</div><a class="sidebar-link" href="develop.html">Template guidelines</a><a class="sidebar-link active" href="publish.html" aria-current="page">Submission guide</a><a class="sidebar-link" href="submit.html">Submit a template <span aria-hidden="true">↗</span></a></div>
+        <div class="sidebar-group"><div class="sidebar-group-title">Marketplace</div><a class="sidebar-link" href="index.html#catalog">Browse templates</a><a class="sidebar-link" href="explore.html">Explore templates</a><a class="sidebar-link" href="https://github.com/litho-templates/litho-template-marketplace" target="_blank" rel="noreferrer">Contribute <span aria-hidden="true">↗</span></a></div>
+        <div class="sidebar-bottom"><a class="sidebar-link" href="index.html">← Back to marketplace</a></div>
+      </aside>
+      <div class="center-panel">
+        <header class="doc-topbar"><div class="crumbs"><span>Marketplace / </span><b>Submit</b></div><div class="top-actions"><a class="square-action desktop-only" href="index.html">Browse</a><button class="square-action theme-toggle" type="button" aria-label="Choose color theme"><svg class="palette-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.4-.5-.8-.5-1.2 0-1 .9-1.8 2-1.8H17a4 4 0 0 0 4-4c0-4.4-4-7.7-9-7.7Z"/><circle cx="7.5" cy="11" r="1.3"/><circle cx="10.5" cy="7" r="1.3"/><circle cx="15" cy="7.5" r="1.3"/></svg><span class="theme-toggle-label">Theme</span></button></div></header>
+        <main id="main-content" class="page-content" tabindex="-1">
+          <header class="page-header" id="overview"><div class="page-eyebrow">Submitting</div><h1>Submit your template</h1><div class="page-meta"><span><time datetime="2026-10-04">Updated 4 Oct 2026</time></span><span>3 min read</span><span class="status"><i class="status-dot" aria-hidden="true"></i>Stable</span></div></header>
+          <p class="intro">List your template in three steps. Publish the files in a public repository or provide a direct download, then send the submission form. An administrator reviews every entry.</p>
+          <p class="official-reference">Writing the files? Start with the <a href="develop.html">template guidelines →</a>.</p>
+          <div class="callout prominent-callout"><strong>The marketplace reviews listings, not content.</strong><p>Verification checks the metadata, links and preview. You remain responsible for your files, documentation, and licence.</p></div>
+
+          <section class="docs-section" id="requirements"><span class="step-number">01</span><h2>Prepare the files</h2><p>Prepare these before you submit:</p>
+            <ul class="check-list compact-check-list"><li><span aria-hidden="true">✓</span><div><strong>A download URL or public repository</strong></div></li><li><span aria-hidden="true">✓</span><div><strong>Name, short description and category</strong></div></li><li><span aria-hidden="true">✓</span><div><strong>README and licence inside the package</strong></div></li><li><span aria-hidden="true">✓</span><div><strong>A preview image of the rendered output</strong></div></li><li><span aria-hidden="true">+</span><div><strong>Optional sample file and extra preview images</strong></div></li></ul>
+          </section>
+
+          <section class="docs-section" id="manifest"><span class="step-number">02</span><h2>Describe the template</h2><p>The submission form collects the metadata the catalog renders on your detail page. Keep the description honest — reviewers compare it against the files.</p>
+            <p>Fields like <code class="inline-code" translate="no">downloadUrl</code> and <code class="inline-code" translate="no">repositoryUrl</code> must resolve publicly before you submit — dead links are the most common rejection.</p>
+            <p class="official-reference">See the <a href="develop.html">template guidelines</a> for the expected package layout and preview requirements.</p>
+            <div class="code-block"><div class="code-head"><span>Text &nbsp; what reviewers check</span><button class="copy-button" type="button" data-copy='Name: IEEE Conference Paper&#10;Description: One or two sentences shown on the card.&#10;Category: Academic&#10;Download URL: https://example.org/ieee-paper.zip&#10;Repository: https://github.com/you/ieee-paper (optional)&#10;Licence: MIT'><span>Copy</span></button></div><pre><code><span class="syntax-key">Name</span>: <span class="syntax-string">IEEE Conference Paper</span>
+<span class="syntax-key">Description</span>: <span class="syntax-string">One or two sentences shown on the card.</span>
+<span class="syntax-key">Category</span>: <span class="syntax-string">Academic</span>
+<span class="syntax-key">Download URL</span>: <span class="syntax-string">https://example.org/ieee-paper.zip</span>
+<span class="syntax-key">Repository</span>: <span class="syntax-string">https://github.com/you/ieee-paper (optional)</span>
+<span class="syntax-key">Licence</span>: <span class="syntax-string">MIT</span></code></pre></div>
+            <details class="manifest-reference"><summary>Field reference</summary><div class="field-table"><div class="field-row header"><span>Field</span><span>Purpose</span><span>Required</span></div><div class="field-row"><code>name</code><span>Human-readable template name</span><b>Yes</b></div><div class="field-row"><code>description</code><span>Short catalog summary, up to 600 characters</span><b>Yes</b></div><div class="field-row"><code>category</code><span>Category shown in the catalog filter bar</span><b>No</b></div><div class="field-row"><code>publisher</code><span>Existing publisher or a new name to create</span><b>No</b></div><div class="field-row"><code>tags</code><span>Up to 10 comma-separated tags</span><b>No</b></div><div class="field-row"><code>downloadUrl</code><span>Direct download of the template package</span><b>One of</b></div><div class="field-row"><code>repositoryUrl</code><span>Public source repository</span><b>One of</b></div><div class="field-row"><code>previewImage</code><span>First-page screenshot or rendered output</span><b>No</b></div></div></details>
+          </section>
+
+          <section class="docs-section" id="submit"><span class="step-number">03</span><h2>Submit for review</h2><p>Open the submission form, fill in the metadata, and attach a preview. Your entry enters the queue as <em>pending</em>; nothing appears publicly until an administrator approves it. Rejections come with a reason you can act on.</p><p class="submit-action"><a class="button publish-primary" href="submit.html">Submit your template <span aria-hidden="true">→</span></a></p></section>
+        </main>
+      </div>
+      <aside class="right-aside"><div class="aside-block"><span class="aside-title">On this page</span><a class="aside-link active" href="#overview">Overview</a><a class="aside-link" href="#requirements">Prepare</a><a class="aside-link" href="#manifest">Metadata</a><a class="aside-link" href="#submit">Submit</a></div><div class="aside-block"><span class="aside-title">Metadata</span><dl class="aside-meta"><div><dt>Status</dt><dd><span class="status-label">Stable</span></dd></div><div><dt>Owner</dt><dd><a href="https://github.com/HANCORE-linux" target="_blank" rel="noreferrer">HANCORE</a></dd></div><div><dt>Visibility</dt><dd>Public</dd></div><div><dt>Updated</dt><dd><time datetime="2026-10-04T10:00:00+02:00"><span>4 Oct 2026</span><small>10:00 CEST</small></time></dd></div></dl></div></aside>
+    </div>
+    <nav class="mobile-bottom" aria-label="Mobile navigation"><a href="index.html">Browse</a><a class="active" href="#overview" data-section-ids="overview requirements">Guide</a><a href="#manifest">Metadata</a><a href="#submit">Submit</a></nav>
+    <div class="toast" id="toast" role="status" aria-live="polite">Copied</div>
+    <script type="module" src="assets/js/publish.js?v=20261008-01"></script>
+  </body>
+</html>

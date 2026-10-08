@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Submit a template to the marketplace. No account required.">
+    <meta name="theme-color" content="#000000">
+    <meta property="og:title" content="Submit a Template | Template Marketplace">
+    <meta property="og:description" content="Submit a template to the marketplace. No account required.">
+    <title>Submit a Template | Template Marketplace</title>
+    <link rel="icon" href="favicon.svg?v=20260728-9" type="image/svg+xml">
+    <link rel="stylesheet" href="assets/css/style.css?v=20261008-01">
+    <link rel="stylesheet" href="assets/css/admin.css?v=20261008-01">
+    <script>(function(){var t=null;try{t=localStorage.getItem("litho-theme")}catch(e){}document.documentElement.dataset.theme=/^[a-z0-9-]{1,32}$/.test(t||"")?t:"dark";})();</script>
+  </head>
+  <body class="admin-page">
+    <div class="admin-shell">
+      <aside class="admin-sidebar">
+        <a class="admin-brand" href="index.html">
+          <img src="assets/img/litho-wordmark.png?v=20261007-01" alt="" width="656" height="192">
+          <span>Submit</span>
+        </a>
+        <nav class="admin-nav" aria-label="Marketplace navigation">
+          <div class="nav-group">Marketplace</div>
+          <a href="index.html">Browse templates</a>
+          <a href="publish.html">Submission guide</a>
+          <a href="develop.html">Guidelines</a>
+          <div class="nav-group">Account</div>
+          <a href="index.html#catalog">Registry</a>
+        </nav>
+        <div class="admin-sidebar-foot">
+          <a class="btn ghost small" href="index.html">← Back to the marketplace</a>
+        </div>
+      </aside>
+      <div class="admin-main">
+        <header class="admin-topbar">
+          <div style="display:flex;align-items:center;gap:12px;min-width:0">
+            <div>
+              <div class="crumbs">Marketplace / Contribution</div>
+              <h1>Submit a template</h1>
+            </div>
+          </div>
+          <div class="admin-actions">
+            <a class="btn ghost" href="publish.html">Read the guide →</a>
+          </div>
+        </header>
+        <main class="admin-body" id="admin-content">
+          <div class="notice">
+            <strong>No account required.</strong> Submissions enter the review queue as
+            <em>pending</em>. An administrator reviews every entry before it appears in the
+            marketplace, and can reject it with a reason.
+          </div>
+
+          <section class="panel">
+            <div class="panel-head"><h2>Template submission</h2><span class="field-hint">* required</span></div>
+            <div class="panel-body">
+              <form id="submit-form" novalidate>
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="name">Template name *</label>
+                    <input type="text" id="name" name="name" maxlength="160" required placeholder="IEEE Conference Paper">
+                    <span class="field-error" data-error-for="name"></span>
+                  </div>
+                  <div class="field">
+                    <label for="version">Version</label>
+                    <input type="text" id="version" name="version" placeholder="1.0.0">
+                    <span class="field-error" data-error-for="version"></span>
+                  </div>
+                  <div class="field full">
+                    <label for="description">Short description *</label>
+                    <textarea id="description" name="description" rows="3" maxlength="600" required placeholder="One or two sentences shown on the card."></textarea>
+                    <span class="field-error" data-error-for="description"></span>
+                  </div>
+                  <div class="field full">
+                    <label for="longDescription">Full description</label>
+                    <textarea id="longDescription" name="longDescription" class="tall" rows="8" placeholder="Structure, contents, requirements, who it is for."></textarea>
+                    <span class="field-error" data-error-for="longDescription"></span>
+                  </div>
+
+                  <div class="field">
+                    <label for="categoryId">Category</label>
+                    <select id="categoryId" name="categoryId"><option value="">Choose a category</option></select>
+                    <span class="field-error" data-error-for="categoryId"></span>
+                  </div>
+                  <div class="field">
+                    <label for="publisherId">Publisher</label>
+                    <select id="publisherId" name="publisherId"><option value="">Select an existing publisher</option></select>
+                    <span class="field-hint">Or name a new publisher below.</span>
+                    <span class="field-error" data-error-for="publisherId"></span>
+                  </div>
+                  <div class="field">
+                    <label for="publisherName">Publisher name</label>
+                    <input type="text" id="publisherName" name="publisherName" maxlength="120" placeholder="Your name or team">
+                    <span class="field-error" data-error-for="publisherName"></span>
+                  </div>
+                  <div class="field">
+                    <label for="tags">Tags</label>
+                    <input type="text" id="tags" name="tags" placeholder="LaTeX, Research, University">
+                    <span class="field-hint">Comma separated, up to 10.</span>
+                    <span class="field-error" data-error-for="tags"></span>
+                  </div>
+
+                  <div class="field">
+                    <label for="license">Licence</label>
+                    <input type="text" id="license" name="license" placeholder="MIT">
+                    <span class="field-error" data-error-for="license"></span>
+                  </div>
+                  <div class="field">
+                    <label for="downloadUrl">Download URL *</label>
+                    <input type="url" id="downloadUrl" name="downloadUrl" required placeholder="https://… or /assets/…">
+                    <span class="field-hint">Add this or a repository URL.</span>
+                    <span class="field-error" data-error-for="downloadUrl"></span>
+                  </div>
+                  <div class="field">
+                    <label for="repositoryUrl">Repository URL</label>
+                    <input type="url" id="repositoryUrl" name="repositoryUrl" placeholder="https://github.com/…">
+                    <span class="field-error" data-error-for="repositoryUrl"></span>
+                  </div>
+                  <div class="field">
+                    <label for="documentationUrl">Documentation URL</label>
+                    <input type="url" id="documentationUrl" name="documentationUrl" placeholder="https://…">
+                    <span class="field-error" data-error-for="documentationUrl"></span>
+                  </div>
+
+                  <div class="field">
+                    <label for="previewImage">Preview image URL</label>
+                    <input type="url" id="previewImage" name="previewImage" placeholder="https://… first page screenshot">
+                    <span class="field-error" data-error-for="previewImage"></span>
+                  </div>
+                  <div class="field">
+                    <label for="previewUpload">Upload preview image</label>
+                    <input type="file" id="previewUpload" name="previewImageFile" accept="image/*">
+                    <span class="field-hint">PNG, JPG, WebP · max 15 MB.</span>
+                  </div>
+                  <div class="field">
+                    <label for="previewImages">Additional images</label>
+                    <input type="text" id="previewImages" name="previewImages" placeholder="https://…, https://…">
+                    <span class="field-error" data-error-for="previewImages"></span>
+                  </div>
+                  <div class="field">
+                    <label for="sampleFile">Sample file URL</label>
+                    <input type="url" id="sampleFile" name="sampleFile" placeholder="https://… example output">
+                    <span class="field-error" data-error-for="sampleFile"></span>
+                  </div>
+                  <div class="field">
+                    <label for="sampleUpload">Upload sample file</label>
+                    <input type="file" id="sampleUpload" name="sampleFileFile" accept=".pdf,.zip,.txt,.md,.tex,application/pdf,application/zip">
+                    <span class="field-hint">PDF, ZIP or TXT · max 15 MB.</span>
+                  </div>
+
+                  <div class="field">
+                    <label for="submitterName">Your name</label>
+                    <input type="text" id="submitterName" name="submitterName" maxlength="120" placeholder="Optional">
+                    <span class="field-error" data-error-for="submitterName"></span>
+                  </div>
+                  <div class="field">
+                    <label for="submitterEmail">Your email</label>
+                    <input type="email" id="submitterEmail" name="submitterEmail" placeholder="Optional — only used to reach you about this submission">
+                    <span class="field-error" data-error-for="submitterEmail"></span>
+                  </div>
+                </div>
+
+                <div class="form-actions" style="margin-top:18px">
+                  <button class="btn primary" type="submit" id="submit-button">Submit for review →</button>
+                  <a class="btn ghost" href="index.html">Cancel</a>
+                </div>
+                <div id="submit-result" style="margin-top:16px"></div>
+              </form>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head"><h2>What happens next</h2></div>
+            <div class="panel-body">
+              <ol style="margin:0;padding-left:18px;line-height:2;font-size:13px;color:var(--muted)">
+                <li>Your entry is stored as <strong style="color:var(--text)">pending</strong> — nothing is public yet.</li>
+                <li>An administrator reviews the metadata, links and preview.</li>
+                <li>Approved entries are published, verified manually, and appear after the next registry generation.</li>
+                <li>Rejected entries get a reason you can act on.</li>
+              </ol>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+    <div class="admin-toast" id="admin-toast" role="status" aria-live="polite"></div>
+    <script type="module" src="assets/js/submit.js?v=20261008-01"></script>
+  </body>
+</html>

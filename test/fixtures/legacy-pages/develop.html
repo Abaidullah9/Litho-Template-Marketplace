@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Package and validate an academic or technical template for the marketplace.">
+    <meta name="theme-color" content="#000000">
+    <title>Template Guidelines | Template Marketplace</title>
+    <link rel="icon" href="favicon.svg?v=20260728-9" type="image/svg+xml"><link rel="stylesheet" href="assets/css/style.css?v=20261008-01">
+    <script>(function(){var t=null;try{t=localStorage.getItem("litho-theme")}catch(e){}document.documentElement.dataset.theme=/^[a-z0-9-]{1,32}$/.test(t||"")?t:"dark";})();</script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to template guidelines</a>
+    <div class="app-shell">
+      <aside class="left-sidebar">
+        <div class="sidebar-brand">
+          <a href="index.html" aria-label="Template Marketplace home"><img src="assets/img/litho-wordmark.png?v=20261007-01" alt="" width="656" height="192"><span>TEMPLATE MARKETPLACE</span></a>
+        </div>
+        <div class="sidebar-section"><span class="label">Workspace</span><div class="workspace-select"><span class="workspace-dot" aria-hidden="true"></span>Document templates</div></div>
+        <div class="sidebar-group"><div class="sidebar-group-title">Authoring</div><a class="sidebar-link active" href="develop.html" aria-current="page">Template guidelines</a><a class="sidebar-link" href="publish.html">Submission guide</a><a class="sidebar-link" href="submit.html">Submit a template <span aria-hidden="true">↗</span></a></div>
+        <div class="sidebar-group"><div class="sidebar-group-title">References</div><a class="sidebar-link" href="publish.html#manifest">Metadata reference <span aria-hidden="true">↗</span></a><a class="sidebar-link" href="index.html#catalog">Browse examples <span aria-hidden="true">↗</span></a></div>
+        <div class="sidebar-group"><div class="sidebar-group-title">Marketplace</div><a class="sidebar-link" href="index.html#catalog">Browse templates</a><a class="sidebar-link" href="explore.html">Explore templates</a><a class="sidebar-link" href="https://github.com/litho-templates/litho-template-marketplace" target="_blank" rel="noreferrer">Contribute <span aria-hidden="true">↗</span></a></div>
+        <div class="sidebar-bottom"><a class="sidebar-link" href="index.html">← Back to marketplace</a></div>
+      </aside>
+      <div class="center-panel">
+        <header class="doc-topbar"><div class="crumbs"><span>Marketplace / </span><b>Guidelines</b></div><div class="top-actions"><a class="square-action desktop-only" href="submit.html">Submit</a><button class="square-action theme-toggle" type="button" aria-label="Choose color theme"><svg class="palette-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.4-.5-.8-.5-1.2 0-1 .9-1.8 2-1.8H17a4 4 0 0 0 4-4c0-4.4-4-7.7-9-7.7Z"/><circle cx="7.5" cy="11" r="1.3"/><circle cx="10.5" cy="7" r="1.3"/><circle cx="15" cy="7.5" r="1.3"/></svg><span class="theme-toggle-label">Theme</span></button></div></header>
+        <main id="main-content" class="page-content development-guide" tabindex="-1">
+          <header class="page-header" id="overview"><div class="page-eyebrow">Guidelines</div><h1>Author a Template Package</h1><div class="page-meta"><span><time datetime="2026-10-04">Updated 4 Oct 2026</time></span><span>10 min read</span><span class="status"><i class="status-dot" aria-hidden="true"></i>Stable</span></div></header>
+          <p class="intro">Assemble a self-contained document package, describe it with honest metadata, render it once to produce the preview, and run the same checks an administrator performs during review.</p>
+          <div class="callout"><strong>Templates are plain files people will build on.</strong><p>Keep every dependency inside the package, state the licence clearly, and never embed fonts, images, or code you are not allowed to redistribute.</p></div>
+
+          <section class="docs-section" id="start"><span class="step-number">01</span><h2>Prepare the Package</h2><p>This walkthrough packages a small conference paper with a bibliography, so a minimal LaTeX project is the closest working starting point.</p>
+            <ul class="check-list"><li><span aria-hidden="true">1</span><div><strong>Match the package layout</strong><small>Keep one entry document at the root, next to the README, licence, and preview — the catalog renders exactly what it finds.</small></div></li><li><span aria-hidden="true">2</span><div><strong>Work in a clean copy</strong><small>Strip editor build artefacts, absolute paths, and personal notes before packaging.</small></div></li><li><span aria-hidden="true">3</span><div><strong>Expect a first render</strong><small>The entry document must compile from a fresh checkout with no extra setup.</small></div></li></ul>
+            <div class="code-block"><div class="code-head"><span>Terminal &nbsp; create local copy</span><button class="copy-button" type="button" aria-label="Copy render command" data-copy="pdflatex -interaction=nonstopmode main.tex"><span>Copy</span></button></div><pre><code>pdflatex -interaction=nonstopmode main.tex</code></pre></div>
+            <p>A successful run writes <code class="inline-code" translate="no">main.pdf</code> beside the sources and reports no undefined references. The finished folder looks like this:</p>
+            <div class="code-block"><div class="code-head"><span>Files &nbsp; template package</span></div><pre><code>ieee-conference-paper/
+├── main.tex
+├── references.bib
+├── README.md
+├── LICENSE
+└── preview.png</code></pre></div>
+            <div class="callout"><strong>Keep the package name stable.</strong><p>The folder name becomes the listing identifier, for example <code class="inline-code" translate="no">ieee-conference-paper</code>. Choose it before submitting — renaming later breaks the links people already shared.</p><code class="inline-code callout-command" translate="no" tabindex="0" role="region" aria-label="Package size check command">du -sh ieee-conference-paper/</code><p>Keep the archive under 15&nbsp;MB so the review upload stays fast.</p></div>
+            <p class="official-reference">Browse the <a href="index.html#catalog">published templates ↗</a> before designing a new package from scratch.</p>
+          </section>
+
+          <section class="docs-section" id="contract"><span class="step-number">02</span><h2>Describe the Metadata</h2><p>The catalog card is built from the metadata you send with the submission. Use this reference when deciding what to fill in.</p>
+            <div class="kind-reference" tabindex="0" role="region" aria-labelledby="kind-reference-title">
+              <table>
+                <caption class="sr-only" id="kind-reference-title">Template metadata reference</caption>
+                <thead><tr><th scope="col">Field</th><th scope="col">Example</th><th scope="col">Required</th><th scope="col">Use it for</th></tr></thead>
+                <tbody>
+                  <tr><td><code>name</code></td><td><code>IEEE Conference Paper</code></td><td>Yes</td><td>Card and detail heading</td></tr>
+                  <tr><td><code>description</code></td><td><code>Two-sentence summary</code></td><td>Yes</td><td>Catalog card copy</td></tr>
+                  <tr><td><code>category</code></td><td><code>Academic</code></td><td>No</td><td>Filter bar grouping</td></tr>
+                  <tr><td><code>tags</code></td><td><code>LaTeX, Research</code></td><td>No</td><td>Search and related lists</td></tr>
+                  <tr><td><code>license</code></td><td><code>MIT</code></td><td>No</td><td>Terms of use section</td></tr>
+                  <tr><td><code>downloadUrl</code></td><td><code>…/paper.zip</code></td><td>One of</td><td>Download button</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p>For this walkthrough, keep the metadata next to the files it describes, and record it in the README so reviewers can compare both:</p>
+            <details class="manifest-reference development-example">
+              <summary><span>Text &nbsp; metadata draft</span></summary>
+              <div class="code-block"><div class="code-head"><span>Text &nbsp; metadata draft</span><button class="copy-button" type="button" aria-label="Copy development metadata draft" data-copy='name: IEEE Conference Paper&#10;description: A conference paper template with figure, table and citation helpers.&#10;category: Academic&#10;tags: LaTeX, Research, University&#10;license: MIT&#10;downloadUrl: https://example.org/ieee-paper.zip'><span>Copy</span></button></div><pre><code>name: <span class="syntax-string">IEEE Conference Paper</span>
+description: <span class="syntax-string">A conference paper template with figure, table and citation helpers.</span>
+category: <span class="syntax-string">Academic</span>
+tags: <span class="syntax-string">LaTeX, Research, University</span>
+license: <span class="syntax-string">MIT</span>
+downloadUrl: <span class="syntax-string">https://example.org/ieee-paper.zip</span></code></pre></div>
+            </details>
+            <div class="callout"><strong>The description is a promise.</strong><p>Write what the template actually contains — sections, bibliography style, compile requirements. Reviewers reject listings whose description and files disagree.</p></div>
+          </section>
+
+          <section class="docs-section" id="entry-point"><span class="step-number">03</span><h2>Write the Entry Document</h2><p><code class="inline-code" translate="no">main.tex</code> is the document the reviewer compiles first. It should open with the class declaration, pull the bibliography from the same folder, and compile without local configuration.</p>
+            <details class="manifest-reference development-example">
+              <summary><span>TeX &nbsp; main.tex</span></summary>
+              <div class="code-block"><div class="code-head"><span>TeX &nbsp; main.tex</span><button class="copy-button" type="button" aria-label="Copy development main.tex" data-copy='\documentclass[conference]{IEEEtran}&#10;&#10;\usepackage{graphicx}&#10;\usepackage{cite}&#10;&#10;\title{A Reusable Conference Paper Template}&#10;\author{Your Name \and Co-Author}&#10;&#10;\begin{document}&#10;\maketitle&#10;&#10;\begin{abstract}&#10;Summarise the contribution in three or four sentences.&#10;\end{abstract}&#10;&#10;\section{Introduction}&#10;State the problem, the approach, and the result.&#10;&#10;\bibliographystyle{IEEEtran}&#10;\bibliography{references}&#10;\end{document}'><span>Copy</span></button></div><pre><code><span class="syntax-key">\documentclass</span>[conference]{IEEEtran}
+
+<span class="syntax-key">\usepackage</span>{graphicx}
+<span class="syntax-key">\usepackage</span>{cite}
+
+<span class="syntax-key">\title</span>{A Reusable Conference Paper Template}
+<span class="syntax-key">\author</span>{Your Name \and Co-Author}
+
+<span class="syntax-key">\begin</span>{document}
+<span class="syntax-key">\maketitle</span>
+
+<span class="syntax-key">\begin</span>{abstract}
+Summarise the contribution in three or four sentences.
+<span class="syntax-key">\end</span>{abstract}
+
+<span class="syntax-key">\section</span>{Introduction}
+State the problem, the approach, and the result.
+
+<span class="syntax-key">\bibliographystyle</span>{IEEEtran}
+<span class="syntax-key">\bibliography</span>{references}
+<span class="syntax-key">\end</span>{document}
+</code></pre></div>
+            </details>
+            <p>Next, record how a reader installs and removes the package in <code class="inline-code" translate="no">README.md</code>:</p>
+            <details class="manifest-reference development-example">
+              <summary><span>Markdown &nbsp; README.md</span></summary>
+              <div class="code-block"><div class="code-head"><span>Markdown &nbsp; README.md</span><button class="copy-button" type="button" aria-label="Copy development README.md" data-copy='# IEEE Conference Paper&#10;&#10;A conference paper template with figure, table and citation helpers.&#10;&#10;## Compile&#10;&#10;```sh&#10;pdflatex main.tex&#10;bibtex main&#10;pdflatex main.tex&#10;```&#10;&#10;## Contents&#10;&#10;- main.tex — entry document&#10;- references.bib — sample bibliography&#10;- preview.png — rendered first page&#10;&#10;## Licence&#10;&#10;MIT; see LICENSE.'><span>Copy</span></button></div><pre><code># IEEE Conference Paper
+
+A conference paper template with figure, table and citation helpers.
+
+## Compile
+
+```sh
+pdflatex main.tex
+bibtex main
+pdflatex main.tex
+```
+
+## Contents
+
+- main.tex — entry document
+- references.bib — sample bibliography
+- preview.png — rendered first page
+
+## Licence
+
+MIT; see LICENSE.</code></pre></div>
+            </details>
+            <div class="callout"><strong>Both files describe one package.</strong><p>The README’s compile steps must match the entry document, and the metadata description must match both. Reviewers check all three against each other.</p></div>
+            <p class="official-reference">This structure follows the marketplace’s <a href="index.html#catalog">published templates</a>. The <a href="publish.html#manifest">metadata reference ↗</a> remains the source of truth for the submission fields.</p>
+          </section>
+
+          <section class="docs-section" id="validate"><span class="step-number">04</span><h2>Validate the Package</h2><p>Check the package the way review does: compile from a clean directory, confirm every referenced file exists, and confirm the licence is present.</p>
+            <div class="code-block"><div class="code-head"><span>Terminal &nbsp; validate</span><button class="copy-button" type="button" aria-label="Copy validation commands" data-copy='TEMPLATE_DIR="$HOME/Documents/ieee-conference-paper"&#10;cd "$TEMPLATE_DIR"&#10;pdflatex -interaction=nonstopmode main.tex&#10;test -f README.md && test -f LICENSE && echo "package complete"'><span>Copy</span></button></div><pre><code>TEMPLATE_DIR="$HOME/Documents/ieee-conference-paper"
+cd "$TEMPLATE_DIR"
+pdflatex -interaction=nonstopmode main.tex
+test -f README.md && test -f LICENSE && echo "package complete"</code></pre></div>
+            <p>Both commands should exit without an error. A missing dependency gives an actionable message, for example:</p>
+            <div class="code-block"><div class="code-head"><span>Example &nbsp; validation failure</span></div><pre><code>! LaTeX Error: File `template.sty' not found.</code></pre></div>
+            <ul class="check-list"><li><span aria-hidden="true">✓</span><div><strong>The entry document compiles</strong><small><code class="inline-code" translate="no">main.tex</code> builds from a fresh checkout with no undefined references.</small></div></li><li><span aria-hidden="true">✓</span><div><strong>Every referenced file is bundled</strong><small>Bibliographies, images, and style files ship inside the package, never on your disk only.</small></div></li><li><span aria-hidden="true">✓</span><div><strong>README and licence agree with the metadata</strong><small>Name, description, and licence match the submission form exactly.</small></div></li><li><span aria-hidden="true">✓</span><div><strong>No build artefacts or secrets</strong><small>No <code class="inline-code" translate="no">.aux</code> leftovers, absolute paths, tokens, or personal data.</small></div></li></ul>
+          </section>
+
+          <section class="docs-section" id="run"><span class="step-number">05</span><h2>Render the Preview</h2><p>The preview image is what shoppers see first. Render the final PDF and export its first page at a readable size:</p>
+            <div class="code-block"><div class="code-head"><span>Terminal &nbsp; export preview</span><button class="copy-button" type="button" aria-label="Copy preview command" data-copy='pdftoppm -png -f 1 -l 1 -r 150 main.pdf preview&#10;mv preview-1.png preview.png'><span>Copy</span></button></div><pre><code>pdftoppm -png -f 1 -l 1 -r 150 main.pdf preview
+mv preview-1.png preview.png</code></pre></div>
+            <p>The command writes <code class="inline-code" translate="no">preview.png</code> beside the sources. Open it once and confirm the text is legible — the catalog scales it down, but never up:</p>
+            <div class="code-block"><div class="code-head"><span>Example &nbsp; preview properties</span></div><pre><code>{
+  <span class="syntax-key">"file"</span>: <span class="syntax-string">"preview.png"</span>,
+  <span class="syntax-key">"recommendedWidth"</span>: <span class="syntax-number">1600</span>,
+  <span class="syntax-key">"formats"</span>: [<span class="syntax-string">"png"</span>, <span class="syntax-string">"jpg"</span>, <span class="syntax-string">"webp"</span>]
+}</code></pre></div>
+            <p>Before sharing, re-run the compile after a clean, click through the preview, check the download link from a private window, and confirm the licence text opens. If the package does not compile, continue to Troubleshooting below.</p>
+          </section>
+
+          <section class="docs-section" id="finished"><span class="step-number">06</span><h2>Finished Example</h2><p>After testing, remove any machine-specific paths, keep the folder name identical to the listing identifier, and place these files in a public repository or a zip archive, then select a file to inspect or copy it.</p>
+            <div class="example-file-tree" role="group" aria-label="Finished conference paper repository files">
+              <div class="example-tree-root"><code>ieee-conference-paper/</code><small>Select a file to inspect it</small></div>
+              <details class="manifest-reference example-file">
+                <summary><span><span class="tree-branch" aria-hidden="true"></span><code>main.tex</code></span></summary>
+                <div class="code-block"><div class="code-head"><span>TeX &nbsp; main.tex</span><button class="copy-button" type="button" aria-label="Copy finished main.tex" data-copy='\documentclass[conference]{IEEEtran}&#10;&#10;\usepackage{graphicx}&#10;\usepackage{cite}&#10;&#10;\title{A Reusable Conference Paper Template}&#10;\author{Your Name \and Co-Author}&#10;&#10;\begin{document}&#10;\maketitle&#10;&#10;\begin{abstract}&#10;Summarise the contribution in three or four sentences.&#10;\end{abstract}&#10;&#10;\section{Introduction}&#10;State the problem, the approach, and the result.&#10;&#10;\bibliographystyle{IEEEtran}&#10;\bibliography{references}&#10;\end{document}'><span>Copy</span></button></div><pre><code><span class="syntax-key">\documentclass</span>[conference]{IEEEtran}
+
+<span class="syntax-key">\usepackage</span>{graphicx}
+<span class="syntax-key">\usepackage</span>{cite}
+
+<span class="syntax-key">\title</span>{A Reusable Conference Paper Template}
+<span class="syntax-key">\author</span>{Your Name \and Co-Author}
+
+<span class="syntax-key">\begin</span>{document}
+<span class="syntax-key">\maketitle</span>
+
+<span class="syntax-key">\begin</span>{abstract}
+Summarise the contribution in three or four sentences.
+<span class="syntax-key">\end</span>{abstract}
+
+<span class="syntax-key">\section</span>{Introduction}
+State the problem, the approach, and the result.
+
+<span class="syntax-key">\bibliographystyle</span>{IEEEtran}
+<span class="syntax-key">\bibliography</span>{references}
+<span class="syntax-key">\end</span>{document}
+</code></pre></div>
+              </details>
+              <details class="manifest-reference example-file">
+                <summary><span><span class="tree-branch" aria-hidden="true"></span><code>README.md</code></span></summary>
+                <div class="code-block"><div class="code-head"><span>Markdown &nbsp; README.md</span><button class="copy-button" type="button" aria-label="Copy finished README.md" data-copy='# IEEE Conference Paper&#10;&#10;A conference paper template with figure, table and citation helpers.&#10;&#10;## Compile&#10;&#10;```sh&#10;pdflatex main.tex&#10;bibtex main&#10;pdflatex main.tex&#10;```&#10;&#10;## Contents&#10;&#10;- main.tex — entry document&#10;- references.bib — sample bibliography&#10;- preview.png — rendered first page&#10;&#10;## Licence&#10;&#10;MIT; see LICENSE.'><span>Copy</span></button></div><pre><code># IEEE Conference Paper
+
+A conference paper template with figure, table and citation helpers.
+
+## Compile
+
+```sh
+pdflatex main.tex
+bibtex main
+pdflatex main.tex
+```
+
+## Contents
+
+- main.tex — entry document
+- references.bib — sample bibliography
+- preview.png — rendered first page
+
+## Licence
+
+MIT; see LICENSE.</code></pre></div>
+              </details>
+              <details class="manifest-reference example-file">
+                <summary><span><span class="tree-branch" aria-hidden="true"></span><code>LICENSE</code></span></summary>
+                <div class="code-block"><div class="code-head"><span>Text &nbsp; LICENSE</span><button class="copy-button" type="button" aria-label="Copy finished LICENSE" data-copy='MIT License&#10;&#10;Copyright (c) 2026 Your name&#10;&#10;Permission is hereby granted, free of charge, to any person obtaining a copy&#10;of this software and associated documentation files (the &quot;Software&quot;), to deal&#10;in the Software without restriction, including without limitation the rights&#10;to use, copy, modify, merge, publish, distribute, sublicense, and/or sell&#10;copies of the Software, and to permit persons to whom the Software is&#10;furnished to do so, subject to the following conditions:&#10;&#10;The above copyright notice and this permission notice shall be included in all&#10;copies or substantial portions of the Software.&#10;&#10;THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&#10;IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&#10;FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE&#10;AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER&#10;LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,&#10;OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE&#10;SOFTWARE.'><span>Copy</span></button></div><pre><code>MIT License
+
+Copyright (c) 2026 Your name
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.</code></pre></div>
+              </details>
+            </div>
+            <p>An optional <code class="inline-code" translate="no">preview.png</code> can sit beside these files; it is binary, so it is not included in the copy-ready tree.</p>
+            <div class="callout"><strong>Use this as a structural reference.</strong><p>Do not copy the name, repository URL, author, or description unchanged. Document every external dependency, font, data file, or online service your template relies on.</p></div>
+          </section>
+
+          <section class="docs-section" id="troubleshooting"><span class="step-number">Reference</span><h2>Troubleshooting</h2><ul class="check-list troubleshooting-list"><li><span aria-hidden="true">!</span><div><strong>Package Does Not Compile</strong><p>Compile from a fresh copy of the folder; a file that only exists on your machine is the usual cause.</p></div></li><li><span aria-hidden="true">!</span><div><strong>Bibliography Entries Missing</strong><p>Run <code class="inline-code" translate="no">bibtex main</code> between the <code class="inline-code" translate="no">pdflatex</code> passes so <code class="inline-code" translate="no">references.bib</code> is actually read.</p></div></li><li><span aria-hidden="true">!</span><div><strong>The Listing Was Rejected</strong><p>Read the rejection reason on the submission, fix exactly that, and submit again — every rejection comes with a reason.</p></div></li><li><span aria-hidden="true">!</span><div><strong>The Preview Looks Blurry</strong><p>Re-export at 150&nbsp;DPI or higher; the catalog never upscales the image it is given.</p></div></li><li><span aria-hidden="true">!</span><div><strong>The Download Link 404s</strong><p>Confirm the URL resolves from a private window; links to local or private repositories are rejected during review.</p></div></li></ul><p class="submit-action"><a class="button publish-primary" href="publish.html">Continue to the Submission Guide <span aria-hidden="true">→</span></a></p></section>
+        </main>
+      </div>
+      <aside class="right-aside"><div class="aside-block"><span class="aside-title">On this page</span><a class="aside-link active" href="#overview">Overview</a><a class="aside-link" href="#start">Prepare</a><a class="aside-link" href="#contract">Metadata</a><a class="aside-link" href="#entry-point">Entry document</a><a class="aside-link" href="#validate">Validate</a><a class="aside-link" href="#run">Preview</a><a class="aside-link" href="#finished">Finished example</a><a class="aside-link" href="#troubleshooting">Troubleshooting</a></div><div class="aside-block"><span class="aside-title">Metadata</span><dl class="aside-meta"><div><dt>Status</dt><dd><span class="status-label">Stable</span></dd></div><div><dt>Audience</dt><dd>Authors</dd></div><div><dt>Owner</dt><dd><a href="https://github.com/HANCORE-linux" target="_blank" rel="noreferrer">HANCORE</a></dd></div><div><dt>Updated</dt><dd><time datetime="2026-10-04"><span>4 Oct 2026</span></time></dd></div></dl></div></aside>
+    </div>
+    <nav class="mobile-bottom" aria-label="Mobile navigation"><a href="index.html">Browse</a><a class="active" href="#overview" data-section-ids="overview start">Start</a><a href="#contract" data-section-ids="contract entry-point validate run">Build</a><a href="#finished" data-section-ids="finished troubleshooting">Finish</a></nav>
+    <div class="toast" id="toast" role="status" aria-live="polite">Copied</div>
+    <script type="module" src="assets/js/develop.js?v=20261008-01"></script>
+  </body>
+</html>
