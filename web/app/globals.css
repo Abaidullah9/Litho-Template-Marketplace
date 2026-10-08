@@ -1,0 +1,42 @@
+/*
+ * Tailwind is imported without its preflight: the marketplace stylesheets already carry the
+ * project's own reset and tokens, and the look must not change.
+ *
+ * The ported stylesheet sits in its own layer below the utilities so a utility class always wins
+ * over a legacy element rule (`button`, `input`, …). Ported pages use legacy classes only, so
+ * nothing changes for them; shadcn primitives need the utilities to take effect.
+ */
+@layer theme, marketplace, utilities;
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+@import "../styles/style.css" layer(marketplace);
+
+/*
+ * shadcn/ui primitives are themed from the marketplace tokens rather than a second palette: the
+ * legacy stylesheets stay the source of truth for the look, so a primitive dropped into a page
+ * inherits the active theme, including the 24 selectable site themes.
+ */
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --color-card: var(--panel);
+  --color-card-foreground: var(--text);
+  --color-popover: var(--panel);
+  --color-popover-foreground: var(--text);
+  --color-primary: var(--accent);
+  --color-primary-foreground: var(--accent-contrast);
+  --color-secondary: var(--panel-2);
+  --color-secondary-foreground: var(--text);
+  --color-muted: var(--panel-2);
+  --color-muted-foreground: var(--muted);
+  --color-accent: var(--panel-2);
+  --color-accent-foreground: var(--text);
+  --color-destructive: var(--updated);
+  --color-border: var(--line);
+  --color-input: var(--line-strong);
+  --color-ring: var(--accent);
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 4px;
+}

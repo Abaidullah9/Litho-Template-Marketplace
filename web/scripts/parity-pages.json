@@ -1,0 +1,9 @@
+[
+  { "legacy": "../../test/fixtures/legacy-pages/index.html", "exported": "../out/index.html", "marker": "homeMain" },
+  { "legacy": "../../test/fixtures/legacy-pages/explore.html", "exported": "../out/explore.html", "marker": "exploreMain" },
+  { "legacy": "../../test/fixtures/legacy-pages/template.html", "exported": "../out/template.html", "marker": "detailMain" },
+  { "legacy": "../../test/fixtures/legacy-pages/develop.html", "exported": "../out/develop.html", "marker": "content" },
+  { "legacy": "../../test/fixtures/legacy-pages/publish.html", "exported": "../out/publish.html", "marker": "content" },
+  { "legacy": "../../test/fixtures/legacy-pages/submit.html", "exported": "../out/submit.html", "marker": "adminContent" },
+  { "legacy": "../../test/fixtures/legacy-pages/admin/login.html", "exported": "../out/admin/login.html", "marker": "loginMain" }
+]
