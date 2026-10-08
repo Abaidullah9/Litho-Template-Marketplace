@@ -37,6 +37,48 @@ const PRESERVED_FILES = new Set([
   "deployment-id.txt",
 ]);
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "/Litho-Template-Marketplace";
+
+function fixHtmlPaths(content) {
+  if (!basePath) return content;
+
+  // 1. Rewrite root assets: "/assets/..." -> "${basePath}/assets/..."
+  content = content.replace(/(["'\(])\/assets\//g, `$1${basePath}/assets/`);
+
+  // 2. Rewrite favicon: "/favicon.svg..." -> "${basePath}/favicon.svg..."
+  content = content.replace(/(["'])\/favicon\.svg/g, `$1${basePath}/favicon.svg`);
+
+  // 3. Rewrite internal page routes:
+  const routes = [
+    "index.html",
+    "explore.html",
+    "develop.html",
+    "publish.html",
+    "submit.html",
+    "template.html",
+    "admin/login",
+    "admin/dashboard",
+    "admin/templates",
+    "admin/submissions",
+    "admin/categories",
+    "admin/tags",
+    "admin/publishers",
+    "admin/analytics",
+    "admin/registry",
+    "admin/settings",
+    "admin/activity",
+    "admin/admins",
+  ];
+
+  for (const r of routes) {
+    const escaped = r.replaceAll("/", "\\/");
+    const re = new RegExp(`(["'])\\/${escaped}(["'#?])`, "g");
+    content = content.replace(re, `$1${basePath}/${r}$2`);
+  }
+
+  return content;
+}
+
 function assertExportFreshness() {
   if (!existsSync(indexOutFile)) {
     throw new Error(
@@ -156,9 +198,15 @@ function copyDirectoryRecursive(src, dest) {
       filesCopied += sub.filesCopied;
       bytesCopied += sub.bytesCopied;
     } else if (entry.isFile()) {
-      copyFileSync(srcPath, destPath);
+      if (entry.name.endsWith(".html") || entry.name.endsWith(".txt")) {
+        const raw = readFileSync(srcPath, "utf8");
+        const fixed = fixHtmlPaths(raw);
+        writeFileSync(destPath, fixed, "utf8");
+      } else {
+        copyFileSync(srcPath, destPath);
+      }
       filesCopied++;
-      bytesCopied += statSync(srcPath).size;
+      bytesCopied += statSync(destPath).size;
     }
   }
 

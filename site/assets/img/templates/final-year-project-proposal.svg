@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-label="Final Year Project Proposal preview">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#151005"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#ffffff" stroke-opacity="0.05"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="675" fill="url(#g)"/>
+  <rect width="1200" height="675" fill="url(#grid)"/>
+  <rect x="0" y="0" width="12" height="675" fill="#f4bd62"/>
+  <rect x="72" y="96" width="132" height="34" rx="2" fill="#f4bd62" fill-opacity="0.15" stroke="#f4bd62"/>
+  <text x="138" y="119" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#f4bd62" text-anchor="middle" letter-spacing="2">PROPOSAL</text>
+  <text x="72" y="250" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="68" font-weight="700" fill="#ffffff">Final Year Project Proposal</text>
+  <text x="72" y="312" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="22" fill="#9ca3af">Document template · ready to download and edit</text>
+  <g stroke="#f4bd62" stroke-opacity="0.6" fill="none">
+    <rect x="72" y="400" width="360" height="180" rx="4"/>
+    <line x1="104" y1="440" x2="400" y2="440"/>
+    <line x1="104" y1="476" x2="360" y2="476"/>
+    <line x1="104" y1="512" x2="384" y2="512"/>
+    <line x1="104" y1="548" x2="300" y2="548"/>
+  </g>
+  <g stroke="#ffffff" stroke-opacity="0.25" fill="none">
+    <rect x="512" y="400" width="360" height="180" rx="4"/>
+    <line x1="544" y1="440" x2="840" y2="440"/>
+    <line x1="544" y1="476" x2="800" y2="476"/>
+    <line x1="544" y1="512" x2="824" y2="512"/>
+    <line x1="544" y1="548" x2="740" y2="548"/>
+  </g>
+  <text x="72" y="636" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18" fill="#f4bd62">template marketplace</text>
+</svg>

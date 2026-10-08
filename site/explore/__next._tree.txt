@@ -1,6 +1,6 @@
-:HL["/_next/static/css/fa85b8274f7011f7.css","style"]
-:HL["/_next/static/css/31faebb6e39089ac.css","style"]
-:HL["/assets/img/litho-wordmark.png?v=20261007-01","image"]
+:HL["/Litho-Template-Marketplace/_next/static/chunks/3hpcn1pg_dgbg.css","style"]
+:HL["/Litho-Template-Marketplace/_next/static/chunks/3h0m3utosxab4.css","style"]
+:HL["/Litho-Template-Marketplace/assets/img/litho-wordmark.png?v=20261007-01","image"]
 2:[["children",{"s":"__PAGE__","h":160}]]
 1:[["children",{"s":"explore","h":96,"c":"$Q2"}]]
-0:{"b":"ELGj8mCifWmhbnkc3vvJC","t":{"t":{"s":"","h":80,"c":"$Q1"}}}
+0:{"b":"Fb-A_THk66RtMMzOZ4VVi","t":{"t":{"s":"","h":80,"c":"$Q1"}}}

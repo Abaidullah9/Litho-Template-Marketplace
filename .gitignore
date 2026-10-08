@@ -16,13 +16,5 @@ web/out/
 export-preview.log
 *.pdf
 
-# Image and picture assets
-*.png
-*.jpg
-*.jpeg
-*.webp
-*.gif
-*.ico
-*.bmp
-*.tiff
-site/assets/img/
+# Legacy plugin screenshots (bloat prevention)
+site/assets/img/plugins/

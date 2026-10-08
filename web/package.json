@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "next dev --port 3000",
     "predev": "node scripts/sync-styles.mjs && node scripts/sync-engine.mjs",
-    "build": "next build --webpack",
+    "build": "next build",
     "prebuild": "node scripts/sync-styles.mjs && node scripts/sync-engine.mjs",
     "sync:styles": "node scripts/sync-styles.mjs",
     "sync:engine": "node scripts/sync-engine.mjs",

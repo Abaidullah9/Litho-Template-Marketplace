@@ -10,10 +10,12 @@ import type { NextConfig } from "next";
  * legacy server instead of duplicating megabytes of images and fonts into `public/`.
  */
 const legacyOrigin = process.env.LEGACY_SITE_ORIGIN || "http://127.0.0.1:8787";
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "/Litho-Template-Marketplace";
 
 export default function nextConfig(phase: string): NextConfig {
   const config: NextConfig = {
     output: "export",
+    basePath: basePath || undefined,
     reactStrictMode: true,
     images: { unoptimized: true },
     trailingSlash: false,

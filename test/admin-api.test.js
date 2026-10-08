@@ -98,7 +98,7 @@ test("the homepage admin entry leads to a sign-in page this server serves", asyn
   // The sign-in card wears the marketplace brand, and the brand links back to the marketplace.
   assert.match(
     loginHtml,
-    /<a class="login-brand" href="\/index\.html" aria-label="Template Marketplace home">[\s\S]*litho-wordmark\.png\?v=20261007-01[\s\S]*<span>TEMPLATE MARKETPLACE<\/span><\/a>/,
+    /<a class="login-brand" href="(?:\/Litho-Template-Marketplace)?\/index\.html" aria-label="Template Marketplace home">[\s\S]*litho-wordmark\.png\?v=20261007-01[\s\S]*<span>TEMPLATE MARKETPLACE<\/span><\/a>/,
   );
 
   // …and the dashboard the sign-in page continues to, plus the assets both pages rely on.

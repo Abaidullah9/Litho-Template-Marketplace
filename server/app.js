@@ -62,15 +62,19 @@ export function createApp({ config, supabase = () => null }) {
   app.use("/api", createPublicRouter({ config, supabase }));
   app.use("/api/admin", createAdminRouter({ config, supabase }));
 
+  const basePath = "/Litho-Template-Marketplace";
   const pages = express.Router();
   for (const [route, file] of Object.entries(PAGE_ROUTES)) {
     const target = path.join(config.siteRoot, file);
     if (!existsSync(target)) continue;
     pages.get(route, (req, res) => res.sendFile(target));
     pages.get(`${route}/`, (req, res) => res.sendFile(target));
+    pages.get(`${basePath}${route}`, (req, res) => res.sendFile(target));
+    pages.get(`${basePath}${route}/`, (req, res) => res.sendFile(target));
   }
   app.use(pages);
 
+  app.use(basePath, express.static(config.siteRoot, { extensions: ["html"], index: "index.html" }));
   app.use(express.static(config.siteRoot, { extensions: ["html"], index: "index.html" }));
 
   app.use((req, res, next) => {
