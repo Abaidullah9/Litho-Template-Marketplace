@@ -150,7 +150,12 @@ export async function createAdminUser(client, { username, password, role = "admi
     .select("id, username, role, created_at, updated_at")
     .maybeSingle();
 
-  if (error) throw upstream(error.message);
+  if (error) {
+    if (error.code === "23505" || error.message?.includes("unique constraint") || error.message?.includes("duplicate key")) {
+      throw conflict(`An admin user with username "${cleanUsername}" already exists.`);
+    }
+    throw upstream(error.message);
+  }
   if (data && "password_hash" in data) {
     delete data.password_hash;
   }
