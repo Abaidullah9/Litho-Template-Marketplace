@@ -15,8 +15,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(__dirname, "..");
 
 const env = Object.assign({}, process.env, {
-  PORT: "8787",
-  HOST: "0.0.0.0",
+  PORT: Number(process.env.PORT) > 0 ? String(process.env.PORT) : "8787",
+  HOST: process.env.HOST || "0.0.0.0",
 });
 
 const child = spawn("node", [path.join(projectRoot, "server", "index.js")], {
