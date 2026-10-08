@@ -70,8 +70,16 @@ export async function api(path, { method = "GET", body, formData } = {}) {
   }
 
   if (!response.ok) {
+    let errorMessage = payload?.error?.message;
+    if (!errorMessage) {
+      if (response.status === 405 || (typeof window !== "undefined" && window.location.hostname.endsWith("github.io"))) {
+        errorMessage = "GitHub Pages is static. Admin sign-in requires the Node.js server (run 'node scripts/start.js' locally at http://localhost:8787/admin).";
+      } else {
+        errorMessage = `Request failed (${response.status})`;
+      }
+    }
     const error = new ApiError(
-      payload?.error?.message || `Request failed (${response.status})`,
+      errorMessage,
       { status: response.status, code: payload?.error?.code, details: payload?.error?.details },
     );
     if (response.status === 401 && !path.endsWith("/login") && !onSignInPage()) {
