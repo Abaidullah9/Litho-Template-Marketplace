@@ -116,6 +116,13 @@ export function queryString(params = {}) {
   return encoded ? `?${encoded}` : "";
 }
 
+export function adminUrl(path) {
+  const base = typeof window !== "undefined" && window.location.pathname.startsWith("/Litho-Template-Marketplace")
+    ? "/Litho-Template-Marketplace"
+    : "";
+  return `${base}${path}`;
+}
+
 export function mountAdmin({ active = "", title = "Dashboard", crumb = "Admin", actions = "" } = {}) {
   document.body.classList.add("admin-page");
   const counts = readCounts();
@@ -124,24 +131,28 @@ export function mountAdmin({ active = "", title = "Dashboard", crumb = "Admin", 
     if (item.group) return `<div class="nav-group">${escapeHtml(item.group)}</div>`;
     const count = item.count ? counts[item.count] : null;
     const badge = count ? `<span class="nav-count">${Number(count)}</span>` : "";
-    return `<a href="${item.href}" class="${item.key === active ? "active" : ""}">${escapeHtml(item.label)}${badge}</a>`;
+    return `<a href="${adminUrl(item.href)}" class="${item.key === active ? "active" : ""}">${escapeHtml(item.label)}${badge}</a>`;
   }).join("");
 
   document.body.innerHTML = `
     <a class="skip-link" href="#admin-content">Skip to content</a>
     <div class="admin-shell">
-      <aside class="admin-sidebar" id="admin-sidebar">
-        <a class="admin-brand" href="/">
-          <img src="/assets/img/litho-wordmark.png?v=20261007-01" alt="" width="656" height="192">
-          <span>Admin</span>
-        </a>
+      <aside class="admin-sidebar" id="admin-sidebar" aria-label="Admin sidebar">
+        <div class="admin-sidebar-header">
+          <a class="admin-brand" href="${adminUrl('/admin')}">
+            <img src="${adminUrl('/assets/img/litho-wordmark.png?v=20261007-01')}" alt="" width="656" height="192">
+            <span>Admin</span>
+          </a>
+          <button class="admin-sidebar-close" type="button" data-action="menu-close" aria-label="Close menu">✕</button>
+        </div>
         <nav class="admin-nav" aria-label="Admin navigation">${navHtml}</nav>
         <div class="admin-sidebar-foot">
-          <a class="btn ghost small" href="/" target="_blank" rel="noreferrer">View marketplace ↗</a>
+          <a class="btn ghost small" href="${adminUrl('/')}" target="_blank" rel="noreferrer">View marketplace ↗</a>
           <button class="btn ghost small" type="button" data-action="theme">Toggle theme</button>
           <button class="btn ghost small" type="button" data-action="logout">Sign out</button>
         </div>
       </aside>
+      <div class="admin-backdrop" id="admin-backdrop" data-action="menu-close" aria-hidden="true"></div>
       <div class="admin-main">
         <header class="admin-topbar">
           <div style="display:flex;align-items:center;gap:12px;min-width:0">
@@ -159,18 +170,46 @@ export function mountAdmin({ active = "", title = "Dashboard", crumb = "Admin", 
     <div class="admin-toast" id="admin-toast" role="status" aria-live="polite"></div>
   `;
 
+  function closeMenu() {
+    const sidebar = document.getElementById("admin-sidebar");
+    const backdrop = document.getElementById("admin-backdrop");
+    const menuToggle = document.querySelector("[data-action='menu']");
+    if (sidebar) sidebar.classList.remove("open");
+    if (backdrop) backdrop.classList.remove("open");
+    if (menuToggle) menuToggle.setAttribute("aria-expanded", "false");
+  }
+
+  function toggleMenu() {
+    const sidebar = document.getElementById("admin-sidebar");
+    const backdrop = document.getElementById("admin-backdrop");
+    const menuToggle = document.querySelector("[data-action='menu']");
+    if (!sidebar) return;
+    const open = sidebar.classList.toggle("open");
+    if (backdrop) backdrop.classList.toggle("open", open);
+    if (menuToggle) menuToggle.setAttribute("aria-expanded", String(open));
+  }
+
   document.body.addEventListener("click", (event) => {
     const action = event.target.closest("[data-action]")?.dataset.action;
     if (action === "logout") {
       post("/api/admin/logout").catch(() => {});
-      window.location.href = "/admin/login";
+      window.location.href = adminUrl("/admin/login");
     }
     if (action === "menu") {
-      const sidebar = document.getElementById("admin-sidebar");
-      const open = sidebar.classList.toggle("open");
-      event.target.closest("[data-action]").setAttribute("aria-expanded", String(open));
+      toggleMenu();
+    }
+    if (action === "menu-close") {
+      closeMenu();
     }
     if (action === "theme") toggleTheme();
+
+    if (event.target.closest(".admin-nav a, .admin-brand, .admin-sidebar-foot a")) {
+      closeMenu();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeMenu();
   });
 
   return {
