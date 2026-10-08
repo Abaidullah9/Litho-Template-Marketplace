@@ -1,0 +1,37 @@
+{
+  "name": "litho-template-marketplace",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.10.1",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "node server/index.js",
+    "start": "node server/index.js",
+    "dev:web": "pnpm --dir web dev",
+    "build:web": "pnpm --dir web build",
+    "parity": "pnpm --dir web check:parity",
+    "build": "pnpm --dir web build && node web/scripts/export-to-site.mjs",
+    "registry:generate": "node scripts/generate-registry.mjs",
+    "db:migrate": "node scripts/apply-migrations.mjs",
+    "db:seed": "node scripts/seed-marketplace.mjs",
+    "migrate:registry": "node scripts/migrate-registry-to-supabase.mjs",
+    "generate:catalog": "node scripts/generate-catalog.js",
+    "build:litho-catalog": "node scripts/build-catalog.mjs",
+    "build:explorer": "node scripts/build-explorer-data.mjs",
+    "check:catalog-write-admission": "node scripts/check-catalog-write-admission.mjs",
+    "export:site": "node web/scripts/export-to-site.mjs",
+    "test": "node scripts/run-tests.mjs"
+  },
+  "devDependencies": {
+    "sharp": "0.35.3"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.117.2",
+    "express": "^5.2.1",
+    "multer": "^2.4.0",
+    "pg": "^8.23.1"
+  }
+}

@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Local Windows shim for jq.
+#
+# jq.exe is a native Windows binary, so on this platform it cannot read the
+# /proc/<pid>/fd/<n> paths that bash process substitution produces, and it
+# emits CRLF line endings. Both break workflow scripts that expect a POSIX jq.
+# This wrapper materializes those paths and normalizes line endings.
+set -o pipefail
+
+self_dir=$(cd "$(dirname "$0")" && pwd)
+args=()
+temporary=()
+
+for argument in "$@"; do
+  case "$argument" in
+    /proc/*/fd/*|/dev/fd/*)
+      copy=$(mktemp)
+      cat "$argument" > "$copy"
+      temporary+=("$copy")
+      args+=("$copy")
+      ;;
+    *)
+      args+=("$argument")
+      ;;
+  esac
+done
+
+"$self_dir/jq.exe.bin" "${args[@]}" | tr -d '\r'
+status=$?
+
+if ((${#temporary[@]})); then
+  rm -f "${temporary[@]}"
+fi
+
+exit "$status"

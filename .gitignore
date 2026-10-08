@@ -1,0 +1,17 @@
+.DS_Store
+node_modules/
+npm-debug.log*
+worker/.dev.vars*
+worker/.env*
+worker/.wrangler/
+worker/wrangler.jsonc
+tools/*.exe.bin
+tools/*.download
+.env
+uploads/
+
+# React migration app (web/): build output and the export preview server log
+web/.next/
+web/out/
+export-preview.log
+*.pdf
