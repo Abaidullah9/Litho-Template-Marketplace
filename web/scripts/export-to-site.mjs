@@ -48,7 +48,10 @@ function fixHtmlPaths(content) {
   // 2. Rewrite favicon: "/favicon.svg..." -> "${basePath}/favicon.svg..."
   content = content.replace(/(["'])\/favicon\.svg/g, `$1${basePath}/favicon.svg`);
 
-  // 3. Rewrite internal page routes:
+  // 3. Rewrite root homepage link: href="/" -> href="${basePath}/"
+  content = content.replace(/(href=["'])\/(["'#?])/g, `$1${basePath}/$2`);
+
+  // 4. Rewrite internal page routes:
   const routes = [
     "index.html",
     "explore.html",
@@ -201,6 +204,10 @@ function copyDirectoryRecursive(src, dest) {
       if (entry.name.endsWith(".html") || entry.name.endsWith(".txt")) {
         const raw = readFileSync(srcPath, "utf8");
         const fixed = fixHtmlPaths(raw);
+        writeFileSync(destPath, fixed, "utf8");
+      } else if (entry.name.endsWith(".css")) {
+        const raw = readFileSync(srcPath, "utf8");
+        const fixed = basePath ? raw.replace(/(["'\(])\/assets\//g, `$1${basePath}/assets/`) : raw;
         writeFileSync(destPath, fixed, "utf8");
       } else {
         copyFileSync(srcPath, destPath);

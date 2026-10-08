@@ -1,4 +1,4 @@
-import { accentColor, formatDate, legibleColor, setupThemeToggle } from "./shared.js";
+import { accentColor, assetUrl, formatDate, legibleColor, setupThemeToggle } from "./shared.js";
 import { createExplorerSearchMatcher, repositoryPublisher } from "./explore-search.js";
 import { themeById } from "./themes.js";
 import { inclusiveDayCount, inclusiveRangeStart } from "./growth-range.js";
@@ -1406,7 +1406,7 @@ window.addEventListener("resize", () => {
 });
 
 try {
-  const response = await fetch("explorer-data.json", { cache: "no-store" });
+  const response = await fetch(assetUrl("explorer-data.json"));
   if (!response.ok) throw new Error(`Explorer request failed: ${response.status}`);
   explorer = await response.json();
   setupDataFreshness();

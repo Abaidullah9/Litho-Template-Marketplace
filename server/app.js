@@ -67,15 +67,15 @@ export function createApp({ config, supabase = () => null }) {
   for (const [route, file] of Object.entries(PAGE_ROUTES)) {
     const target = path.join(config.siteRoot, file);
     if (!existsSync(target)) continue;
-    pages.get(route, (req, res) => res.sendFile(target));
-    pages.get(`${route}/`, (req, res) => res.sendFile(target));
-    pages.get(`${basePath}${route}`, (req, res) => res.sendFile(target));
-    pages.get(`${basePath}${route}/`, (req, res) => res.sendFile(target));
+    pages.get(route, (req, res) => res.sendFile(target, { dotfiles: "allow" }));
+    pages.get(`${route}/`, (req, res) => res.sendFile(target, { dotfiles: "allow" }));
+    pages.get(`${basePath}${route}`, (req, res) => res.sendFile(target, { dotfiles: "allow" }));
+    pages.get(`${basePath}${route}/`, (req, res) => res.sendFile(target, { dotfiles: "allow" }));
   }
   app.use(pages);
 
-  app.use(basePath, express.static(config.siteRoot, { extensions: ["html"], index: "index.html" }));
-  app.use(express.static(config.siteRoot, { extensions: ["html"], index: "index.html" }));
+  app.use(basePath, express.static(config.siteRoot, { dotfiles: "allow", extensions: ["html"], index: "index.html" }));
+  app.use(express.static(config.siteRoot, { dotfiles: "allow", extensions: ["html"], index: "index.html" }));
 
   app.use((req, res, next) => {
     if (req.path.startsWith("/api/")) {

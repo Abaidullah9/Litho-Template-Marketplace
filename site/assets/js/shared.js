@@ -76,16 +76,38 @@ export function displayTaxonomyTag(value) {
   return taxonomyTagNames[tag] || tag;
 }
 
+export function getBasePath() {
+  if (typeof window !== "undefined" && window.location.pathname.startsWith("/Litho-Template-Marketplace")) {
+    return "/Litho-Template-Marketplace";
+  }
+  return "";
+}
+
+export function assetUrl(path) {
+  if (!path) return "";
+  if (path.startsWith("http://") || path.startsWith("https://") || path.startsWith("data:")) return path;
+  const base = getBasePath();
+  if (path.startsWith("/")) {
+    if (base && path.startsWith(base + "/")) return path;
+    return `${base}${path}`;
+  }
+  return `${base}/${path}`;
+}
+
 export async function loadCatalog() {
   // The generated registry (Supabase → registry.json) is the marketplace catalog.
   // The legacy catalog.json stays as a fallback so the site still renders before
   // the first registry generation.
-  const sources = ["registry.json", "catalog.json"];
+  const base = getBasePath();
+  const sources = [
+    `${base}/registry.json`,
+    `${base}/catalog.json`
+  ];
   let lastError = null;
   for (const source of sources) {
     let response;
     try {
-      response = await fetch(source, { cache: "no-store" });
+      response = await fetch(source);
     } catch (error) {
       lastError = error;
       continue;
@@ -102,6 +124,15 @@ export async function loadCatalog() {
       if (!Array.isArray(document.templates)) {
         lastError = new Error("Catalog has no template list");
         continue;
+      }
+      for (const t of document.templates) {
+        if (t.previewImage) t.previewImage = assetUrl(t.previewImage);
+        if (t.previewThumbnail) t.previewThumbnail = assetUrl(t.previewThumbnail);
+        if (t.downloadUrl) t.downloadUrl = assetUrl(t.downloadUrl);
+        if (t.sampleFile) t.sampleFile = assetUrl(t.sampleFile);
+        if (Array.isArray(t.previewImages)) {
+          t.previewImages = t.previewImages.map((img) => assetUrl(img));
+        }
       }
       return document;
     } catch (error) {

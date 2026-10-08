@@ -1,5 +1,5 @@
-:HL["/Litho-Template-Marketplace/_next/static/chunks/3hpcn1pg_dgbg.css","style"]
+:HL["/Litho-Template-Marketplace/_next/static/chunks/1zm9-_pcjp1d_.css","style"]
 :HL["/Litho-Template-Marketplace/_next/static/chunks/3eubpk-m3-d1i.css","style"]
 2:[["children",{"s":"__PAGE__","h":160}]]
 1:[["children",{"s":"admin","h":96,"c":"$Q2"}]]
-0:{"b":"Fb-A_THk66RtMMzOZ4VVi","t":{"t":{"s":"","h":80,"c":"$Q1"}}}
+0:{"b":"nZ52yHoyzUQKNGfKeKFsA","t":{"t":{"s":"","h":80,"c":"$Q1"}}}

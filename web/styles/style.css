@@ -26,7 +26,7 @@
 
 @font-face {
   font-family: "Litho Engagement Icons";
-  src: url("/assets/fonts/engagement-icons.woff2?v=20260816-02") format("woff2");
+  src: url("/Litho-Template-Marketplace/assets/fonts/engagement-icons.woff2?v=20260816-02") format("woff2");
   font-display: block;
   font-style: normal;
   font-weight: 400;
@@ -2017,8 +2017,8 @@ svg.social-glyph { display: block; width: 14px; height: 14px; flex: none; fill: 
 /* Litho wordmark (brand kit) shows through wherever tiles do not cover the grid. */
 .split-grid::after {
   content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; background: var(--line-strong); opacity: .7;
-  -webkit-mask: url("/assets/img/litho-wordmark.svg?v=20261007-01") center / 80% auto no-repeat;
-  mask: url("/assets/img/litho-wordmark.svg?v=20261007-01") center / 80% auto no-repeat;
+  -webkit-mask: url("/Litho-Template-Marketplace/assets/img/litho-wordmark.svg?v=20261007-01") center / 80% auto no-repeat;
+  mask: url("/Litho-Template-Marketplace/assets/img/litho-wordmark.svg?v=20261007-01") center / 80% auto no-repeat;
 }
 .split-grid.is-full::after { display: none; }
 .split-tile {

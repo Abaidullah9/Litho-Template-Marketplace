@@ -13,6 +13,8 @@ const webRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..")
 const sourceDir = path.resolve(webRoot, "..", "site", "assets", "css");
 const targetDir = path.join(webRoot, "styles");
 const sheets = ["style.css", "admin.css", "explore.css"];
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "/Litho-Template-Marketplace";
+const prefix = basePath ? `${basePath}/assets/` : "/assets/";
 
 mkdirSync(targetDir, { recursive: true });
 
@@ -20,8 +22,10 @@ const rewritten = [];
 for (const sheet of sheets) {
   const source = readFileSync(path.join(sourceDir, sheet), "utf8");
   const output = source
-    .replaceAll('url("../fonts/', 'url("/assets/fonts/')
-    .replaceAll('url("../img/', 'url("/assets/img/');
+    .replaceAll('url("../fonts/', `url("${prefix}fonts/`)
+    .replaceAll('url("../img/', `url("${prefix}img/`)
+    .replaceAll('url("/assets/fonts/', `url("${prefix}fonts/`)
+    .replaceAll('url("/assets/img/', `url("${prefix}img/`);
   const target = path.join(targetDir, sheet);
   const previous = (() => {
     try {

@@ -1820,6 +1820,8 @@ async function init() {
   });
 
   try {
+    if (count) count.textContent = "…";
+    if (countLabel) countLabel.textContent = "loading templates…";
     const catalog = await loadCatalog();
     if (!catalog || !Array.isArray(catalog.templates)) {
       throw new Error("Catalog response is invalid");
